@@ -18,21 +18,24 @@ import (
 
 // ConsumerHandler handles HTTP requests for consumers
 type ConsumerHandler struct {
-	useCase *usecase.ConsumerUseCase
-	nc      *nats.Conn
-	js      nats.JetStreamContext
+	useCase        *usecase.ConsumerUseCase
+	messageUseCase  *usecase.MessageUseCase
+	nc             *nats.Conn // For cross-stream operations (e.g., finding consumer by name across streams)
+	js             nats.JetStreamContext // For cross-stream operations
 }
 
 // NewConsumerHandler creates a new consumer handler
 func NewConsumerHandler(
 	useCase *usecase.ConsumerUseCase,
+	messageUseCase *usecase.MessageUseCase,
 	nc *nats.Conn,
 	js nats.JetStreamContext,
 ) *ConsumerHandler {
 	return &ConsumerHandler{
-		useCase: useCase,
-		nc:      nc,
-		js:      js,
+		useCase:       useCase,
+		messageUseCase: messageUseCase,
+		nc:            nc,
+		js:            js,
 	}
 }
 
@@ -442,7 +445,7 @@ func (h *ConsumerHandler) DeleteStreamMessage(c *gin.Context) {
 		return
 	}
 
-	if err := h.js.DeleteMsg(streamName, sequence); err != nil {
+	if err := h.messageUseCase.DeleteMessage(c.Request.Context(), streamName, sequence); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
 			Error:   "Failed to delete message",
 			Details: err.Error(),
@@ -471,7 +474,7 @@ func (h *ConsumerHandler) PublishMessage(c *gin.Context) {
 		return
 	}
 
-	if _, err := h.js.Publish(req.Subject, []byte(req.Payload)); err != nil {
+	if err := h.messageUseCase.PublishToStream(c.Request.Context(), req.Subject, []byte(req.Payload)); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
 			Error:   "Failed to publish message",
 			Details: err.Error(),
@@ -486,78 +489,40 @@ func (h *ConsumerHandler) PublishMessage(c *gin.Context) {
 func (h *ConsumerHandler) GetPendingMessages(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
+	
+	limit := constants.MaxFetchCount
+	if l := c.Query("limit"); l != "" {
+		if parsed, err := strconv.Atoi(l); err == nil && parsed > 0 && parsed <= constants.MaxFetchCount {
+			limit = parsed
+		}
+	}
 
-	info, err := h.js.ConsumerInfo(streamName, consumerName)
+	messages, err := h.useCase.GetPendingMessages(c.Request.Context(), streamName, consumerName, limit)
 	if err != nil {
-		c.JSON(http.StatusNotFound, dto.ErrorResponse{
-			Error: "Consumer not found",
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Error:   "Failed to get pending messages",
+			Details: err.Error(),
 		})
 		return
 	}
 
-	if info.Config.DeliverSubject != "" {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "Cannot fetch pending messages from push consumers. Use pull consumers.",
+	pendingMessages := make([]dto.PendingMessage, 0, len(messages))
+	for _, msg := range messages {
+		pendingMessages = append(pendingMessages, dto.PendingMessage{
+			Sequence:  msg.Sequence,
+			Subject:   msg.Subject,
+			Data:      string(msg.Data),
+			Timestamp: msg.Timestamp.Format(time.RFC3339),
+			Stream:    streamName,
+			Consumer:  consumerName,
 		})
-		return
-	}
-
-	pendingMessages := []dto.PendingMessage{}
-	fetchCount := info.NumPending
-	if fetchCount > constants.MaxFetchCount {
-		fetchCount = constants.MaxFetchCount
-	}
-
-	if fetchCount > 0 {
-		sub, err := h.js.PullSubscribe(
-			"",
-			"",
-			nats.Bind(streamName, consumerName),
-			nats.ManualAck(),
-		)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-				Error:   "Failed to create subscription",
-				Details: err.Error(),
-			})
-			return
-		}
-		defer sub.Unsubscribe()
-
-		for i := uint64(0); i < fetchCount; i++ {
-			msg, err := sub.NextMsg(constants.MessageFetchTimeout)
-			if err != nil {
-				break
-			}
-
-			meta, err := msg.Metadata()
-			if err != nil {
-				msg.Nak()
-				continue
-			}
-
-			msgData := string(msg.Data)
-			msg.Nak()
-
-			pendingMessages = append(pendingMessages, dto.PendingMessage{
-				Sequence:     meta.Sequence.Stream,
-				Subject:      msg.Subject,
-				Data:         msgData,
-				Timestamp:    meta.Timestamp.Format(time.RFC3339),
-				NumDelivered: int(meta.NumDelivered),
-				NumPending:   info.NumPending,
-				Stream:       streamName,
-				Consumer:     consumerName,
-			})
-		}
 	}
 
 	c.JSON(http.StatusOK, dto.PendingMessagesResponse{
-		Consumer:      consumerName,
-		Stream:        streamName,
-		NumPending:    info.NumPending,
-		NumAckPending: uint64(info.NumAckPending),
-		Messages:      pendingMessages,
+		Consumer:   consumerName,
+		Stream:     streamName,
+		NumPending: uint64(len(messages)),
+		Messages:   pendingMessages,
 	})
 }
 

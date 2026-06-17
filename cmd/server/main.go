@@ -132,12 +132,14 @@ func main() {
 
 	streamRepo := infrastructure.NewNATSStreamRepository(natsConn.nc, natsConn.js)
 	consumerRepo := infrastructure.NewNATSConsumerRepository(natsConn.nc, natsConn.js)
+	messageRepo := infrastructure.NewNATSMessageRepository(natsConn.nc, natsConn.js)
 
 	streamUseCase := usecase.NewStreamUseCase(streamRepo)
 	consumerUseCase := usecase.NewConsumerUseCase(consumerRepo)
+	messageUseCase := usecase.NewMessageUseCase(messageRepo)
 
 	streamHandler := handlers.NewStreamHandler(streamUseCase)
-	consumerHandler := handlers.NewConsumerHandler(consumerUseCase, natsConn.nc, natsConn.js)
+	consumerHandler := handlers.NewConsumerHandler(consumerUseCase, messageUseCase, natsConn.nc, natsConn.js)
 	serverHandler := handlers.NewServerHandler(natsConn.nc, natsConn.js)
 	coreNATSHandler := handlers.NewCoreNATShandler(natsConn.nc)
 	kvHandler := handlers.NewKVHandler(natsConn.nc, natsConn.js)

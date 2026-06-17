@@ -105,3 +105,47 @@ func (uc *ConsumerUseCase) ResumeConsumer(ctx context.Context, req *domain.Resum
 	}
 	return uc.consumerRepo.Resume(ctx, req)
 }
+
+// AckMessage acknowledges a message
+func (uc *ConsumerUseCase) AckMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error {
+	if streamName == "" {
+		return fmt.Errorf("stream name is required")
+	}
+	if consumerName == "" {
+		return fmt.Errorf("consumer name is required")
+	}
+	return uc.consumerRepo.AckMessage(ctx, streamName, consumerName, sequence)
+}
+
+// NackMessage negative acknowledges a message
+func (uc *ConsumerUseCase) NackMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error {
+	if streamName == "" {
+		return fmt.Errorf("stream name is required")
+	}
+	if consumerName == "" {
+		return fmt.Errorf("consumer name is required")
+	}
+	return uc.consumerRepo.NackMessage(ctx, streamName, consumerName, sequence)
+}
+
+// TerminateMessage terminates a message
+func (uc *ConsumerUseCase) TerminateMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error {
+	if streamName == "" {
+		return fmt.Errorf("stream name is required")
+	}
+	if consumerName == "" {
+		return fmt.Errorf("consumer name is required")
+	}
+	return uc.consumerRepo.TerminateMessage(ctx, streamName, consumerName, sequence)
+}
+
+// GetPendingMessages returns pending messages for a consumer
+func (uc *ConsumerUseCase) GetPendingMessages(ctx context.Context, streamName, consumerName string, limit int) ([]*domain.Message, error) {
+	if streamName == "" {
+		return nil, fmt.Errorf("stream name is required")
+	}
+	if consumerName == "" {
+		return nil, fmt.Errorf("consumer name is required")
+	}
+	return uc.consumerRepo.GetPendingMessages(ctx, streamName, consumerName, limit)
+}

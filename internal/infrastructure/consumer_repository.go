@@ -266,3 +266,74 @@ func (r *NATSConsumerRepository) toNATSConsumerConfig(consumer *domain.Consumer)
 		MaxDeliver:    consumer.MaxDeliver,
 	}
 }
+
+// AckMessage acknowledges a message
+func (r *NATSConsumerRepository) AckMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error {
+	ackSubject := fmt.Sprintf("$JS.ACK.%s.%s.%d", streamName, consumerName, sequence)
+	return r.nc.Publish(ackSubject, nil)
+}
+
+// NackMessage negative acknowledges a message
+func (r *NATSConsumerRepository) NackMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error {
+	// Negative acknowledgment is done by publishing -NA to the ack subject
+	ackSubject := fmt.Sprintf("$JS.ACK.%s.%s.%d", streamName, consumerName, sequence)
+	return r.nc.Publish(ackSubject, []byte("-NA"))
+}
+
+// TerminateMessage terminates a message
+func (r *NATSConsumerRepository) TerminateMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error {
+	// Termination is done by publishing +TERM to the ack subject
+	ackSubject := fmt.Sprintf("$JS.ACK.%s.%s.%d", streamName, consumerName, sequence)
+	return r.nc.Publish(ackSubject, []byte("+TERM"))
+}
+
+// GetPendingMessages returns pending messages for a consumer
+func (r *NATSConsumerRepository) GetPendingMessages(ctx context.Context, streamName, consumerName string, limit int) ([]*domain.Message, error) {
+	info, err := r.js.ConsumerInfo(streamName, consumerName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get consumer info: %w", err)
+	}
+
+	if info.Config.DeliverSubject != "" {
+		return nil, fmt.Errorf("cannot get pending messages for push consumers")
+	}
+
+	// Get pending messages
+
+	sub, err := r.js.PullSubscribe(info.Config.FilterSubject, info.Name)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create pull subscription: %w", err)
+	}
+	defer sub.Unsubscribe()
+
+	messages := make([]*domain.Message, 0, limit)
+	fetched := 0
+
+	for fetched < limit && fetched < int(info.NumPending) {
+		msg, err := sub.NextMsg(2 * time.Second)
+		if err != nil {
+			break // No more messages or timeout
+		}
+
+		meta, err := msg.Metadata()
+		if err != nil {
+			continue // Skip messages without metadata
+		}
+
+		headers := make(map[string][]string)
+		for k, v := range msg.Header {
+			headers[k] = v
+		}
+
+		messages = append(messages, &domain.Message{
+			Subject:   msg.Subject,
+			Sequence:  meta.Sequence.Stream,
+			Data:      msg.Data,
+			Headers:   headers,
+			Timestamp: meta.Timestamp,
+		})
+		fetched++
+	}
+
+	return messages, nil
+}

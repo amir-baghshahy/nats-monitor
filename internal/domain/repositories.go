@@ -26,6 +26,14 @@ type ConsumerRepository interface {
 	Replay(ctx context.Context, req *ReplayRequest) (string, error)
 	Pause(ctx context.Context, req *PauseRequest) error
 	Resume(ctx context.Context, req *ResumeRequest) error
+
+	// Message acknowledgment operations
+	AckMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error
+	NackMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error
+	TerminateMessage(ctx context.Context, streamName, consumerName string, sequence uint64) error
+
+	// Pending messages
+	GetPendingMessages(ctx context.Context, streamName, consumerName string, limit int) ([]*Message, error)
 }
 
 // ConnectionRepository defines operations for connection monitoring
@@ -41,6 +49,7 @@ type MessageRepository interface {
 	Get(ctx context.Context, streamName string, sequence uint64) (*Message, error)
 	Delete(ctx context.Context, streamName string, sequence uint64) error
 	Publish(ctx context.Context, subject string, data []byte) error
+	PublishToStream(ctx context.Context, streamName string, data []byte) error
 }
 
 // ServerRepository defines operations for server information
