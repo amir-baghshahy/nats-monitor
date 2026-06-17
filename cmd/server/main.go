@@ -21,6 +21,20 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
+// @title NATS Monitoring API
+// @version 1.0
+// @description Comprehensive API for monitoring and managing NATS JetStream instances.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name NATS Monitoring Project
+// @contact.url http://github.com/nats-monitoring
+
+// @license.name MIT
+// @license.url https://opensource.org/licenses/MIT
+
+// @BasePath /api
+// @schemes http https
+
 // NATSConnection manages the NATS connection
 type NATSConnection struct {
 	nc *nats.Conn

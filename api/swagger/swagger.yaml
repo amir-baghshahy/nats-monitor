@@ -1,0 +1,1265 @@
+basePath: /api
+definitions:
+  nats-monitoring_internal_dto.AckMessageRequest:
+    properties:
+      sequence:
+        type: integer
+    required:
+    - sequence
+    type: object
+  nats-monitoring_internal_dto.AckMessageResponse:
+    properties:
+      message:
+        type: string
+      sequence:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.AckTermMessageRequest:
+    properties:
+      sequence:
+        type: integer
+    required:
+    - sequence
+    type: object
+  nats-monitoring_internal_dto.ConnectionInfo:
+    properties:
+      cid:
+        type: integer
+      connected_at:
+        type: string
+      ip:
+        type: string
+      last_activity:
+        type: string
+      name:
+        type: string
+      server:
+        type: string
+      subs_count:
+        type: integer
+      type:
+        type: string
+      user:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.ConnectionsResponse:
+    properties:
+      connections:
+        items:
+          $ref: '#/definitions/nats-monitoring_internal_dto.ConnectionInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.ConsumerConfigResponse:
+    properties:
+      ack_policy:
+        type: string
+      deliver_policy:
+        type: string
+      durable:
+        type: string
+      max_deliver:
+        type: integer
+      replay_policy:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.ConsumerResponse:
+    properties:
+      ack_rate:
+        type: string
+      config:
+        $ref: '#/definitions/nats-monitoring_internal_dto.ConsumerConfigResponse'
+      lag:
+        type: integer
+      name:
+        type: string
+      num_pending:
+        type: integer
+      paused:
+        type: boolean
+      status:
+        type: string
+      stream:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.CreateConsumerRequest:
+    properties:
+      ack_policy:
+        enum:
+        - none
+        - all
+        - explicit
+        type: string
+      deliver_policy:
+        enum:
+        - all
+        - last
+        - new
+        type: string
+      durable:
+        type: string
+      filter_subject:
+        type: string
+      max_deliver:
+        minimum: -1
+        type: integer
+      name:
+        type: string
+      replay_policy:
+        enum:
+        - instant
+        - original
+        type: string
+    required:
+    - name
+    type: object
+  nats-monitoring_internal_dto.CreateStreamRequest:
+    properties:
+      max_age:
+        type: string
+      max_bytes:
+        type: integer
+      name:
+        type: string
+      replicas:
+        maximum: 5
+        minimum: 1
+        type: integer
+      retention:
+        enum:
+        - limits
+        - interest
+        - workqueue
+        type: string
+      storage:
+        enum:
+        - file
+        - memory
+        type: string
+      subjects:
+        items:
+          type: string
+        minItems: 1
+        type: array
+    required:
+    - name
+    - storage
+    - subjects
+    type: object
+  nats-monitoring_internal_dto.DashboardStatsResponse:
+    properties:
+      bytes:
+        type: integer
+      connections:
+        type: integer
+      consumers:
+        type: integer
+      messages:
+        type: integer
+      server_status:
+        type: string
+      streams:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.ErrorResponse:
+    properties:
+      code:
+        type: string
+      details:
+        type: string
+      error:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.HealthResponse:
+    properties:
+      nats:
+        type: string
+      status:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.NackMessageRequest:
+    properties:
+      delay:
+        description: Redelivery delay in seconds
+        type: integer
+      sequence:
+        type: integer
+    required:
+    - sequence
+    type: object
+  nats-monitoring_internal_dto.PendingMessage:
+    properties:
+      consumer:
+        type: string
+      data:
+        type: string
+      num_delivered:
+        type: integer
+      num_pending:
+        type: integer
+      sequence:
+        type: integer
+      stream:
+        type: string
+      subject:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.PendingMessagesResponse:
+    properties:
+      consumer:
+        type: string
+      messages:
+        items:
+          $ref: '#/definitions/nats-monitoring_internal_dto.PendingMessage'
+        type: array
+      num_ack_pending:
+        type: integer
+      num_pending:
+        type: integer
+      stream:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.PublishMessageRequest:
+    properties:
+      headers:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      payload:
+        type: string
+      reply_to:
+        type: string
+      subject:
+        type: string
+    required:
+    - subject
+    type: object
+  nats-monitoring_internal_dto.PurgeStreamRequest:
+    properties:
+      sequence:
+        type: integer
+      subject:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.PurgeStreamResponse:
+    properties:
+      message:
+        type: string
+      remaining:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.ReplayRequest:
+    properties:
+      end_seq:
+        type: integer
+      filter_subject:
+        type: string
+      start_seq:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.ReplayResponse:
+    properties:
+      message:
+        type: string
+      replay_id:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.ResetLagRequest:
+    properties:
+      sequence:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.ResetLagResponse:
+    properties:
+      message:
+        type: string
+      new_sequence:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.StreamConfigResponse:
+    properties:
+      max_age:
+        type: string
+      max_bytes:
+        type: integer
+      name:
+        type: string
+      replicas:
+        type: integer
+      retention:
+        type: string
+      storage:
+        type: string
+      subjects:
+        items:
+          type: string
+        type: array
+    type: object
+  nats-monitoring_internal_dto.StreamResponse:
+    properties:
+      config:
+        $ref: '#/definitions/nats-monitoring_internal_dto.StreamConfigResponse'
+      state:
+        $ref: '#/definitions/nats-monitoring_internal_dto.StreamStateResponse'
+    type: object
+  nats-monitoring_internal_dto.StreamStateResponse:
+    properties:
+      bytes:
+        type: integer
+      consumers:
+        type: integer
+      delete_marks:
+        type: integer
+      first_seq:
+        type: integer
+      first_ts:
+        type: string
+      last_seq:
+        type: integer
+      last_ts:
+        type: string
+      messages:
+        type: integer
+      num_pending:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.SubjectInfo:
+    properties:
+      count:
+        type: integer
+      last_seen:
+        type: string
+      name:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.SubjectsResponse:
+    properties:
+      subjects:
+        items:
+          $ref: '#/definitions/nats-monitoring_internal_dto.SubjectInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  nats-monitoring_internal_dto.SuccessResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  nats-monitoring_internal_dto.UpdateConsumerRequest:
+    properties:
+      ack_policy:
+        enum:
+        - none
+        - all
+        - explicit
+        type: string
+      deliver_policy:
+        enum:
+        - all
+        - last
+        - new
+        type: string
+      max_deliver:
+        minimum: -1
+        type: integer
+      replay_policy:
+        enum:
+        - instant
+        - original
+        type: string
+    type: object
+  nats-monitoring_internal_dto.UpdateStreamRequest:
+    properties:
+      max_age:
+        type: string
+      max_bytes:
+        type: integer
+      replicas:
+        maximum: 5
+        minimum: 1
+        type: integer
+      subjects:
+        items:
+          type: string
+        type: array
+    type: object
+info:
+  contact:
+    name: NATS Monitoring Project
+    url: http://github.com/nats-monitoring
+  description: Comprehensive API for monitoring and managing NATS JetStream instances.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: NATS Monitoring API
+  version: "1.0"
+paths:
+  /account/info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Account information
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get JetStream account information
+      tags:
+      - health
+  /connections:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ConnectionsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get NATS connections
+      tags:
+      - health
+  /connections/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Connection ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "501":
+          description: Not Implemented
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Terminate a connection
+      tags:
+      - health
+  /consumers:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/nats-monitoring_internal_dto.ConsumerResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: List all consumers across all streams
+      tags:
+      - consumers
+  /consumers/{name}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Consumer name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ConsumerResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get consumer by name across all streams
+      tags:
+      - consumers
+  /dashboard/stats:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.DashboardStatsResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.DashboardStatsResponse'
+      summary: Get dashboard statistics
+      tags:
+      - health
+  /health:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.HealthResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.HealthResponse'
+      summary: Get system health status
+      tags:
+      - health
+  /metrics/rates:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - default: 60
+        description: Duration in seconds
+        in: query
+        name: duration
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Rate metrics
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get rate metrics
+      tags:
+      - metrics
+  /metrics/system:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: System metrics
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get system metrics
+      tags:
+      - metrics
+  /server/info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Server information
+          schema:
+            type: object
+      summary: Get server information
+      tags:
+      - health
+  /streams:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/nats-monitoring_internal_dto.StreamResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: List all streams
+      tags:
+      - streams
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.CreateStreamRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.StreamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Create a new stream
+      tags:
+      - streams
+  /streams/{name}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Delete a stream
+      tags:
+      - streams
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.StreamResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get stream details
+      tags:
+      - streams
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Stream update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.UpdateStreamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.StreamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Update a stream
+      tags:
+      - streams
+  /streams/{name}/consumers:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.CreateConsumerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ConsumerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Create a consumer
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Delete a consumer
+      tags:
+      - consumers
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ConsumerResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get consumer details
+      tags:
+      - consumers
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      - description: Consumer update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.UpdateConsumerRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ConsumerResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Update a consumer
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/ack:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      - description: Acknowledgment request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.AckMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.AckMessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Acknowledge a message
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/lag-reset:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      - description: Reset lag options
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.ResetLagRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ResetLagResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Reset consumer lag
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/nack:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      - description: Negative acknowledgment request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.NackMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Negatively acknowledge a message
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/pause:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Pause a consumer
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/pending:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      - default: 25
+        description: Maximum number of messages to return
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.PendingMessagesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get pending messages for a consumer
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/replay:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      - description: Replay options
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.ReplayRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ReplayResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Replay messages to consumer
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/resume:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Resume a paused consumer
+      tags:
+      - consumers
+  /streams/{name}/consumers/{consumer}/term:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Consumer name
+        in: path
+        name: consumer
+        required: true
+        type: string
+      - description: Termination request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.AckTermMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Terminate a message
+      tags:
+      - consumers
+  /streams/{name}/messages/{sequence}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Message sequence number
+        in: path
+        name: sequence
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Delete a message from a stream
+      tags:
+      - messages
+  /streams/{name}/messages/publish:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Message to publish
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.PublishMessageRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Publish a message to a stream
+      tags:
+      - messages
+  /streams/{name}/purge:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Stream name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Purge options
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/nats-monitoring_internal_dto.PurgeStreamRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.PurgeStreamResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Purge messages from a stream
+      tags:
+      - streams
+  /subjects:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.SubjectsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/nats-monitoring_internal_dto.ErrorResponse'
+      summary: Get subject information
+      tags:
+      - health
+schemes:
+- http
+- https
+swagger: "2.0"
