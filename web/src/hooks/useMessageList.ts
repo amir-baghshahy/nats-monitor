@@ -1,7 +1,21 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { Message, MessageFormat } from "../types/nats";
 import { detectMessageFormat } from "../utils/formatters";
 import { LIMITS } from "../utils/constants";
+
+export interface Message {
+  subject: string;
+  data: string;
+  data_base64: string;
+  reply?: string;
+  headers?: Record<string, string[]>;
+  timestamp: number;
+  size: number;
+}
+
+export interface MessageFormat {
+  type: "json" | "text" | "binary" | "hex";
+  view: "pretty" | "raw" | "hex";
+}
 
 interface UseMessageListOptions {
   /**

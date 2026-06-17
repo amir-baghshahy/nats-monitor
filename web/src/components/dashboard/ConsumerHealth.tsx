@@ -1,22 +1,15 @@
-import { ConsumerInfo } from "../../types/nats";
+import type { nats_monitoring_internal_dto_ConsumerResponse as ConsumerResponse } from "../../types";
 import { getConsumerStatus } from "../../utils/validators";
 
 interface ConsumerHealthProps {
-  /**
-   * List of consumers
-   */
-  consumers: ConsumerInfo[];
+  consumers: ConsumerResponse[];
 }
 
-/**
- * Consumer health display showing highest lag consumers
- */
 export default function ConsumerHealth({ consumers }: ConsumerHealthProps) {
   if (!consumers || consumers.length === 0) {
     return null;
   }
 
-  // Sort by lag (descending) and take top 5
   const topLagging = [...consumers]
     .sort(
       (a, b) => (b.lag || b.num_pending || 0) - (a.lag || a.num_pending || 0),

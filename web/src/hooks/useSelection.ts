@@ -1,5 +1,12 @@
 import { useState, useCallback } from "react";
-import { SelectionState } from "../types/common";
+
+export interface SelectionState<T> {
+  selected: Set<T>;
+  toggleSelection: (item: T) => void;
+  clearSelection: () => void;
+  selectAll: (items: T[]) => void;
+  isSelected: (item: T) => boolean;
+}
 
 /**
  * Hook for managing selection state

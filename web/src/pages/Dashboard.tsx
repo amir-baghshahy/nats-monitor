@@ -1,9 +1,4 @@
-// ============================================================================
-// Dashboard Page
-// ============================================================================
-
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useSSE } from "../hooks/useSSE";
 import { SystemMetrics } from "../components/MetricsGraph";
 import {
@@ -14,51 +9,38 @@ import {
   ConsumerHealth,
 } from "../components/dashboard";
 import EmptyState from "../components/ui/EmptyState";
-import {
-  DashboardStats,
-  AccountInfo,
-  ConnectionStatus as ConnectionStatusType,
-} from "../types/nats";
+import { ConsumersService, HealthService } from "../types";
+import type { nats_monitoring_internal_dto_DashboardStatsResponse as DashboardStatsResponse } from "../types";
 import { Database } from "lucide-react";
 
 export default function Dashboard() {
   const { connected: sseConnected } = useSSE("dashboard");
 
-  // Fetch dashboard stats
   const { data: stats, refetch } = useQuery({
     queryKey: ["dashboardStats"],
-    queryFn: () =>
-      axios.get<DashboardStats>("/api/dashboard/stats").then((res) => res.data),
+    queryFn: () => HealthService.getDashboardStats(),
     refetchInterval: sseConnected ? false : 5000,
   });
 
-  // Fetch account info
   const { data: accountInfo } = useQuery({
     queryKey: ["accountInfo"],
-    queryFn: () =>
-      axios.get<AccountInfo>("/api/account/info").then((res) => res.data),
+    queryFn: () => HealthService.getAccountInfo(),
     refetchInterval: sseConnected ? false : 5000,
   });
 
-  // Fetch connections
   const { data: connections } = useQuery({
     queryKey: ["connections"],
-    queryFn: () =>
-      axios
-        .get<ConnectionStatusType[]>("/api/connections")
-        .then((res) => res.data),
+    queryFn: () => HealthService.getConnections(),
     refetchInterval: sseConnected ? false : 10000,
   });
 
-  // Fetch consumers
   const { data: consumers } = useQuery({
     queryKey: ["consumers"],
-    queryFn: () => axios.get("/api/consumers").then((res) => res.data),
+    queryFn: () => ConsumersService.getConsumers(),
     refetchInterval: sseConnected ? false : 5000,
   });
 
-  // Default values
-  const dashboardStats = stats || {
+  const dashboardStats: DashboardStatsResponse = stats || {
     streams: 0,
     consumers: 0,
     messages: 0,
@@ -86,7 +68,6 @@ export default function Dashboard() {
 
       <StatsGrid stats={dashboardStats} />
 
-      {/* Real-time Metrics Graphs */}
       <div className="mb-8">
         <h2 className="text-lg font-semibold mb-4">Real-time Metrics</h2>
         <SystemMetrics />
@@ -96,7 +77,7 @@ export default function Dashboard() {
 
       <ConnectionStatus
         connected={dashboardStats.server_status === "connected"}
-        connections={connections || []}
+        connections={connections?.connections || []}
       />
 
       {hasData ? (

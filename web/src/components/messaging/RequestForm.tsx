@@ -1,18 +1,23 @@
 import { Zap, Eye, MessageSquare } from "lucide-react";
-import { RequestForm as RequestFormData } from "../../types/nats";
 import { validateSubject, validateTimeout } from "../../utils/validators";
 import { formatTimestamp } from "../../utils/formatters";
+
+export interface RequestForm {
+  subject: string;
+  payload: string;
+  timeout: number;
+}
 
 interface RequestFormProps {
   /**
    * Current form data
    */
-  form: RequestFormData;
+  form: RequestForm;
 
   /**
    * Form update callback
    */
-  onChange: (form: RequestFormData) => void;
+  onChange: (form: RequestForm) => void;
 
   /**
    * Submit callback
@@ -56,10 +61,7 @@ export default function RequestForm({
     onSubmit();
   };
 
-  const updateField = (
-    field: keyof RequestFormData,
-    value: string | number,
-  ) => {
+  const updateField = (field: keyof RequestForm, value: string | number) => {
     onChange({ ...form, [field]: value });
   };
 

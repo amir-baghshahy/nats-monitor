@@ -1,22 +1,12 @@
 import { Server } from "lucide-react";
 import StatusBadge from "../ui/StatusBadge";
-import { ConnectionStatus as ConnectionStatusType } from "../../types/nats";
+import type { nats_monitoring_internal_dto_ConnectionInfo as ConnectionInfo } from "../../types";
 
 interface ConnectionStatusProps {
-  /**
-   * Connection status
-   */
   connected: boolean;
-
-  /**
-   * List of connections
-   */
-  connections: ConnectionStatusType[];
+  connections: ConnectionInfo[];
 }
 
-/**
- * Connection status display for dashboard
- */
 export default function ConnectionStatus({
   connected,
   connections,
@@ -41,24 +31,13 @@ export default function ConnectionStatus({
             <div className="flex items-center gap-2 mb-2">
               <Server className="w-4 h-4 text-primary-400" />
               <span className="font-medium">
-                {conn.server || "NATS Server"}
+                {conn.name || conn.server || "NATS Server"}
               </span>
             </div>
             <div className="text-sm text-dark-muted space-y-1">
-              <p>URL: {conn.ip || "Not connected"}</p>
-              <p>
-                Status:{" "}
-                <span
-                  className={
-                    conn.status === "connected"
-                      ? "text-green-400"
-                      : "text-red-400"
-                  }
-                >
-                  {conn.status || "Disconnected"}
-                </span>
-              </p>
-              <p>Latency: {conn.latency || "Not available"}</p>
+              <p>IP: {conn.ip || "Not connected"}</p>
+              <p>User: {conn.user || "N/A"}</p>
+              <p>Subscriptions: {conn.subs_count || 0}</p>
             </div>
           </div>
         ))}

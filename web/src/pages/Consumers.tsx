@@ -1,177 +1,257 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ConsumersService, StreamsService } from "../types";
+import type {
+  nats_monitoring_internal_dto_ConsumerResponse as Consumer,
+  nats_monitoring_internal_dto_StreamResponse as Stream,
+} from "../types";
 import {
-  Search, Filter, RefreshCw, Play, Pause, Trash2, Eye,
-  TrendingUp, AlertCircle, CheckCircle, Clock,
-  MessageSquare, Zap, Plus, ChevronDown, ChevronRight,
-  Wifi, WifiOff, Activity
-} from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useSSE } from '../hooks/useSSE'
-import { deleteConsumer, setConsumerState, resetConsumerLag } from '../utils/natsOperations'
-import { useToast } from '../components/Toast'
+  Search,
+  Filter,
+  RefreshCw,
+  Play,
+  Pause,
+  Trash2,
+  Eye,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  MessageSquare,
+  Zap,
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  Wifi,
+  WifiOff,
+  Activity,
+} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSSE } from "../hooks/useSSE";
+import {
+  deleteConsumer,
+  setConsumerState,
+  resetConsumerLag,
+} from "../utils/natsOperations";
+import { useToast } from "../components/Toast";
 
 export default function Consumers() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedStream, setSelectedStream] = useState<string>('all')
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'stuck' | 'idle'>('all')
-  const [selectedConsumers, setSelectedConsumers] = useState<Set<string>>(new Set())
-  const [expandedConsumers, setExpandedConsumers] = useState<Set<string>>(new Set())
-  const [showMoreFilters, setShowMoreFilters] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStream, setSelectedStream] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<
+    "all" | "active" | "stuck" | "idle"
+  >("all");
+  const [selectedConsumers, setSelectedConsumers] = useState<Set<string>>(
+    new Set(),
+  );
+  const [expandedConsumers, setExpandedConsumers] = useState<Set<string>>(
+    new Set(),
+  );
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
 
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
-  const { toast } = useToast()
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   // SSE connection for real-time updates
-  const { connected: sseConnected } = useSSE('consumers')
+  const { connected: sseConnected } = useSSE("consumers");
 
-  const { data: consumers, isLoading, refetch } = useQuery({
-    queryKey: ['consumers'],
-    queryFn: () => axios.get('/api/consumers').then(res => res.data),
-  })
+  const {
+    data: consumers,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["consumers"],
+    queryFn: () => ConsumersService.getConsumers(),
+  });
 
   const { data: streams } = useQuery({
-    queryKey: ['streams'],
-    queryFn: () => axios.get('/api/streams').then(res => res.data),
-  })
+    queryKey: ["streams"],
+    queryFn: () => StreamsService.getStreams(),
+  });
 
   // Filter consumers
-  const filteredConsumers = consumers?.filter((consumer: any) => {
-    const matchesSearch = (consumer.name || '')
-      .toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (consumer.stream || '').toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConsumers =
+    consumers?.filter((consumer: Consumer) => {
+      const matchesSearch =
+        (consumer.name || "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        (consumer.stream || "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
-    const matchesStream = selectedStream === 'all' || consumer.stream === selectedStream
+      const matchesStream =
+        selectedStream === "all" || consumer.stream === selectedStream;
 
-    let matchesStatus = true
-    if (filterStatus === 'active') matchesStatus = consumer.status === 'active'
-    else if (filterStatus === 'stuck') matchesStatus = consumer.status === 'stuck'
-    else if (filterStatus === 'idle') matchesStatus = consumer.status === 'idle'
+      let matchesStatus = true;
+      if (filterStatus === "active")
+        matchesStatus = consumer.status === "active";
+      else if (filterStatus === "stuck")
+        matchesStatus = consumer.status === "stuck";
+      else if (filterStatus === "idle")
+        matchesStatus = consumer.status === "idle";
 
-    return matchesSearch && matchesStream && matchesStatus
-  }) || []
+      return matchesSearch && matchesStream && matchesStatus;
+    }) || [];
 
   // Stats
   const stats = {
     total: filteredConsumers.length,
-    active: filteredConsumers.filter((c: any) => c.status === 'active').length,
-    stuck: filteredConsumers.filter((c: any) => c.status === 'stuck').length,
-    idle: filteredConsumers.filter((c: any) => c.status === 'idle').length,
-    totalLag: filteredConsumers.reduce((acc: number, c: any) => acc + (c.lag || 0), 0),
-    avgAckRate: filteredConsumers.length > 0
-      ? filteredConsumers.reduce((acc: number, c: any) => acc + parseInt(String(c.ack_rate || '0').replace(/[^\d]/g, '') || '0'), 0) / filteredConsumers.length
-      : 0,
-  }
+    active: filteredConsumers.filter((c: Consumer) => c.status === "active")
+      .length,
+    stuck: filteredConsumers.filter((c: Consumer) => c.status === "stuck")
+      .length,
+    idle: filteredConsumers.filter((c: Consumer) => c.status === "idle").length,
+    totalLag: filteredConsumers.reduce(
+      (acc: number, c: Consumer) => acc + (c.lag || 0),
+      0,
+    ),
+    avgAckRate:
+      filteredConsumers.length > 0
+        ? filteredConsumers.reduce(
+            (acc: number, c: Consumer) =>
+              acc +
+              parseInt(String(c.ack_rate || "0").replace(/[^\d]/g, "") || "0"),
+            0,
+          ) / filteredConsumers.length
+        : 0,
+  };
 
   const deleteMutation = useMutation({
-    mutationFn: ({ stream, name }: { stream: string; name: string }) => deleteConsumer(stream, name),
+    mutationFn: ({ stream, name }: { stream: string; name: string }) =>
+      deleteConsumer(stream, name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['consumers'] })
-      setSelectedConsumers(new Set())
-      toast('success', 'Consumer deleted')
+      queryClient.invalidateQueries({ queryKey: ["consumers"] });
+      setSelectedConsumers(new Set());
+      toast("success", "Consumer deleted");
     },
-    onError: () => toast('error', 'Failed to delete consumer'),
-  })
+    onError: () => toast("error", "Failed to delete consumer"),
+  });
 
   const pauseResumeMutation = useMutation({
-    mutationFn: ({ stream, name, paused }: { stream: string; name: string; paused: boolean }) =>
-      setConsumerState(stream, name, paused),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['consumers'] }) },
-    onError: () => toast('error', 'Failed to update consumer'),
-  })
+    mutationFn: ({
+      stream,
+      name,
+      paused,
+    }: {
+      stream: string;
+      name: string;
+      paused: boolean;
+    }) => setConsumerState(stream, name, paused),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["consumers"] });
+    },
+    onError: () => toast("error", "Failed to update consumer"),
+  });
 
   const resetLagMutation = useMutation({
-    mutationFn: ({ stream, name }: { stream: string; name: string }) => resetConsumerLag(stream, name),
+    mutationFn: ({ stream, name }: { stream: string; name: string }) =>
+      resetConsumerLag(stream, name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['consumers'] })
-      toast('success', 'Lag reset')
+      queryClient.invalidateQueries({ queryKey: ["consumers"] });
+      toast("success", "Lag reset");
     },
-    onError: () => toast('error', 'Failed to reset lag'),
-  })
+    onError: () => toast("error", "Failed to reset lag"),
+  });
 
   const handleBulkResume = () => {
     if (confirm(`Resume ${selectedConsumers.size} selected consumers?`)) {
       filteredConsumers.forEach((c: any) => {
-        if (selectedConsumers.has(c.name) && c.status !== 'active') {
-          pauseResumeMutation.mutate({ stream: c.stream, name: c.name, paused: false })
+        if (selectedConsumers.has(c.name) && c.status !== "active") {
+          pauseResumeMutation.mutate({
+            stream: c.stream,
+            name: c.name,
+            paused: false,
+          });
         }
-      })
+      });
     }
-  }
+  };
 
   const handleBulkPause = () => {
     if (confirm(`Pause ${selectedConsumers.size} selected consumers?`)) {
       filteredConsumers.forEach((c: any) => {
-        if (selectedConsumers.has(c.name) && c.status === 'active') {
-          pauseResumeMutation.mutate({ stream: c.stream, name: c.name, paused: true })
+        if (selectedConsumers.has(c.name) && c.status === "active") {
+          pauseResumeMutation.mutate({
+            stream: c.stream,
+            name: c.name,
+            paused: true,
+          });
         }
-      })
+      });
     }
-  }
+  };
 
   const handleBulkDelete = () => {
     if (confirm(`Delete ${selectedConsumers.size} selected consumers?`)) {
       filteredConsumers.forEach((c: any) => {
         if (selectedConsumers.has(c.name)) {
-          deleteMutation.mutate({ stream: c.stream, name: c.name })
+          deleteMutation.mutate({ stream: c.stream, name: c.name });
         }
-      })
+      });
     }
-  }
+  };
 
   const getStatusIcon = (consumer: any) => {
-      switch (consumer.status) {
-        case 'active': return <CheckCircle className="w-4 h-4 status-success" />
-        case 'stuck': return <AlertCircle className="w-4 h-4 status-error" />
-        case 'idle': return <Clock className="w-4 h-4 status-warning" />
-        default: return <Activity className="w-4 h-4 status-info" />
-      }
-  }
+    switch (consumer.status) {
+      case "active":
+        return <CheckCircle className="w-4 h-4 status-success" />;
+      case "stuck":
+        return <AlertCircle className="w-4 h-4 status-error" />;
+      case "idle":
+        return <Clock className="w-4 h-4 status-warning" />;
+      default:
+        return <Activity className="w-4 h-4 status-info" />;
+    }
+  };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'active': return 'Active'
-      case 'stuck': return 'Stuck'
-      case 'idle': return 'Idle'
-      default: return 'Unknown'
+      case "active":
+        return "Active";
+      case "stuck":
+        return "Stuck";
+      case "idle":
+        return "Idle";
+      default:
+        return "Unknown";
     }
-  }
+  };
 
   const getLagColor = (lag: number) => {
-    if (lag > 10000) return 'status-error'
-    if (lag > 1000) return 'status-warning'
-    return 'status-success'
-  }
+    if (lag > 10000) return "status-error";
+    if (lag > 1000) return "status-warning";
+    return "status-success";
+  };
 
   const toggleConsumerSelection = (consumerName: string) => {
-    const newSelected = new Set(selectedConsumers)
+    const newSelected = new Set(selectedConsumers);
     if (newSelected.has(consumerName)) {
-      newSelected.delete(consumerName)
+      newSelected.delete(consumerName);
     } else {
-      newSelected.add(consumerName)
+      newSelected.add(consumerName);
     }
-    setSelectedConsumers(newSelected)
-  }
+    setSelectedConsumers(newSelected);
+  };
 
   const toggleExpand = (consumerName: string) => {
-    const newExpanded = new Set(expandedConsumers)
+    const newExpanded = new Set(expandedConsumers);
     if (newExpanded.has(consumerName)) {
-      newExpanded.delete(consumerName)
+      newExpanded.delete(consumerName);
     } else {
-      newExpanded.add(consumerName)
+      newExpanded.add(consumerName);
     }
-    setExpandedConsumers(newExpanded)
-  }
+    setExpandedConsumers(newExpanded);
+  };
 
   const toggleAll = () => {
     if (selectedConsumers.size === filteredConsumers.length) {
-      setSelectedConsumers(new Set())
+      setSelectedConsumers(new Set());
     } else {
-      setSelectedConsumers(new Set(filteredConsumers.map((c: any) => c.name)))
+      setSelectedConsumers(new Set(filteredConsumers.map((c: any) => c.name)));
     }
-  }
+  };
 
   return (
     <div className="p-4 md:p-8">
@@ -179,7 +259,9 @@ export default function Consumers() {
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Consumers</h1>
-          <p className="text-dark-muted mt-1">Monitor and manage JetStream consumers</p>
+          <p className="text-dark-muted mt-1">
+            Monitor and manage JetStream consumers
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {/* SSE Status */}
@@ -199,15 +281,27 @@ export default function Consumers() {
 
           {selectedConsumers.size > 0 && (
             <>
-              <button onClick={handleBulkResume} disabled={pauseResumeMutation.isPending} className="btn-secondary flex items-center gap-2">
+              <button
+                onClick={handleBulkResume}
+                disabled={pauseResumeMutation.isPending}
+                className="btn-secondary flex items-center gap-2"
+              >
                 <Play className="w-4 h-4" />
                 Resume ({selectedConsumers.size})
               </button>
-              <button onClick={handleBulkPause} disabled={pauseResumeMutation.isPending} className="btn-secondary flex items-center gap-2">
+              <button
+                onClick={handleBulkPause}
+                disabled={pauseResumeMutation.isPending}
+                className="btn-secondary flex items-center gap-2"
+              >
                 <Pause className="w-4 h-4" />
                 Pause ({selectedConsumers.size})
               </button>
-              <button onClick={handleBulkDelete} disabled={deleteMutation.isPending} className="btn-secondary flex items-center gap-2 text-status-error">
+              <button
+                onClick={handleBulkDelete}
+                disabled={deleteMutation.isPending}
+                className="btn-secondary flex items-center gap-2 text-status-error"
+              >
                 <Trash2 className="w-4 h-4" />
                 Delete ({selectedConsumers.size})
               </button>
@@ -216,7 +310,10 @@ export default function Consumers() {
           <button onClick={() => refetch()} className="btn-secondary">
             <RefreshCw className="w-4 h-4" />
           </button>
-          <button onClick={() => navigate('/streams')} className="btn-primary flex items-center gap-2">
+          <button
+            onClick={() => navigate("/streams")}
+            className="btn-primary flex items-center gap-2"
+          >
             <Plus className="w-4 h-4" />
             Create Consumer
           </button>
@@ -275,7 +372,9 @@ export default function Consumers() {
               <TrendingUp className="w-5 h-5 text-purple-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{(stats.totalLag / 1000).toFixed(1)}K</p>
+              <p className="text-2xl font-bold">
+                {(stats.totalLag / 1000).toFixed(1)}K
+              </p>
               <p className="text-xs text-dark-muted">Total Lag</p>
             </div>
           </div>
@@ -286,7 +385,9 @@ export default function Consumers() {
               <Zap className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{Math.floor(stats.avgAckRate)}</p>
+              <p className="text-2xl font-bold">
+                {Math.floor(stats.avgAckRate)}
+              </p>
               <p className="text-xs text-dark-muted">Avg ACK/s</p>
             </div>
           </div>
@@ -313,9 +414,12 @@ export default function Consumers() {
               className="input"
             >
               <option value="all">All Streams</option>
-              {streams?.map((stream: any) => (
-                <option key={stream.config?.name || stream.name} value={stream.config?.name || stream.name}>
-                  {stream.config?.name || stream.name}
+              {streams?.map((stream: Stream) => (
+                <option
+                  key={stream.config?.name}
+                  value={stream.config?.name}
+                >
+                  {stream.config?.name}
                 </option>
               ))}
             </select>
@@ -334,7 +438,7 @@ export default function Consumers() {
               className="btn-secondary flex items-center gap-2"
             >
               <Filter className="w-4 h-4" />
-              {showMoreFilters ? 'Less Filters' : 'More Filters'}
+              {showMoreFilters ? "Less Filters" : "More Filters"}
             </button>
           </div>
         </div>
@@ -348,22 +452,26 @@ export default function Consumers() {
             <div className="flex items-center gap-4">
               <input
                 type="checkbox"
-                checked={selectedConsumers.size === filteredConsumers.length && filteredConsumers.length > 0}
+                checked={
+                  selectedConsumers.size === filteredConsumers.length &&
+                  filteredConsumers.length > 0
+                }
                 onChange={toggleAll}
                 className="w-4 h-4 rounded"
               />
               <span className="text-sm text-dark-muted">
                 {selectedConsumers.size > 0
                   ? `${selectedConsumers.size} selected`
-                  : `${filteredConsumers.length} consumers`
-                }
+                  : `${filteredConsumers.length} consumers`}
               </span>
             </div>
           </div>
         </div>
 
         {isLoading ? (
-          <div className="p-8 text-center text-dark-muted">Loading consumers...</div>
+          <div className="p-8 text-center text-dark-muted">
+            Loading consumers...
+          </div>
         ) : filteredConsumers.length === 0 ? (
           <div className="p-8 text-center text-dark-muted">
             No consumers found matching your filters
@@ -371,13 +479,16 @@ export default function Consumers() {
         ) : (
           <div className="divide-y divide-dark-border">
             {filteredConsumers.map((consumer: any) => {
-              const consumerName = consumer.name || ''
-              if (!consumerName) return null
-              const isExpanded = expandedConsumers.has(consumerName)
-              const isSelected = selectedConsumers.has(consumerName)
+              const consumerName = consumer.name || "";
+              if (!consumerName) return null;
+              const isExpanded = expandedConsumers.has(consumerName);
+              const isSelected = selectedConsumers.has(consumerName);
 
               return (
-                <div key={consumerName} className="border-l-2 border-l-transparent hover:border-l-primary-500 transition-colors">
+                <div
+                  key={consumerName}
+                  className="border-l-2 border-l-transparent hover:border-l-primary-500 transition-colors"
+                >
                   {/* Main Row */}
                   <div className="p-4 hover:bg-dark-bg/50 transition-colors">
                     <div className="flex items-center gap-4">
@@ -404,7 +515,9 @@ export default function Consumers() {
                       {/* Status */}
                       <div className="flex items-center gap-2">
                         {getStatusIcon(consumer)}
-                        <span className="text-sm">{getStatusLabel(consumer.status)}</span>
+                        <span className="text-sm">
+                          {getStatusLabel(consumer.status)}
+                        </span>
                       </div>
 
                       {/* Consumer Info */}
@@ -428,13 +541,17 @@ export default function Consumers() {
                       {/* Stats */}
                       <div className="hidden md:flex items-center gap-6 text-sm">
                         <div className="text-center">
-                          <p className={`font-medium ${getLagColor(consumer.lag || 0)}`}>
+                          <p
+                            className={`font-medium ${getLagColor(consumer.lag || 0)}`}
+                          >
                             {(consumer.lag || 0).toLocaleString()}
                           </p>
                           <p className="text-xs text-dark-muted">Lag</p>
                         </div>
                         <div className="text-center">
-                          <p className="font-medium">{consumer.ack_rate || 'N/A'}</p>
+                          <p className="font-medium">
+                            {consumer.ack_rate || "N/A"}
+                          </p>
                           <p className="text-xs text-dark-muted">ACK Rate</p>
                         </div>
                         <div className="text-center">
@@ -449,15 +566,23 @@ export default function Consumers() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => {
-                            const stream = consumer.stream
-                            const consumerName = consumer.name
-                            const isPaused = consumer.status !== 'active'
-                            pauseResumeMutation.mutate({ stream, name: consumerName, paused: !isPaused })
+                            const stream = consumer.stream;
+                            const consumerName = consumer.name;
+                            const isPaused = consumer.status !== "active";
+                            pauseResumeMutation.mutate({
+                              stream,
+                              name: consumerName,
+                              paused: !isPaused,
+                            });
                           }}
                           className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
-                          title={consumer.status === 'active' ? 'Pause consumer' : 'Resume consumer'}
+                          title={
+                            consumer.status === "active"
+                              ? "Pause consumer"
+                              : "Resume consumer"
+                          }
                         >
-                          {consumer.status === 'active' ? (
+                          {consumer.status === "active" ? (
                             <Pause className="w-4 h-4 text-dark-muted" />
                           ) : (
                             <Play className="w-4 h-4 text-dark-muted" />
@@ -479,39 +604,68 @@ export default function Consumers() {
                         {/* Configuration Details */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           <div className="bg-dark-bg/50 rounded-lg p-3">
-                            <p className="text-xs text-dark-muted">Delivery Policy</p>
-                            <p className="font-medium">{consumer.config?.delivery || 'all'}</p>
+                            <p className="text-xs text-dark-muted">
+                              Delivery Policy
+                            </p>
+                            <p className="font-medium">
+                              {consumer.config?.delivery || "all"}
+                            </p>
                           </div>
                           <div className="bg-dark-bg/50 rounded-lg p-3">
-                            <p className="text-xs text-dark-muted">Ack Policy</p>
-                            <p className="font-medium">{consumer.config?.ack_policy || 'explicit'}</p>
+                            <p className="text-xs text-dark-muted">
+                              Ack Policy
+                            </p>
+                            <p className="font-medium">
+                              {consumer.config?.ack_policy || "explicit"}
+                            </p>
                           </div>
                           <div className="bg-dark-bg/50 rounded-lg p-3">
-                            <p className="text-xs text-dark-muted">Replay Policy</p>
-                            <p className="font-medium">{consumer.config?.replay_policy || 'instant'}</p>
+                            <p className="text-xs text-dark-muted">
+                              Replay Policy
+                            </p>
+                            <p className="font-medium">
+                              {consumer.config?.replay_policy || "instant"}
+                            </p>
                           </div>
                           <div className="bg-dark-bg/50 rounded-lg p-3">
-                            <p className="text-xs text-dark-muted">Max Deliveries</p>
-                            <p className="font-medium">{consumer.config?.max_deliver || '-1'}</p>
+                            <p className="text-xs text-dark-muted">
+                              Max Deliveries
+                            </p>
+                            <p className="font-medium">
+                              {consumer.config?.max_deliver || "-1"}
+                            </p>
                           </div>
                         </div>
 
                         {/* Action Buttons */}
                         <div className="flex items-center gap-3 pt-2">
                           <button
-                            onClick={() => navigate(`/consumers/${encodeURIComponent(consumer.name)}`)}
+                            onClick={() =>
+                              navigate(
+                                `/consumers/${encodeURIComponent(consumer.name)}`,
+                              )
+                            }
                             className="btn-secondary text-sm"
                           >
                             Edit Configuration
                           </button>
                           <button
-                            onClick={() => navigate(`/consumers/${encodeURIComponent(consumer.name)}`)}
+                            onClick={() =>
+                              navigate(
+                                `/consumers/${encodeURIComponent(consumer.name)}`,
+                              )
+                            }
                             className="btn-secondary text-sm"
                           >
                             View Messages
                           </button>
                           <button
-                            onClick={() => resetLagMutation.mutate({ stream: consumer.stream, name: consumer.name })}
+                            onClick={() =>
+                              resetLagMutation.mutate({
+                                stream: consumer.stream,
+                                name: consumer.name,
+                              })
+                            }
                             disabled={resetLagMutation.isPending}
                             className="btn-secondary text-sm"
                           >
@@ -519,8 +673,13 @@ export default function Consumers() {
                           </button>
                           <button
                             onClick={() => {
-                              if (confirm(`Delete consumer "${consumer.name}"?`)) {
-                                deleteMutation.mutate({ stream: consumer.stream, name: consumer.name })
+                              if (
+                                confirm(`Delete consumer "${consumer.name}"?`)
+                              ) {
+                                deleteMutation.mutate({
+                                  stream: consumer.stream,
+                                  name: consumer.name,
+                                });
                               }
                             }}
                             className="btn-secondary text-sm text-status-error"
@@ -532,7 +691,7 @@ export default function Consumers() {
                     )}
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         )}
@@ -540,8 +699,11 @@ export default function Consumers() {
 
       {/* Summary */}
       <div className="mt-4 flex items-center justify-between text-sm text-dark-muted">
-        <span>Showing {filteredConsumers.length} of {consumers?.length || 0} consumers</span>
+        <span>
+          Showing {filteredConsumers.length} of {consumers?.length || 0}{" "}
+          consumers
+        </span>
       </div>
     </div>
-  )
+  );
 }

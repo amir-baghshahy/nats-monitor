@@ -1,153 +1,222 @@
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import axios from 'axios'
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { ConsumersService } from "../types";
+import type {
+  nats_monitoring_internal_dto_AckMessageRequest,
+  nats_monitoring_internal_dto_AckTermMessageRequest,
+  nats_monitoring_internal_dto_NackMessageRequest,
+} from "../types";
 import {
-  ArrowLeft, Play, Pause, Trash2, Settings, TrendingUp,
-  Activity, MessageSquare, Zap, AlertTriangle, CheckCircle,
-  RefreshCw, Eye, SkipForward, SkipBack, BarChart3,
-  FastForward, Loader2, Check, X, Clock, Copy
-} from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { resetConsumerLag, replayMessages as replayMessagesApi, setConsumerState, deleteConsumer } from '../utils/natsOperations'
+  ArrowLeft,
+  Play,
+  Pause,
+  Trash2,
+  Settings,
+  TrendingUp,
+  Activity,
+  MessageSquare,
+  Zap,
+  AlertTriangle,
+  CheckCircle,
+  RefreshCw,
+  Eye,
+  SkipForward,
+  SkipBack,
+  BarChart3,
+  FastForward,
+  Loader2,
+  Check,
+  X,
+  Clock,
+  Copy,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  resetConsumerLag,
+  replayMessages,
+  setConsumerState,
+  deleteConsumer,
+} from "../utils/natsOperations";
 
 export default function ConsumerDetail() {
-  const { name } = useParams<{ name: string }>()
-  const queryClient = useQueryClient()
-  const [activeTab, setActiveTab] = useState<'overview' | 'messages' | 'config'>('overview')
-  const [isPaused, setIsPaused] = useState(false)
-  const [loadingAction, setLoadingAction] = useState<string | null>(null)
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const { name } = useParams<{ name: string }>();
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "messages" | "config"
+  >("overview");
+  const [isPaused, setIsPaused] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   const { data: consumer, refetch } = useQuery({
-    queryKey: ['consumer', name],
-    queryFn: () => axios.get(`/api/consumers/${encodeURIComponent(name || '')}`).then(res => res.data),
+    queryKey: ["consumer", name],
+    queryFn: () => ConsumersService.getConsumers1(name || ""),
     refetchInterval: isPaused ? false : 2000,
     enabled: !!name,
-  })
+  });
 
   const consumerData = consumer || {
     name: name,
-    stream: '',
-    status: 'unknown',
+    stream: "",
+    status: "unknown",
     lag: 0,
     num_pending: 0,
     config: {
       durable: false,
-      ack_policy: 'explicit',
-      deliver_policy: 'all',
-      replay_policy: 'instant',
+      ack_policy: "explicit",
+      deliver_policy: "all",
+      replay_policy: "instant",
       max_deliver: -1,
     },
-  }
+  };
 
   // Fetch pending messages
   const { data: pendingMessages, refetch: refetchPending } = useQuery({
-    queryKey: ['pendingMessages', consumerData.stream, name],
-    queryFn: () => axios.get(`/api/streams/${consumerData.stream}/consumers/${name}/pending`).then(res => res.data),
-    enabled: !!consumerData.stream && !!name && activeTab === 'messages',
+    queryKey: ["pendingMessages", consumerData.stream, name],
+    queryFn: () =>
+      ConsumersService.getStreamsConsumersPending(
+        consumerData.stream ?? "",
+        name || "",
+      ),
+    enabled: !!consumerData.stream && !!name && activeTab === "messages",
     refetchInterval: 5000,
-  })
+  });
 
   const ackMutation = useMutation({
-    mutationFn: (sequence: number) =>
-      axios.post(`/api/streams/${consumerData.stream}/consumers/${name}/ack`, { sequence }),
-    onSuccess: () => {
-      refetchPending()
-      refetch()
+    mutationFn: (sequence: number) => {
+      const payload: nats_monitoring_internal_dto_AckMessageRequest = {
+        sequence,
+      };
+      return ConsumersService.postStreamsConsumersAck(
+        consumerData.stream ?? "",
+        name || "",
+        payload,
+      );
     },
-  })
+    onSuccess: () => {
+      refetchPending();
+      refetch();
+    },
+  });
 
   const nackMutation = useMutation({
-    mutationFn: ({ sequence, delay }: { sequence: number; delay?: number }) =>
-      axios.post(`/api/streams/${consumerData.stream}/consumers/${name}/nack`, { sequence, delay }),
-    onSuccess: () => {
-      refetchPending()
-      refetch()
+    mutationFn: ({ sequence, delay }: { sequence: number; delay?: number }) => {
+      const payload: nats_monitoring_internal_dto_NackMessageRequest = {
+        sequence,
+      };
+      if (delay !== undefined) payload.delay = delay;
+      return ConsumersService.postStreamsConsumersNack(
+        consumerData.stream ?? "",
+        name || "",
+        payload,
+      );
     },
-  })
+    onSuccess: () => {
+      refetchPending();
+      refetch();
+    },
+  });
 
   const termMutation = useMutation({
-    mutationFn: (sequence: number) =>
-      axios.post(`/api/streams/${consumerData.stream}/consumers/${name}/term`, { sequence }),
-    onSuccess: () => {
-      refetchPending()
-      refetch()
+    mutationFn: (sequence: number) => {
+      const payload: nats_monitoring_internal_dto_AckTermMessageRequest = {
+        sequence,
+      };
+      return ConsumersService.postStreamsConsumersTerm(
+        consumerData.stream ?? "",
+        name || "",
+        payload,
+      );
     },
-  })
+    onSuccess: () => {
+      refetchPending();
+      refetch();
+    },
+  });
 
-  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-    setToast({ message, type })
-    setTimeout(() => setToast(null), 3000)
-  }
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success",
+  ) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleResetLag = async () => {
-    if (!name || !consumerData.stream) return
-    setLoadingAction('reset-lag')
-    const result = await resetConsumerLag(consumerData.stream, name)
+    if (!name || !consumerData.stream) return;
+    setLoadingAction("reset-lag");
+    const result = await resetConsumerLag(consumerData.stream, name);
     if (result.success) {
-      showToast(result.message, 'success')
-      refetch()
+      showToast(result.message, "success");
+      refetch();
     } else {
-      showToast(result.message, 'error')
+      showToast(result.message, "error");
     }
-    setLoadingAction(null)
-  }
+    setLoadingAction(null);
+  };
 
   const handleReplayMessages = async () => {
-    if (!name || !consumerData.stream) return
-    setLoadingAction('replay')
-    const result = await replayMessagesApi(consumerData.stream, name)
+    if (!name || !consumerData.stream) return;
+    setLoadingAction("replay");
+    const result = await replayMessages(consumerData.stream ?? "", name || "");
     if (result.success) {
-      showToast(result.message, 'success')
-      refetch()
+      showToast(result.message, "success");
+      refetch();
     } else {
-      showToast(result.message, 'error')
+      showToast(result.message, "error");
     }
-    setLoadingAction(null)
-  }
+    setLoadingAction(null);
+  };
 
   const handlePauseResume = async () => {
-    if (!name || !consumerData.stream) return
-    setLoadingAction('pause-resume')
-    const newState = !isPaused
-    const result = await setConsumerState(consumerData.stream, name, newState)
+    if (!name || !consumerData.stream) return;
+    setLoadingAction("pause-resume");
+    const newState = !isPaused;
+    const result = await setConsumerState(consumerData.stream, name, newState);
     if (result.success) {
-      setIsPaused(newState)
-      showToast(result.message, 'success')
+      setIsPaused(newState);
+      showToast(result.message, "success");
     } else {
-      showToast(result.message, 'error')
+      showToast(result.message, "error");
     }
-    setLoadingAction(null)
-  }
+    setLoadingAction(null);
+  };
 
   const handleDeleteConsumer = async () => {
-    if (!name || !consumerData.stream) return
-    if (!confirm(`Are you sure you want to delete consumer "${name}"?`)) return
-    setLoadingAction('delete')
-    const result = await deleteConsumer(consumerData.stream, name)
+    if (!name || !consumerData.stream) return;
+    if (!confirm(`Are you sure you want to delete consumer "${name}"?`)) return;
+    setLoadingAction("delete");
+    const result = await deleteConsumer(consumerData.stream, name);
     if (result.success) {
-      showToast(result.message, 'success')
-      queryClient.invalidateQueries({ queryKey: ['consumers'] })
-      window.location.href = `/streams/${encodeURIComponent(consumerData.stream)}`
+      showToast(result.message, "success");
+      queryClient.invalidateQueries({ queryKey: ["consumers"] });
+      window.location.href = `/streams/${encodeURIComponent(consumerData.stream)}`;
     } else {
-      showToast(result.message, 'error')
+      showToast(result.message, "error");
     }
-    setLoadingAction(null)
-  }
+    setLoadingAction(null);
+  };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string | undefined) => {
     switch (status) {
-      case 'active': return CheckCircle
-      case 'paused': return Pause
-      case 'stuck': return AlertTriangle
-      default: return Activity
+      case "active":
+        return CheckCircle;
+      case "paused":
+        return Pause;
+      case "stuck":
+        return AlertTriangle;
+      default:
+        return Activity;
     }
-  }
+  };
 
-  if (!name) return <div>Consumer not found</div>
+  if (!name) return <div>Consumer not found</div>;
 
-  const StatusIcon = getStatusIcon(consumerData.status)
+  const StatusIcon = getStatusIcon(consumerData.status);
 
   return (
     <div className="p-4 md:p-8">
@@ -162,13 +231,19 @@ export default function ConsumerDetail() {
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl md:text-3xl font-bold">{name}</h1>
-            <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-              consumerData.status === 'active' ? 'bg-status-success/20 text-status-success' :
-              consumerData.status === 'stuck' ? 'bg-status-error/20 text-status-error' :
-              'bg-status-warning/20 text-status-warning'
-            }`}>
+            <div
+              className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                consumerData.status === "active"
+                  ? "bg-status-success/20 text-status-success"
+                  : consumerData.status === "stuck"
+                    ? "bg-status-error/20 text-status-error"
+                    : "bg-status-warning/20 text-status-warning"
+              }`}
+            >
               <StatusIcon className="w-4 h-4" />
-              <span className="text-sm font-medium capitalize">{consumerData.status}</span>
+              <span className="text-sm font-medium capitalize">
+                {consumerData.status}
+              </span>
             </div>
             {consumerData.config?.durable && (
               <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-sm">
@@ -177,8 +252,11 @@ export default function ConsumerDetail() {
             )}
           </div>
           <p className="text-dark-muted mt-1">
-            Stream:{' '}
-            <Link to={`/streams/${encodeURIComponent(consumerData.stream)}`} className="text-primary-400 hover:underline">
+            Stream:{" "}
+            <Link
+              to={`/streams/${encodeURIComponent(consumerData.stream ?? "")}`}
+              className="text-primary-400 hover:underline"
+            >
               {consumerData.stream}
             </Link>
           </p>
@@ -188,12 +266,14 @@ export default function ConsumerDetail() {
             onClick={handlePauseResume}
             disabled={loadingAction !== null}
             className={`btn-secondary flex items-center gap-2 ${
-              consumerData.status === 'stuck' ? 'text-status-success' : ''
-            } ${loadingAction === 'pause-resume' ? 'opacity-50' : ''}`}
+              consumerData.status === "stuck" ? "text-status-success" : ""
+            } ${loadingAction === "pause-resume" ? "opacity-50" : ""}`}
           >
-            {loadingAction === 'pause-resume' ? (
+            {loadingAction === "pause-resume" ? (
               <Loader2 className="w-4 h-4 animate-spin" />
-            ) : consumerData.status === 'stuck' || consumerData.status === 'paused' || isPaused ? (
+            ) : consumerData.status === "stuck" ||
+              consumerData.status === "paused" ||
+              isPaused ? (
               <Play className="w-4 h-4" />
             ) : (
               <Pause className="w-4 h-4" />
@@ -202,11 +282,17 @@ export default function ConsumerDetail() {
           <button onClick={() => refetch()} className="btn-secondary">
             <RefreshCw className="w-4 h-4" />
           </button>
-          <button onClick={() => setActiveTab('messages')} className="btn-secondary flex items-center gap-2">
+          <button
+            onClick={() => setActiveTab("messages")}
+            className="btn-secondary flex items-center gap-2"
+          >
             <Eye className="w-4 h-4" />
             Peek Messages
           </button>
-          <button onClick={() => setActiveTab('config')} className="btn-primary flex items-center gap-2">
+          <button
+            onClick={() => setActiveTab("config")}
+            className="btn-primary flex items-center gap-2"
+          >
             <Settings className="w-4 h-4" />
             Configure
           </button>
@@ -215,9 +301,13 @@ export default function ConsumerDetail() {
 
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
-          toast.type === 'success' ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'
-        }`}>
+        <div
+          className={`fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 ${
+            toast.type === "success"
+              ? "bg-green-500/90 text-white"
+              : "bg-red-500/90 text-white"
+          }`}
+        >
           {toast.message}
         </div>
       )}
@@ -230,7 +320,9 @@ export default function ConsumerDetail() {
               <TrendingUp className="w-5 h-5 text-orange-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{(consumerData.lag || 0).toLocaleString()}</p>
+              <p className="text-2xl font-bold">
+                {(consumerData.lag || 0).toLocaleString()}
+              </p>
               <p className="text-xs text-dark-muted">Lag</p>
             </div>
           </div>
@@ -241,7 +333,9 @@ export default function ConsumerDetail() {
               <Zap className="w-5 h-5 text-green-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{consumerData.ack_rate || 'N/A'}</p>
+              <p className="text-2xl font-bold">
+                {(consumerData as { ack_rate?: string }).ack_rate ?? "N/A"}
+              </p>
               <p className="text-xs text-dark-muted">ACK Rate</p>
             </div>
           </div>
@@ -252,7 +346,9 @@ export default function ConsumerDetail() {
               <MessageSquare className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{(consumerData.num_pending || 0).toLocaleString()}</p>
+              <p className="text-2xl font-bold">
+                {(consumerData.num_pending || 0).toLocaleString()}
+              </p>
               <p className="text-xs text-dark-muted">Pending</p>
             </div>
           </div>
@@ -295,17 +391,17 @@ export default function ConsumerDetail() {
       {/* Tabs */}
       <div className="flex items-center gap-1 mb-6 bg-dark-bg p-1 rounded-lg w-fit">
         {[
-          { id: 'overview', label: 'Overview', icon: BarChart3 },
-          { id: 'messages', label: 'Messages', icon: MessageSquare },
-          { id: 'config', label: 'Configuration', icon: Settings },
-        ].map(tab => (
+          { id: "overview", label: "Overview", icon: BarChart3 },
+          { id: "messages", label: "Messages", icon: MessageSquare },
+          { id: "config", label: "Configuration", icon: Settings },
+        ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
               activeTab === tab.id
-                ? 'bg-primary-600 text-white'
-                : 'text-dark-muted hover:text-dark-text hover:bg-dark-border'
+                ? "bg-primary-600 text-white"
+                : "text-dark-muted hover:text-dark-text hover:bg-dark-border"
             }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -315,7 +411,7 @@ export default function ConsumerDetail() {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'overview' && (
+      {activeTab === "overview" && (
         <div className="space-y-6">
           {/* Quick Actions */}
           <div className="card">
@@ -323,12 +419,12 @@ export default function ConsumerDetail() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <button
                 onClick={handleResetLag}
-                disabled={loadingAction === 'reset-lag'}
+                disabled={loadingAction === "reset-lag"}
                 className={`btn-secondary flex items-center gap-2 ${
-                  loadingAction === 'reset-lag' ? 'opacity-50' : ''
+                  loadingAction === "reset-lag" ? "opacity-50" : ""
                 }`}
               >
-                {loadingAction === 'reset-lag' ? (
+                {loadingAction === "reset-lag" ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <SkipBack className="w-4 h-4" />
@@ -337,12 +433,12 @@ export default function ConsumerDetail() {
               </button>
               <button
                 onClick={handleReplayMessages}
-                disabled={loadingAction === 'replay'}
+                disabled={loadingAction === "replay"}
                 className={`btn-secondary flex items-center gap-2 ${
-                  loadingAction === 'replay' ? 'opacity-50' : ''
+                  loadingAction === "replay" ? "opacity-50" : ""
                 }`}
               >
-                {loadingAction === 'replay' ? (
+                {loadingAction === "replay" ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <SkipForward className="w-4 h-4" />
@@ -350,7 +446,7 @@ export default function ConsumerDetail() {
                 Replay Messages
               </button>
               <button
-                onClick={() => setActiveTab('messages')}
+                onClick={() => setActiveTab("messages")}
                 className="btn-secondary flex items-center gap-2"
               >
                 <Eye className="w-4 h-4" />
@@ -358,12 +454,12 @@ export default function ConsumerDetail() {
               </button>
               <button
                 onClick={handleDeleteConsumer}
-                disabled={loadingAction === 'delete'}
+                disabled={loadingAction === "delete"}
                 className={`btn-secondary flex items-center gap-2 text-status-error ${
-                  loadingAction === 'delete' ? 'opacity-50' : ''
+                  loadingAction === "delete" ? "opacity-50" : ""
                 }`}
               >
-                {loadingAction === 'delete' ? (
+                {loadingAction === "delete" ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Trash2 className="w-4 h-4" />
@@ -375,27 +471,34 @@ export default function ConsumerDetail() {
         </div>
       )}
 
-      {activeTab === 'messages' && (
+      {activeTab === "messages" && (
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
               Pending Messages ({pendingMessages?.messages?.length || 0})
             </h3>
-            <button onClick={() => refetchPending()} className="btn-secondary flex items-center gap-2">
+            <button
+              onClick={() => refetchPending()}
+              className="btn-secondary flex items-center gap-2"
+            >
               <RefreshCw className="w-4 h-4" />
               Refresh
             </button>
           </div>
 
-          {!pendingMessages || pendingMessages.messages.length === 0 ? (
+          {!pendingMessages ||
+          !pendingMessages.messages ||
+          pendingMessages.messages.length === 0 ? (
             <div className="text-center py-12">
               <MessageSquare className="w-16 h-16 mx-auto mb-4 text-dark-muted opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">No Pending Messages</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                No Pending Messages
+              </h3>
               <p className="text-dark-muted">
-                {consumerData.num_pending > 0
+                {consumerData.num_pending && consumerData.num_pending > 0
                   ? `This consumer has ${consumerData.num_pending} pending messages, but they may not be fetchable (push consumer).`
-                  : 'This consumer has no pending messages.'}
+                  : "This consumer has no pending messages."}
               </p>
             </div>
           ) : (
@@ -405,8 +508,12 @@ export default function ConsumerDetail() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="font-mono text-sm text-primary-400">#{msg.sequence}</span>
-                        <span className="text-sm font-mono text-dark-muted">{msg.subject}</span>
+                        <span className="font-mono text-sm text-primary-400">
+                          #{msg.sequence}
+                        </span>
+                        <span className="text-sm font-mono text-dark-muted">
+                          {msg.subject}
+                        </span>
                         <span className="text-xs text-dark-muted flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {new Date(msg.timestamp).toLocaleString()}
@@ -429,7 +536,9 @@ export default function ConsumerDetail() {
                         <Check className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => nackMutation.mutate({ sequence: msg.sequence })}
+                        onClick={() =>
+                          nackMutation.mutate({ sequence: msg.sequence })
+                        }
                         disabled={nackMutation.isPending}
                         className="p-2 bg-yellow-500/20 text-yellow-400 rounded-lg hover:bg-yellow-500/30"
                         title="Nack"
@@ -453,35 +562,49 @@ export default function ConsumerDetail() {
         </div>
       )}
 
-      {activeTab === 'config' && (
+      {activeTab === "config" && (
         <div className="space-y-6">
           <div className="card">
-            <h3 className="text-lg font-semibold mb-4">Consumer Configuration</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              Consumer Configuration
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Durable</span>
-                  <span className={`px-2 py-1 rounded text-xs ${consumerData.config?.durable ? 'bg-green-500/20 text-green-400' : 'bg-dark-border'}`}>
-                    {consumerData.config?.durable ? 'Yes' : 'No'}
+                  <span
+                    className={`px-2 py-1 rounded text-xs ${consumerData.config?.durable ? "bg-green-500/20 text-green-400" : "bg-dark-border"}`}
+                  >
+                    {consumerData.config?.durable ? "Yes" : "No"}
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Delivery Policy</span>
-                  <span className="font-medium capitalize">{consumerData.config?.delivery || 'all'}</span>
+                  <span className="font-medium capitalize">
+                    {consumerData.config?.deliver_policy || "all"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Ack Policy</span>
-                  <span className="font-medium capitalize">{consumerData.config?.ack_policy || 'explicit'}</span>
+                  <span className="font-medium capitalize">
+                    {consumerData.config?.ack_policy || "explicit"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Replay Policy</span>
-                  <span className="font-medium capitalize">{consumerData.config?.replay_policy || 'instant'}</span>
+                  <span className="font-medium capitalize">
+                    {consumerData.config?.replay_policy || "instant"}
+                  </span>
                 </div>
               </div>
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Max Deliveries</span>
-                  <span className="font-medium">{consumerData.config?.max_deliver === -1 ? 'Unlimited' : consumerData.config?.max_deliver || 3}</span>
+                  <span className="font-medium">
+                    {consumerData.config?.max_deliver === -1
+                      ? "Unlimited"
+                      : consumerData.config?.max_deliver || 3}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Ack Wait</span>
@@ -504,7 +627,9 @@ export default function ConsumerDetail() {
             <h3 className="text-lg font-semibold mb-4">Filter Subject</h3>
             <div className="p-3 bg-dark-bg/50 rounded-lg">
               <p className="font-mono text-sm">orders.{`>`}</p>
-              <p className="text-xs text-dark-muted mt-1">Only messages matching this subject will be delivered</p>
+              <p className="text-xs text-dark-muted mt-1">
+                Only messages matching this subject will be delivered
+              </p>
             </div>
           </div>
 
@@ -518,12 +643,12 @@ export default function ConsumerDetail() {
               </button>
               <button
                 onClick={handleResetLag}
-                disabled={loadingAction === 'reset-lag'}
+                disabled={loadingAction === "reset-lag"}
                 className={`btn-secondary flex items-center gap-2 ${
-                  loadingAction === 'reset-lag' ? 'opacity-50' : ''
+                  loadingAction === "reset-lag" ? "opacity-50" : ""
                 }`}
               >
-                {loadingAction === 'reset-lag' ? (
+                {loadingAction === "reset-lag" ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <SkipBack className="w-4 h-4" />
@@ -536,12 +661,12 @@ export default function ConsumerDetail() {
               </button>
               <button
                 onClick={handleDeleteConsumer}
-                disabled={loadingAction === 'delete'}
+                disabled={loadingAction === "delete"}
                 className={`btn-secondary flex items-center gap-2 text-status-error ${
-                  loadingAction === 'delete' ? 'opacity-50' : ''
+                  loadingAction === "delete" ? "opacity-50" : ""
                 }`}
               >
-                {loadingAction === 'delete' ? (
+                {loadingAction === "delete" ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <Trash2 className="w-4 h-4" />
@@ -553,5 +678,5 @@ export default function ConsumerDetail() {
         </div>
       )}
     </div>
-  )
+  );
 }

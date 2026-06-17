@@ -1,13 +1,16 @@
 import { useEffect, useRef, useCallback } from "react";
-import { Message } from "../types/nats";
+
+export interface Message {
+  subject: string;
+  data: string;
+  data_base64: string;
+  reply?: string;
+  headers?: Record<string, string[]>;
+  timestamp: number;
+  size: number;
+}
 
 interface UseNATSSubscriptionOptions {
-  /**
-   * Maximum number of messages to keep in memory
-   * @default 1000
-   */
-  maxMessages?: number;
-
   /**
    * Callback when a new message arrives
    */
@@ -58,7 +61,7 @@ interface UseNATSSubscriptionReturn {
 export function useNATSSubscription(
   options: UseNATSSubscriptionOptions = {},
 ): UseNATSSubscriptionReturn {
-  const { maxMessages = 1000, onMessage, onStatusChange, onError } = options;
+  const { onMessage, onStatusChange, onError } = options;
 
   // Store EventSources in a ref to avoid re-renders
   const eventSourcesRef = useRef<Map<string, EventSource>>(new Map());

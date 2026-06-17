@@ -6,13 +6,22 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
-import { Message } from "../../types/nats";
 import {
   formatBytes,
   formatTimestamp,
   toHexString,
   formatJSON,
 } from "../../utils/formatters";
+
+export interface Message {
+  subject: string;
+  data: string;
+  data_base64: string;
+  reply?: string;
+  headers?: Record<string, string[]>;
+  timestamp: number;
+  size: number;
+}
 import { FORMAT_COLORS } from "../../utils/constants";
 
 interface MessageItemProps {

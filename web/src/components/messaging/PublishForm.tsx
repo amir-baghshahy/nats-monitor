@@ -1,17 +1,23 @@
 import { Send } from "lucide-react";
-import { PublishForm as PublishFormData } from "../../types/nats";
 import { validateSubject, validateJSON } from "../../utils/validators";
+
+export interface PublishForm {
+  subject: string;
+  payload: string;
+  replyTo: string;
+  headers: string;
+}
 
 interface PublishFormProps {
   /**
    * Current form data
    */
-  form: PublishFormData;
+  form: PublishForm;
 
   /**
    * Form update callback
    */
-  onChange: (form: PublishFormData) => void;
+  onChange: (form: PublishForm) => void;
 
   /**
    * Submit callback
@@ -52,7 +58,7 @@ export default function PublishForm({
     onSubmit();
   };
 
-  const updateField = (field: keyof PublishFormData, value: string) => {
+  const updateField = (field: keyof PublishForm, value: string) => {
     onChange({ ...form, [field]: value });
   };
 

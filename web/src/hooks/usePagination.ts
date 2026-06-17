@@ -1,5 +1,10 @@
 import { useState, useCallback, useRef } from "react";
-import { Pagination } from "../types/common";
+
+interface Pagination {
+  page: number;
+  perPage: number;
+  total: number;
+}
 
 export interface UsePaginationOptions {
   /**

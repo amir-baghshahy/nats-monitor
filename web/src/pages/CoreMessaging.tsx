@@ -9,8 +9,6 @@ import {
   Activity,
   Network,
   Server,
-  TrendingUp,
-  ArrowRightLeft,
 } from "lucide-react";
 import { useSSE } from "../hooks/useSSE";
 import { useNATSSubscription, useMessageList } from "../hooks";
@@ -20,12 +18,29 @@ import {
   PublishForm,
   RequestForm,
 } from "../components/messaging";
-import {
-  Message,
-  PublishForm as PublishFormData,
-  RequestForm as RequestFormData,
-  MessageFormat,
-} from "../types/nats";
+
+export interface Message {
+  subject: string;
+  data: string;
+  data_base64: string;
+  reply?: string;
+  headers?: Record<string, string[]>;
+  timestamp: number;
+  size: number;
+}
+
+export interface PublishForm {
+  subject: string;
+  payload: string;
+  replyTo: string;
+  headers: string;
+}
+
+export interface RequestForm {
+  subject: string;
+  payload: string;
+  timeout: number;
+}
 
 type TabType = "messages" | "publish" | "request" | "services" | "monitor";
 
@@ -33,13 +48,13 @@ export default function CoreMessaging() {
   const [activeTab, setActiveTab] = useState<TabType>("messages");
   const [subscriptions, setSubscriptions] = useState<Set<string>>(new Set());
   const [autoScroll, setAutoScroll] = useState(true);
-  const [publishForm, setPublishForm] = useState<PublishFormData>({
+  const [publishForm, setPublishForm] = useState<PublishForm>({
     subject: "",
     payload: "",
     replyTo: "",
     headers: "{}",
   });
-  const [requestForm, setRequestForm] = useState<RequestFormData>({
+  const [requestForm, setRequestForm] = useState<RequestForm>({
     subject: "",
     payload: "",
     timeout: 5000,

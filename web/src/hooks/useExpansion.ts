@@ -1,5 +1,10 @@
 import { useState, useCallback } from "react";
-import { ExpansionState } from "../types/common";
+
+export interface ExpansionState<T> {
+  expanded: Set<T>;
+  toggleExpansion: (item: T) => void;
+  isExpanded: (item: T) => boolean;
+}
 
 /**
  * Hook for managing expansion state

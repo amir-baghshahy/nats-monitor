@@ -1,23 +1,17 @@
 import { Database, Users, MessageSquare, Activity } from "lucide-react";
 import StatCard from "../ui/StatCard";
-import { DashboardStats } from "../../types/nats";
+import type { nats_monitoring_internal_dto_DashboardStatsResponse as DashboardStatsResponse } from "../../types";
 
 interface StatsGridProps {
-  /**
-   * Dashboard statistics
-   */
-  stats: DashboardStats;
+  stats: DashboardStatsResponse;
 }
 
-/**
- * Primary statistics grid for dashboard
- */
 export default function StatsGrid({ stats }: StatsGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       <StatCard
         icon={Database}
-        value={stats.streams}
+        value={stats.streams || 0}
         label="Streams"
         iconBg="bg-primary-500/20"
         iconColor="text-primary-400"
@@ -25,7 +19,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
 
       <StatCard
         icon={Users}
-        value={stats.consumers}
+        value={stats.consumers || 0}
         label="Consumers"
         iconBg="bg-blue-500/20"
         iconColor="text-blue-400"
@@ -33,7 +27,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
 
       <StatCard
         icon={MessageSquare}
-        value={stats.messages}
+        value={stats.messages || 0}
         label="Total Messages"
         iconBg="bg-green-500/20"
         iconColor="text-green-400"
@@ -41,7 +35,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
 
       <StatCard
         icon={Activity}
-        value={stats.connections}
+        value={stats.connections || 0}
         label="Connections"
         iconBg="bg-cyan-500/20"
         iconColor="text-cyan-400"

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { HealthService, MetricsService } from '../types'
 import { TrendingUp, Activity, HardDrive, Cpu } from 'lucide-react'
 
 interface DataPoint {
@@ -188,7 +188,7 @@ export function SystemMetrics() {
         icon={<Activity className="w-5 h-5 text-green-400" />}
         color="rgb(74, 222, 128)"
         queryKey={['dashboardStats']}
-        queryFn={() => axios.get('/api/dashboard/stats').then(res => res.data)}
+        queryFn={() => HealthService.getDashboardStats()}
         getValue={(data) => data?.messages || 0}
       />
 
@@ -197,7 +197,7 @@ export function SystemMetrics() {
         icon={<Cpu className="w-5 h-5 text-orange-400" />}
         color="rgb(251, 146, 60)"
         queryKey={['systemMetrics']}
-        queryFn={() => axios.get('/api/metrics/system').then(res => res.data)}
+        queryFn={() => MetricsService.getMetricsSystem()}
         getValue={(data) => data?.memory?.used || 0}
       />
 
@@ -206,7 +206,7 @@ export function SystemMetrics() {
         icon={<HardDrive className="w-5 h-5 text-purple-400" />}
         color="rgb(192, 132, 252)"
         queryKey={['systemMetrics']}
-        queryFn={() => axios.get('/api/metrics/system').then(res => res.data)}
+        queryFn={() => MetricsService.getMetricsSystem()}
         getValue={(data) => data?.storage?.used || 0}
       />
 
@@ -215,7 +215,7 @@ export function SystemMetrics() {
         icon={<TrendingUp className="w-5 h-5 text-cyan-400" />}
         color="rgb(34, 211, 238)"
         queryKey={['rateMetrics']}
-        queryFn={() => axios.get('/api/metrics/rates').then(res => res.data)}
+        queryFn={() => MetricsService.getMetricsRates()}
         getValue={(data) => {
           const totalMessages = data?.streams?.reduce((sum: number, s: any) => sum + (s?.messages || 0), 0) || 0
           return totalMessages

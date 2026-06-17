@@ -1,7 +1,3 @@
-// ============================================================================
-// Streams Page
-// ============================================================================
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -28,14 +24,31 @@ import {
 } from "../hooks";
 import { SearchBar, Pagination, BulkActions } from "../components/common";
 import { StatusBadge, EmptyState } from "../components/ui";
-import { streamsAPI } from "../services/api";
-import {
-  Stream,
-  StreamFilters,
-  StreamStats,
-  StreamHealthStatus,
-} from "../types";
+import { StreamsService } from "../types";
+import type { nats_monitoring_internal_dto_StreamResponse as Stream } from "../types";
+
 import { formatBytes } from "../utils/formatters";
+
+interface StreamFilters {
+  search: string;
+  storage: "file" | "memory" | "all";
+  status: StreamHealthStatus;
+  minMessages: number;
+  maxMessages: number;
+  minConsumers: number;
+  subjectPattern: string;
+}
+
+interface StreamStats {
+  total: number;
+  fileStorage: number;
+  memoryStorage: number;
+  totalMessages: number;
+  totalBytes: number;
+  totalConsumers: number;
+}
+
+type StreamHealthStatus = "all" | "healthy" | "warning" | "critical";
 
 // Default filter values
 const defaultFilters: StreamFilters = {
@@ -62,16 +75,15 @@ export default function Streams() {
     refetch,
   } = useQuery({
     queryKey: ["streams"],
-    queryFn: () => streamsAPI.getAll(),
+    queryFn: () => StreamsService.getStreams(),
   });
 
   // Stable filter function
   const streamFilterFn = useCallback(
     (stream: Stream, filters: StreamFilters) => {
+      const streamName = stream.config?.name || "";
       const matchesSearch =
-        (stream.config?.name || stream.name || "")
-          .toLowerCase()
-          .includes(filters.search.toLowerCase()) ||
+        streamName.toLowerCase().includes(filters.search.toLowerCase()) ||
         (stream.config?.subjects || []).some((s) =>
           s.toLowerCase().includes(filters.search.toLowerCase()),
         );
@@ -86,12 +98,12 @@ export default function Streams() {
         matchesStatus = lag >= 1000 && lag < 10000;
       else if (filters.status === "critical") matchesStatus = lag >= 10000;
 
-      const matchesMinMessages = stream.state?.messages >= filters.minMessages;
+      const messages = stream.state?.messages || 0;
+      const matchesMinMessages = messages >= filters.minMessages;
       const matchesMaxMessages =
-        filters.maxMessages === 0 ||
-        stream.state?.messages <= filters.maxMessages;
+        filters.maxMessages === 0 || messages <= filters.maxMessages;
       const matchesMinConsumers =
-        stream.state?.consumers >= filters.minConsumers;
+        (stream.state?.consumers || 0) >= filters.minConsumers;
       const matchesSubjectPattern =
         filters.subjectPattern === "" ||
         (stream.config?.subjects || []).some((s) =>
@@ -141,14 +153,14 @@ export default function Streams() {
 
   // Mutations
   const deleteMutation = useMutation({
-    mutationFn: (name: string) => streamsAPI.delete(name),
+    mutationFn: (name: string) => StreamsService.deleteStreams(name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["streams"] });
     },
   });
 
   const purgeMutation = useMutation({
-    mutationFn: (name: string) => streamsAPI.purge(name),
+    mutationFn: (name: string) => StreamsService.postStreamsPurge(name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["streams"] });
     },
@@ -184,7 +196,7 @@ export default function Streams() {
   };
 
   const getStreamName = (stream: Stream): string =>
-    stream.config?.name || stream.name || "";
+    stream.config?.name || "";
 
   const handleDelete = (streamName: string) => {
     if (

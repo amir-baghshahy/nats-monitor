@@ -1,18 +1,19 @@
 import { HardDrive, Zap, Server, TrendingUp } from "lucide-react";
 import StatCard from "../ui/StatCard";
-import { AccountInfo } from "../../types/nats";
 import { getHealthStatus } from "../../utils/validators";
 
+interface AccountInfo {
+  memory?: number;
+  storage?: number;
+  streams?: number;
+  consumers?: number;
+  api?: { total?: number; errors?: number };
+}
+
 interface SecondaryStatsGridProps {
-  /**
-   * Account information
-   */
   account: AccountInfo;
 }
 
-/**
- * Secondary statistics grid for storage, memory, and API health
- */
 export default function SecondaryStatsGrid({
   account,
 }: SecondaryStatsGridProps) {
@@ -29,7 +30,7 @@ export default function SecondaryStatsGrid({
         : "bg-red-500/20 text-red-400";
 
   const errorStatusColor =
-    account.api?.errors > 0
+    (account.api?.errors || 0) > 0
       ? "bg-red-500/20 text-red-400"
       : "bg-green-500/20 text-green-400";
 

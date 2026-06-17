@@ -1,7 +1,7 @@
-import { MessageSquare, Trash2, CheckCircle, Zap, X } from "lucide-react";
-import { Message, MessageFormat } from "../../types/nats";
+import { MessageSquare, Trash2, CheckCircle, Zap } from "lucide-react";
 import EmptyState from "../ui/EmptyState";
 import MessageItem from "./MessageItem";
+import type { Message, MessageFormat } from "../../hooks/useMessageList";
 
 interface MessageListProps {
   /**
@@ -146,7 +146,13 @@ export default function MessageList({
           const timestamp = message.timestamp;
           const isExpanded = expandedMessages.has(timestamp);
           const viewMode = viewModes.get(timestamp) || "pretty";
-          const format = messageFormats.get(timestamp) || "text";
+          const format =
+            (messageFormats.get(timestamp) || "text") === "hex"
+              ? "text"
+              : ((messageFormats.get(timestamp) || "text") as
+                  | "json"
+                  | "binary"
+                  | "text");
 
           return (
             <MessageItem

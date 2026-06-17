@@ -1,10 +1,9 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Pagination as PaginationType } from "../../types/common";
 
-interface PaginationProps extends PaginationType {
-  /**
-   * Page change callback
-   */
+interface PaginationProps {
+  page: number;
+  perPage: number;
+  total: number;
   onPageChange: (page: number) => void;
 }
 
