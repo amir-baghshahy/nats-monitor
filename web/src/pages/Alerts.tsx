@@ -566,10 +566,10 @@ export default function Alerts() {
                     defaultValue={selectedAlert?.condition.operator || ">"}
                     className="input w-full"
                   >
-                    <option value="&gt;">&gt; Greater than</option>
-                    <option value="&lt;">&lt; Less than</option>
-                    <option value="&gt;=">&ge; Greater or equal</option>
-                    <option value="&lt;=">&le; Less or equal</option>
+                    <option value=">">{">"} Greater than</option>
+                    <option value="<">{"<"} Less than</option>
+                    <option value=">=">{">="} Greater or equal</option>
+                    <option value="<=">{"<="} Less or equal</option>
                   </select>
                 </div>
                 <div>

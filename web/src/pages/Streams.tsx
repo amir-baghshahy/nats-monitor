@@ -228,6 +228,9 @@ export default function Streams() {
       queryClient.invalidateQueries({ queryKey: ["streams"] });
       setShowCreateModal(false);
     },
+    onError: (error: any) => {
+      toast("error", error.response?.data?.error || "Failed to create stream");
+    },
   });
 
   const stats: StreamStats = {

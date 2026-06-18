@@ -26,14 +26,14 @@ export default function History() {
     queryFn: () =>
       selectedStream !== "all"
         ? (HistoryService.getHistoryStreams(selectedStream, "messages", duration) as Promise<Record<string, any>>)
-        : Promise.resolve({ points: [] }),
+        : Promise.resolve({ data: [] }),
     enabled: selectedStream !== "all",
   });
 
   const streamOptions =
     streams?.map((stream: Stream) => stream.config?.name).filter(Boolean) || [];
   const historyStreams = report?.streams || [];
-  const streamHistoryPoints = streamHistory?.points || [];
+  const streamHistoryPoints = streamHistory?.data || [];
 
   return (
     <div className="p-4 md:p-8">
@@ -136,7 +136,7 @@ export default function History() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-dark-muted">
                       {point.timestamp
-                        ? new Date(point.timestamp).toLocaleString()
+                        ? new Date(point.timestamp * 1000).toLocaleString()
                         : "N/A"}
                     </span>
                     <span className="font-mono">

@@ -49,10 +49,10 @@ func (h *HistoryHandler) Stop() {
 
 // startCollector starts collecting historical data
 func (h *HistoryHandler) startCollector() {
-	// Collect every minute
 	h.ticker = time.NewTicker(1 * time.Minute)
 
 	go func() {
+		h.collectData() // collect immediately so history isn't empty on first load
 		for {
 			select {
 			case <-h.ticker.C:
@@ -93,27 +93,38 @@ func (h *HistoryHandler) collectData() {
 		return
 	}
 
+	// Remove history for streams that no longer exist
+	activeStreams := make(map[string]bool, len(response.Streams))
+	for _, s := range response.Streams {
+		activeStreams[s.Config.Name] = true
+	}
+	for key := range h.history {
+		parts := splitString(key, ":")
+		if len(parts) == 2 && !activeStreams[parts[0]] {
+			delete(h.history, key)
+		}
+	}
+
+	const maxPoints = 10080 // 7 days of per-minute data
 	for _, stream := range response.Streams {
 		// Messages history
-		key := stream.Config.Name + ":messages"
-		h.history[key] = append(h.history[key], DataPoint{
+		msgKey := stream.Config.Name + ":messages"
+		h.history[msgKey] = append(h.history[msgKey], DataPoint{
 			Timestamp: now.Unix(),
 			Value:     float64(stream.State.Messages),
 		})
+		if len(h.history[msgKey]) > maxPoints {
+			h.history[msgKey] = h.history[msgKey][len(h.history[msgKey])-maxPoints:]
+		}
 
 		// Bytes history
-		key = stream.Config.Name + ":bytes"
-		h.history[key] = append(h.history[key], DataPoint{
+		bytesKey := stream.Config.Name + ":bytes"
+		h.history[bytesKey] = append(h.history[bytesKey], DataPoint{
 			Timestamp: now.Unix(),
 			Value:     float64(stream.State.Bytes),
 		})
-
-		// Keep only last 7 days of data (10080 minutes)
-		maxPoints := 10080
-		for k, points := range h.history {
-			if len(points) > maxPoints {
-				h.history[k] = points[len(points)-maxPoints:]
-			}
+		if len(h.history[bytesKey]) > maxPoints {
+			h.history[bytesKey] = h.history[bytesKey][len(h.history[bytesKey])-maxPoints:]
 		}
 	}
 }

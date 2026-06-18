@@ -55,7 +55,7 @@ func storageToString(storage int) string {
 }
 
 func (r *NATSStreamRepository) List(ctx context.Context) ([]*models.Stream, error) {
-	msg, err := r.nc.Request("$JS.API.STREAM.LIST", []byte(`{"subjects_filter":">"}`), 5*time.Second)
+	msg, err := r.nc.Request("$JS.API.STREAM.LIST", []byte(`{}`), 5*time.Second)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list streams: %w", err)
 	}

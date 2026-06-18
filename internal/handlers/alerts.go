@@ -243,9 +243,12 @@ func (h *AlertsHandler) triggerAlert(alert *Alert, message string, data map[stri
 
 	h.triggers = append(h.triggers, trigger)
 
-	alert.LastTrigger = now
-	alert.TriggerCount++
-	alert.UpdatedAt = now
+	// Write back state to the authoritative map entry (not the snapshot)
+	if original, ok := h.alerts[alert.ID]; ok {
+		original.LastTrigger = now
+		original.TriggerCount++
+		original.UpdatedAt = now
+	}
 
 	if len(h.triggers) > 1000 {
 		h.triggers = h.triggers[len(h.triggers)-1000:]
@@ -431,6 +434,15 @@ func (h *AlertsHandler) DeleteAlert(c *gin.Context) {
 	}
 
 	delete(h.alerts, id)
+
+	// Remove all triggers associated with this alert
+	filtered := h.triggers[:0]
+	for _, t := range h.triggers {
+		if t.AlertID != id {
+			filtered = append(filtered, t)
+		}
+	}
+	h.triggers = filtered
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "alert deleted"})
 }
