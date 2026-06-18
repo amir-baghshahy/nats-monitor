@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
 
+	"nats-monitoring/internal/constants"
+	"nats-monitoring/internal/dto"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"nats-monitoring/internal/dto"
 )
 
 // MetricDataPoint represents a single metric data point
@@ -23,6 +26,54 @@ type MetricSeries struct {
 	Name   string            `json:"name"`
 	Labels map[string]string `json:"labels"`
 	Data   []MetricDataPoint `json:"data"`
+}
+
+type serverPingResponse struct {
+	Data   json.RawMessage `json:"data"`
+	Server struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"server"`
+}
+
+type consumerListMetricsResponse struct {
+	Consumers []struct {
+		Name   string `json:"name"`
+		Config struct {
+			Durable string `json:"durable"`
+		} `json:"config"`
+		State struct {
+			NumPending     uint64 `json:"num_pending"`
+			NumAckPending  uint64 `json:"num_ack_pending"`
+			NumRedelivered uint64 `json:"num_redelivered"`
+			Delivered      struct {
+				Stream   uint64 `json:"stream"`
+				Consumer uint64 `json:"consumer"`
+			} `json:"delivered"`
+			AckFloor struct {
+				Stream   uint64 `json:"stream"`
+				Consumer uint64 `json:"consumer"`
+			} `json:"ack_floor"`
+		} `json:"state"`
+	} `json:"consumers"`
+}
+
+type connzMetricsResponse struct {
+	NumConnections int `json:"num_connections"`
+	Total          int `json:"total"`
+	Connections    []struct {
+		Subscriptions int `json:"subscriptions"`
+	} `json:"connections"`
+}
+
+func (r connzMetricsResponse) TotalConnections() int {
+	if r.Total > 0 {
+		return r.Total
+	}
+	if r.NumConnections > 0 {
+		return r.NumConnections
+	}
+	return len(r.Connections)
 }
 
 // MetricsResponse represents the metrics API response
@@ -187,6 +238,139 @@ func (h *MetricsHandler) collectMetrics() {
 
 	// Update timestamp
 	h.metricsCache.Timestamp = now.Unix()
+
+	h.collectConsumerMetrics(now, streamNames)
+	h.collectServerMetrics(now)
+}
+
+func (h *MetricsHandler) collectConsumerMetrics(now time.Time, streamNames map[string]bool) {
+	for streamName := range streamNames {
+		msg, err := h.nc.Request(fmt.Sprintf("$JS.API.CONSUMER.LIST.%s", streamName), []byte("{}"), constants.LongRequestTimeout)
+		if err != nil {
+			continue
+		}
+
+		var response consumerListMetricsResponse
+		if err := json.Unmarshal(msg.Data, &response); err != nil {
+			continue
+		}
+
+		for _, consumer := range response.Consumers {
+			consumerName := consumer.Name
+			if consumerName == "" {
+				consumerName = consumer.Config.Durable
+			}
+			if consumerName == "" {
+				continue
+			}
+
+			name := fmt.Sprintf("%s/%s", streamName, consumerName)
+			h.appendMetric(&h.metricsCache.Consumers, name, "lag", float64(consumer.State.NumPending), now)
+			h.appendMetric(&h.metricsCache.Consumers, name, "pending", float64(consumer.State.NumPending), now)
+			h.appendMetric(&h.metricsCache.Consumers, name, "ack_pending", float64(consumer.State.NumAckPending), now)
+			h.appendMetric(&h.metricsCache.Consumers, name, "redelivered", float64(consumer.State.NumRedelivered), now)
+			h.appendMetric(&h.metricsCache.Consumers, name, "delivered_stream", float64(consumer.State.Delivered.Stream), now)
+			h.appendMetric(&h.metricsCache.Consumers, name, "delivered_consumer", float64(consumer.State.Delivered.Consumer), now)
+			h.appendMetric(&h.metricsCache.Consumers, name, "ack_floor_stream", float64(consumer.State.AckFloor.Stream), now)
+			h.appendMetric(&h.metricsCache.Consumers, name, "ack_floor_consumer", float64(consumer.State.AckFloor.Consumer), now)
+		}
+	}
+}
+
+func (h *MetricsHandler) collectServerMetrics(now time.Time) {
+	h.collectVarzMetrics(now)
+	h.collectConnzMetrics(now)
+}
+
+func (h *MetricsHandler) collectVarzMetrics(now time.Time) {
+	var response serverPingResponse
+	if err := h.requestServerMetric("$SYS.REQ.SERVER.PING.VARZ", map[string]any{}, &response); err != nil {
+		return
+	}
+
+	var varz struct {
+		Memory        uint64  `json:"memory"`
+		CPU           float64 `json:"cpu"`
+		Connections   int     `json:"connections"`
+		Subscriptions int     `json:"subscriptions"`
+		Routes        int     `json:"routes"`
+		SentMsgs      int64   `json:"sent_msgs"`
+		ReceivedMsgs  int64   `json:"received_msgs"`
+		SentBytes     uint64  `json:"sent_bytes"`
+		ReceivedBytes uint64  `json:"received_bytes"`
+		SlowConsumers int64   `json:"slow_consumers"`
+	}
+	if err := json.Unmarshal(response.Data, &varz); err != nil {
+		return
+	}
+
+	serverName := "server"
+	if response.Server.Name != "" {
+		serverName = response.Server.Name
+	} else if response.Server.ID != "" {
+		serverName = response.Server.ID
+	}
+
+	h.appendMetric(&h.metricsCache.System, serverName, "cpu_percent", varz.CPU, now)
+	h.appendMetric(&h.metricsCache.System, serverName, "memory_used", float64(varz.Memory), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "connections", float64(varz.Connections), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "subscriptions", float64(varz.Subscriptions), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "routes", float64(varz.Routes), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "sent_messages", float64(varz.SentMsgs), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "received_messages", float64(varz.ReceivedMsgs), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "sent_bytes", float64(varz.SentBytes), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "received_bytes", float64(varz.ReceivedBytes), now)
+	h.appendMetric(&h.metricsCache.System, serverName, "slow_consumers", float64(varz.SlowConsumers), now)
+}
+
+func (h *MetricsHandler) collectConnzMetrics(now time.Time) {
+	var response serverPingResponse
+	if err := h.requestServerMetric("$SYS.REQ.SERVER.PING.CONNZ", map[string]any{"subscriptions": false, "offset": 0, "limit": 1024}, &response); err != nil {
+		return
+	}
+
+	var connz connzMetricsResponse
+	if err := json.Unmarshal(response.Data, &connz); err != nil {
+		return
+	}
+
+	subscriptions := 0
+	for _, conn := range connz.Connections {
+		subscriptions += conn.Subscriptions
+	}
+
+	h.appendMetric(&h.metricsCache.System, "cluster", "connections", float64(connz.TotalConnections()), now)
+	h.appendMetric(&h.metricsCache.System, "cluster", "subscriptions", float64(subscriptions), now)
+}
+
+func (h *MetricsHandler) requestServerMetric(subject string, payload any, target any) error {
+	body, _ := json.Marshal(payload)
+	msg, err := h.nc.Request(subject, body, constants.DefaultRequestTimeout)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(msg.Data, target)
+}
+
+func (h *MetricsHandler) appendMetric(series *[]MetricSeries, name, metricType string, value float64, now time.Time) {
+	for i := range *series {
+		if (*series)[i].Name == name && (*series)[i].Labels["type"] == metricType {
+			point := MetricDataPoint{Timestamp: now.Unix(), Value: value}
+			(*series)[i].Data = append((*series)[i].Data, point)
+			if len((*series)[i].Data) > 100 {
+				(*series)[i].Data = (*series)[i].Data[len((*series)[i].Data)-100:]
+			}
+			return
+		}
+	}
+
+	*series = append(*series, MetricSeries{
+		Name: name,
+		Labels: map[string]string{
+			"type": metricType,
+		},
+		Data: []MetricDataPoint{{Timestamp: now.Unix(), Value: value}},
+	})
 }
 
 // GetMetrics returns the current metrics

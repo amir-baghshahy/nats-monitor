@@ -11,6 +11,7 @@ export type { internal_handlers_Alert } from './models/internal_handlers_Alert';
 export type { internal_handlers_AlertCondition } from './models/internal_handlers_AlertCondition';
 export { internal_handlers_AlertSeverity } from './models/internal_handlers_AlertSeverity';
 export type { internal_handlers_AlertTrigger } from './models/internal_handlers_AlertTrigger';
+export type { internal_handlers_CheckAlertsResponse } from './models/internal_handlers_CheckAlertsResponse';
 export type { internal_handlers_ConnectionConfig } from './models/internal_handlers_ConnectionConfig';
 export type { internal_handlers_MetricDataPoint } from './models/internal_handlers_MetricDataPoint';
 export type { internal_handlers_MetricSeries } from './models/internal_handlers_MetricSeries';
@@ -20,6 +21,7 @@ export type { internal_handlers_UserPermissions } from './models/internal_handle
 export type { nats_monitoring_internal_dto_AckMessageRequest } from './models/nats_monitoring_internal_dto_AckMessageRequest';
 export type { nats_monitoring_internal_dto_AckMessageResponse } from './models/nats_monitoring_internal_dto_AckMessageResponse';
 export type { nats_monitoring_internal_dto_AckTermMessageRequest } from './models/nats_monitoring_internal_dto_AckTermMessageRequest';
+export type { nats_monitoring_internal_dto_ActiveSubscription } from './models/nats_monitoring_internal_dto_ActiveSubscription';
 export type { nats_monitoring_internal_dto_ClusterConnectedServer } from './models/nats_monitoring_internal_dto_ClusterConnectedServer';
 export type { nats_monitoring_internal_dto_ClusterHealthResponse } from './models/nats_monitoring_internal_dto_ClusterHealthResponse';
 export type { nats_monitoring_internal_dto_ClusterInfoPeerResponse } from './models/nats_monitoring_internal_dto_ClusterInfoPeerResponse';

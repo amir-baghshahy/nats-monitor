@@ -78,6 +78,9 @@ export default function RequestForm({
           {/* Subject */}
           <div>
             <label className="block text-sm font-medium mb-2">Subject</label>
+            <p className="text-xs text-dark-muted mb-2">
+              The service address you want to call, e.g. service.get.
+            </p>
             <input
               type="text"
               placeholder="service.get"

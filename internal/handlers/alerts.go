@@ -109,8 +109,14 @@ func (h *AlertsHandler) startChecker() {
 	}()
 }
 
+type CheckAlertsResponse struct {
+	Evaluated int   `json:"evaluated"`
+	Triggered int   `json:"triggered"`
+	Timestamp int64 `json:"timestamp"`
+}
+
 // checkAlerts evaluates all enabled alerts
-func (h *AlertsHandler) checkAlerts() {
+func (h *AlertsHandler) checkAlerts() (int, int) {
 	h.mu.RLock()
 	alerts := make([]*Alert, 0, len(h.alerts))
 	for _, alert := range h.alerts {
@@ -121,11 +127,15 @@ func (h *AlertsHandler) checkAlerts() {
 	h.mu.RUnlock()
 
 	now := time.Now()
+	evaluated := 0
+	triggeredCount := 0
 	for _, alert := range alerts {
 		// Check cooldown
 		if !alert.LastTrigger.IsZero() && now.Sub(alert.LastTrigger) < alert.Cooldown {
 			continue
 		}
+
+		evaluated++
 
 		// Evaluate condition
 		triggered, data, err := h.evaluateCondition(alert.Condition)
@@ -135,8 +145,11 @@ func (h *AlertsHandler) checkAlerts() {
 
 		if triggered {
 			h.triggerAlert(alert, fmt.Sprintf("%s: %s", alert.Condition.Type, formatConditionData(alert.Condition, data)), data)
+			triggeredCount++
 		}
 	}
+
+	return evaluated, triggeredCount
 }
 
 // evaluateCondition evaluates an alert condition
@@ -417,6 +430,22 @@ func (h *AlertsHandler) DeleteAlert(c *gin.Context) {
 	delete(h.alerts, id)
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "alert deleted"})
+}
+
+// CheckAlertsNow evaluates enabled alerts immediately
+// @Summary Check alerts now
+// @Description Evaluates all enabled alert conditions immediately and returns how many triggered
+// @Tags alerts
+// @Produce json
+// @Success 200 {object} CheckAlertsResponse
+// @Router /alerts/check [post]
+func (h *AlertsHandler) CheckAlertsNow(c *gin.Context) {
+	evaluated, triggered := h.checkAlerts()
+	c.JSON(http.StatusOK, CheckAlertsResponse{
+		Evaluated: evaluated,
+		Triggered: triggered,
+		Timestamp: time.Now().Unix(),
+	})
 }
 
 // ListTriggers returns alert triggers

@@ -145,8 +145,16 @@ type Connection struct {
 	Name         string    `json:"name"`
 	User         string    `json:"user"`
 	IP           string    `json:"ip"`
+	Port         int       `json:"port,omitempty"`
 	Server       string    `json:"server"`
+	ServerID     string    `json:"server_id,omitempty"`
 	SubsCount    int       `json:"subs_count"`
+	RTT          string    `json:"rtt,omitempty"`
+	PendingBytes int64     `json:"pending_bytes,omitempty"`
+	InMsgs       int64     `json:"in_msgs,omitempty"`
+	OutMsgs      int64     `json:"out_msgs,omitempty"`
+	InBytes      int64     `json:"in_bytes,omitempty"`
+	OutBytes     int64     `json:"out_bytes,omitempty"`
 	ConnectedAt  time.Time `json:"connected_at"`
 	LastActivity time.Time `json:"last_activity"`
 }

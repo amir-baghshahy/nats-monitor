@@ -1,24 +1,27 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import {
-  Send,
-  MessageSquare,
-  CheckCircle,
-  Zap,
-  Activity,
-  Network,
-  Server,
-} from "lucide-react";
-import { useSSE } from "../hooks/useSSE";
-import { useNATSSubscription, useMessageList } from "../hooks";
+  CoreNatsService,
+  nats_monitoring_internal_dto_PublishMessageRequest,
+  nats_monitoring_internal_dto_RequestMessageRequest,
+} from "../types";
 import {
   MessageList,
   SubscriptionBar,
   PublishForm,
   RequestForm,
+  MessagingTabs,
+  MessagingHeader,
+  SubjectExplorer,
+  ServiceDiscoveryPanel,
+  TrafficMonitorPanel,
 } from "../components/messaging";
 import { useToast } from "../components/Toast";
+import { PageError, PageLoading } from "../components/ui/PageState";
+import { useNATSSubscription, useMessageList } from "../hooks";
+import { useSSE } from "../hooks/useSSE";
+import type { MessagingTab } from "../components/messaging/MessagingTabs";
+import type { ServiceInfo } from "../components/messaging/ServiceDiscoveryPanel";
 
 export interface Message {
   subject: string;
@@ -43,10 +46,8 @@ export interface RequestForm {
   timeout: number;
 }
 
-type TabType = "messages" | "publish" | "request" | "services" | "monitor";
-
-export default function CoreMessaging() {
-  const [activeTab, setActiveTab] = useState<TabType>("messages");
+export function CoreMessagingContent() {
+  const [activeTab, setActiveTab] = useState<MessagingTab>("messages");
   const [subscriptions, setSubscriptions] = useState<Set<string>>(new Set());
   const [autoScroll, setAutoScroll] = useState(true);
   const [publishForm, setPublishForm] = useState<PublishForm>({
@@ -61,12 +62,13 @@ export default function CoreMessaging() {
     timeout: 5000,
   });
   const [requestResponse, setRequestResponse] = useState<any>(null);
+  const [monitorSubjects, setMonitorSubjects] = useState("");
+  const [monitorEvents, setMonitorEvents] = useState<any[]>([]);
+  const monitorSourceRef = useRef<EventSource | null>(null);
 
-  // SSE connection
   const { connected: sseConnected } = useSSE("core-messaging");
   const { toast } = useToast();
 
-  // Message list management
   const {
     messages,
     messageFormats,
@@ -79,7 +81,6 @@ export default function CoreMessaging() {
     messagesEndRef,
   } = useMessageList({ autoScroll, maxMessages: 1000 });
 
-  // NATS subscription management
   const {
     subscribe: subscribeToSubject,
     unsubscribe: unsubscribeFromSubject,
@@ -90,26 +91,38 @@ export default function CoreMessaging() {
       addMessage(message);
     },
     onStatusChange: (connected) => {
-      // Update subscriptions list on status change
       if (connected) {
         setSubscriptions(new Set(getSubscriptions()));
       }
     },
   });
 
-  // Sync subscriptions state with hook
   useEffect(() => {
     setSubscriptions(new Set(getSubscriptions()));
   }, [getSubscriptions]);
 
-  // Fetch service discovery info
-  const { data: serviceInfo } = useQuery({
+  const parseHeaders = (headersText: string) => {
+    const headers = headersText ? JSON.parse(headersText) : {};
+
+    return Object.fromEntries(
+      Object.entries(headers).map(([key, value]) => [
+        key,
+        Array.isArray(value) ? value : [String(value)],
+      ]),
+    );
+  };
+
+  const {
+    data: serviceInfo,
+    isLoading: serviceInfoLoading,
+    error: serviceInfoError,
+    refetch: refetchServiceInfo,
+  } = useQuery({
     queryKey: ["serviceDiscovery"],
-    queryFn: () => axios.get("/api/core/services").then((res) => res.data),
+    queryFn: () => CoreNatsService.getCoreServices(),
     refetchInterval: 10000,
   });
 
-  // Subscribe handler
   const handleSubscribe = (subject: string) => {
     if (isSubscribed(subject)) {
       unsubscribeFromSubject(subject);
@@ -118,34 +131,34 @@ export default function CoreMessaging() {
     }
   };
 
-  // Publish handler
   const handlePublish = async () => {
     try {
-      const headers = publishForm.headers
-        ? JSON.parse(publishForm.headers)
-        : {};
-      await axios.post("/api/core/publish", {
+      const request: nats_monitoring_internal_dto_PublishMessageRequest = {
         subject: publishForm.subject,
         payload: publishForm.payload,
-        headers: headers,
+        headers: parseHeaders(publishForm.headers),
         reply_to: publishForm.replyTo,
-      });
+      };
+      await CoreNatsService.postCorePublish(request);
       setPublishForm({ subject: "", payload: "", replyTo: "", headers: "{}" });
       toast("success", "Message published successfully!");
     } catch (err: any) {
-      toast("error", `Failed to publish: ${err.response?.data?.error || err.message}`);
+      toast(
+        "error",
+        `Failed to publish: ${err.response?.data?.error || err.message}`,
+      );
     }
   };
 
-  // Request handler
   const handleRequest = async () => {
     try {
-      const response = await axios.post("/api/core/request", {
+      const request: nats_monitoring_internal_dto_RequestMessageRequest = {
         subject: requestForm.subject,
         payload: requestForm.payload,
         timeout: requestForm.timeout,
-      });
-      setRequestResponse(response.data);
+      };
+      const response = await CoreNatsService.postCoreRequest(request);
+      setRequestResponse(response);
     } catch (err: any) {
       console.error("Request failed:", err);
       setRequestResponse({
@@ -154,7 +167,6 @@ export default function CoreMessaging() {
     }
   };
 
-  // Copy message handler
   const handleCopyMessage = async (message: Message) => {
     try {
       await navigator.clipboard.writeText(message.data);
@@ -163,100 +175,105 @@ export default function CoreMessaging() {
     }
   };
 
+  const startMonitor = () => {
+    const subjects = monitorSubjects
+      .split(",")
+      .map((subject) => subject.trim())
+      .filter(Boolean);
+
+    monitorSourceRef.current?.close();
+    setMonitorEvents([]);
+
+    if (subjects.length === 0) {
+      toast("error", "Enter at least one subject to monitor");
+      return;
+    }
+
+    const params = subjects
+      .map((subject) => `subjects=${encodeURIComponent(subject)}`)
+      .join("&");
+    const source = new EventSource(`/api/core/monitor?${params}`);
+    monitorSourceRef.current = source;
+
+    source.addEventListener("message", (event) => {
+      try {
+        setMonitorEvents((current) =>
+          [JSON.parse(event.data), ...current].slice(0, 50),
+        );
+      } catch (err) {
+        console.error("Failed to parse monitor event:", err);
+      }
+    });
+
+    source.addEventListener("stats", (event) => {
+      try {
+        setMonitorEvents((current) =>
+          [JSON.parse(event.data), ...current].slice(0, 50),
+        );
+      } catch (err) {
+        console.error("Failed to parse monitor stats:", err);
+      }
+    });
+
+    source.onerror = () => {
+      toast("error", "Traffic monitor disconnected");
+      source.close();
+      monitorSourceRef.current = null;
+    };
+  };
+
+  const stopMonitor = () => {
+    monitorSourceRef.current?.close();
+    monitorSourceRef.current = null;
+  };
+
+  useEffect(() => {
+    return () => stopMonitor();
+  }, []);
+
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return "Unable to load service discovery";
+  };
+
+  const knownSubjects = Array.from(
+    new Set(
+      [
+        ...subscriptions,
+        ...messages.map((message) => message.subject),
+        publishForm.subject,
+        requestForm.subject,
+      ].filter((subject): subject is string => Boolean(subject)),
+    ),
+  );
+
+  if (serviceInfoLoading) {
+    return <PageLoading text="Loading core messaging..." />;
+  }
+
+  if (serviceInfoError) {
+    return (
+      <PageError
+        message={getErrorMessage(serviceInfoError)}
+        onRetry={refetchServiceInfo}
+      />
+    );
+  }
+
   return (
-    <div className="p-4 md:p-8">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Core Messaging</h1>
-          <p className="text-dark-muted mt-1">NATS Pub/Sub & Request/Reply</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 bg-dark-bg rounded-lg border border-dark-border">
-            {sseConnected ? (
-              <>
-                <CheckCircle className="w-4 h-4 text-green-400" />
-                <span className="text-sm text-green-400">SSE Connected</span>
-              </>
-            ) : (
-              <>
-                <Zap className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm text-yellow-400">Polling</span>
-              </>
-            )}
-          </div>
-          <button
-            onClick={() => setActiveTab("publish")}
-            className="btn-primary flex items-center gap-2"
-          >
-            <Send className="w-4 h-4" />
-            Publish
-          </button>
-          <button
-            onClick={() => setActiveTab("request")}
-            className="btn-secondary flex items-center gap-2"
-          >
-            <MessageSquare className="w-4 h-4" />
-            Request
-          </button>
-        </div>
-      </div>
+    <div>
+      <MessagingHeader
+        sseConnected={sseConnected}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 mb-6 border-b border-dark-border pb-4 flex-wrap">
-        <button
-          onClick={() => setActiveTab("messages")}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            activeTab === "messages"
-              ? "bg-primary-500/20 text-primary-400"
-              : "hover:bg-dark-bg"
-          }`}
-        >
-          Messages ({messages.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("publish")}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            activeTab === "publish"
-              ? "bg-primary-500/20 text-primary-400"
-              : "hover:bg-dark-bg"
-          }`}
-        >
-          Publish
-        </button>
-        <button
-          onClick={() => setActiveTab("request")}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            activeTab === "request"
-              ? "bg-primary-500/20 text-primary-400"
-              : "hover:bg-dark-bg"
-          }`}
-        >
-          Request/Reply
-        </button>
-        <button
-          onClick={() => setActiveTab("services")}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            activeTab === "services"
-              ? "bg-primary-500/20 text-primary-400"
-              : "hover:bg-dark-bg"
-          }`}
-        >
-          Services
-        </button>
-        <button
-          onClick={() => setActiveTab("monitor")}
-          className={`px-4 py-2 rounded-lg transition-colors ${
-            activeTab === "monitor"
-              ? "bg-primary-500/20 text-primary-400"
-              : "hover:bg-dark-bg"
-          }`}
-        >
-          Traffic Monitor
-        </button>
-      </div>
+      <MessagingTabs
+        activeTab={activeTab}
+        messagesCount={messages.length}
+        onTabChange={setActiveTab}
+      />
 
-      {/* Messages Tab */}
       {activeTab === "messages" && (
         <>
           <SubscriptionBar
@@ -282,7 +299,6 @@ export default function CoreMessaging() {
         </>
       )}
 
-      {/* Publish Tab */}
       {activeTab === "publish" && (
         <PublishForm
           form={publishForm}
@@ -291,7 +307,6 @@ export default function CoreMessaging() {
         />
       )}
 
-      {/* Request Tab */}
       {activeTab === "request" && (
         <RequestForm
           form={requestForm}
@@ -301,67 +316,34 @@ export default function CoreMessaging() {
         />
       )}
 
-      {/* Services Tab */}
+      {activeTab === "subjects" && <SubjectExplorer subjects={knownSubjects} />}
+
       {activeTab === "services" && (
-        <div className="space-y-6">
-          <div className="card">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-              <Server className="w-5 h-5" />
-              Service Discovery
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              <div className="bg-dark-bg/50 rounded-lg p-4">
-                <p className="text-xs text-dark-muted">Server Name</p>
-                <p className="font-mono text-sm">
-                  {serviceInfo?.server_name || "NATS Server"}
-                </p>
-              </div>
-              <div className="bg-dark-bg/50 rounded-lg p-4">
-                <p className="text-xs text-dark-muted">Version</p>
-                <p className="text-sm">
-                  {serviceInfo?.version || "Not available"}
-                </p>
-              </div>
-              <div className="bg-dark-bg/50 rounded-lg p-4">
-                <p className="text-xs text-dark-muted">Max Payload</p>
-                <p className="text-sm">
-                  {serviceInfo?.max_payload
-                    ? `${(serviceInfo.max_payload / 1024).toFixed(0)} KB`
-                    : "Not available"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Network className="w-5 h-5 text-primary-400" />
-              Active Subscriptions
-            </h3>
-            <div className="p-8 text-center text-dark-muted border border-dashed border-dark-border rounded-lg">
-              <Server className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="mb-4">
-                Core NATS subscriptions are ephemeral and not centrally tracked.
-              </p>
-              <p className="text-sm">
-                To monitor service traffic, go to the{" "}
-                <strong>Traffic Monitor</strong> tab
-              </p>
-            </div>
-          </div>
-        </div>
+        <ServiceDiscoveryPanel
+          serviceInfo={serviceInfo as ServiceInfo}
+          subscriptions={subscriptions}
+          onRefresh={refetchServiceInfo}
+        />
       )}
 
-      {/* Traffic Monitor Tab */}
       {activeTab === "monitor" && (
-        <div className="card">
-          <div className="p-8 text-center text-dark-muted">
-            <Activity className="w-16 h-16 mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium mb-2">Traffic Monitor</h3>
-            <p>Use the Messages tab to monitor traffic in real-time.</p>
-          </div>
-        </div>
+        <TrafficMonitorPanel
+          subjects={monitorSubjects}
+          onSubjectsChange={setMonitorSubjects}
+          isMonitoring={Boolean(monitorSourceRef.current)}
+          events={monitorEvents}
+          onStart={startMonitor}
+          onStop={stopMonitor}
+        />
       )}
+    </div>
+  );
+}
+
+export default function CoreMessaging() {
+  return (
+    <div className="p-4 md:p-8">
+      <CoreMessagingContent />
     </div>
   );
 }

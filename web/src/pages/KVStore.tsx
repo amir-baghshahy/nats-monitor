@@ -14,8 +14,10 @@ import {
   Key,
   History,
   X,
+  Eye,
 } from "lucide-react";
 import { useToast } from "../components/Toast";
+import { PageError, PageLoading } from "../components/ui/PageState";
 
 export default function KVStore() {
   const [selectedBucket, setSelectedBucket] = useState<string | null>(null);
@@ -25,24 +27,33 @@ export default function KVStore() {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [selectedKeyResult, setSelectedKeyResult] = useState<KVKeyEntry | null>(null);
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: buckets, refetch: refetchBuckets } = useQuery({
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return "Unable to load KV data";
+  };
+
+  const getMutationErrorMessage = (error: any) =>
+    error.response?.data?.error || error.message || "Operation failed";
+
+  const { data: buckets, refetch: refetchBuckets, isLoading: bucketsLoading, error: bucketsError } = useQuery({
     queryKey: ["kvBuckets"],
     queryFn: () => KvService.getKvBuckets(),
     refetchInterval: 10000,
   });
 
-  const { data: keys } = useQuery<KVKeyEntry[]>({
+  const { data: keys, isLoading: keysLoading, error: keysError } = useQuery<KVKeyEntry[]>({
     queryKey: ['kvKeys', selectedBucket ?? ''],
     queryFn: () =>
       selectedBucket ? KvService.getKvBucketsKeys(selectedBucket) : Promise.resolve([]),
     enabled: !!selectedBucket,
   })
 
-  const { data: history } = useQuery<KVKeyHistoryEntry[]>({
+  const { data: history, error: historyError } = useQuery<KVKeyHistoryEntry[]>({
     queryKey: ['kvHistory', selectedBucket ?? '', selectedKey ?? ''],
     queryFn: () =>
       selectedBucket && selectedKey
@@ -69,6 +80,33 @@ export default function KVStore() {
     },
   });
 
+  const deleteBucketMutation = useMutation({
+    mutationFn: (name: string) => KvService.deleteKvBuckets(name),
+    onSuccess: (_, name) => {
+      if (selectedBucket === name) {
+        setSelectedBucket(null);
+      }
+      queryClient.invalidateQueries({ queryKey: ["kvBuckets"] });
+      toast("success", `Bucket "${name}" deleted successfully!`);
+    },
+    onError: (error: any) => {
+      toast("error", `Failed to delete bucket: ${getMutationErrorMessage(error)}`);
+    },
+  });
+
+  const purgeBucketMutation = useMutation({
+    mutationFn: (name: string) => KvService.postKvBucketsPurge(name),
+    onSuccess: () => {
+      if (selectedBucket) {
+        queryClient.invalidateQueries({ queryKey: ["kvKeys", selectedBucket] });
+      }
+      toast("success", "Bucket purge completed successfully!");
+    },
+    onError: (error: any) => {
+      toast("error", `Failed to purge bucket: ${getMutationErrorMessage(error)}`);
+    },
+  });
+
   const putKeyMutation = useMutation({
     mutationFn: ({ key, value }: { key: string; value: string }) => {
       if (!selectedBucket) throw new Error("No bucket selected");
@@ -79,6 +117,20 @@ export default function KVStore() {
         queryClient.invalidateQueries({ queryKey: ["kvKeys", selectedBucket] });
       }
       setShowKeyModal(false);
+    },
+  });
+
+  const getKeyMutation = useMutation({
+    mutationFn: (key: string) => {
+      if (!selectedBucket) throw new Error("No bucket selected");
+      return KvService.getKvBucketsKey(selectedBucket, key) as Promise<KVKeyEntry>;
+    },
+    onSuccess: (data) => {
+      setSelectedKeyResult(data);
+      setSelectedKey(data.key || selectedKey || "");
+    },
+    onError: (error: any) => {
+      toast("error", `Failed to get key: ${getMutationErrorMessage(error)}`);
     },
   });
 
@@ -114,6 +166,28 @@ export default function KVStore() {
         value.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }) || [];
+
+  if (bucketsLoading || (selectedBucket && keysLoading)) {
+    return <PageLoading text="Loading KV buckets..." />;
+  }
+
+  if (bucketsError || keysError) {
+    return (
+      <PageError
+        message={getErrorMessage(bucketsError || keysError)}
+        onRetry={refetchBuckets}
+      />
+    );
+  }
+
+  if (selectedBucket && historyError) {
+    return (
+      <PageError
+        message={getErrorMessage(historyError)}
+        onRetry={refetchBuckets}
+      />
+    );
+  }
 
   return (
     <div className="p-4 md:p-8">
@@ -159,14 +233,19 @@ export default function KVStore() {
                     setSelectedBucket(bucket.name ?? bucket.bucket_name ?? '')
                   }
                   className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                    selectedBucket === bucket.name
+                    selectedBucket === (bucket.name ?? bucket.bucket_name)
                       ? "bg-primary-500/20 border border-primary-500/50"
                       : "bg-dark-bg hover:bg-dark-bg/80"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <FolderOpen className="w-5 h-5 text-purple-400" />
-                    <div className="flex-1 min-w-0">
+                    <div
+                      className="flex-1 min-w-0"
+                      onClick={() =>
+                        setSelectedBucket(bucket.name ?? bucket.bucket_name ?? '')
+                      }
+                    >
                       <p className="font-medium truncate">
                         {bucket.bucket_name}
                       </p>
@@ -175,6 +254,19 @@ export default function KVStore() {
                         {formatBytes(bucket.bytes || 0)}
                       </p>
                     </div>
+                    <button
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        const name = bucket.name ?? bucket.bucket_name ?? "";
+                        if (confirm(`Delete bucket "${name}"?`)) {
+                          deleteBucketMutation.mutate(name);
+                        }
+                      }}
+                      className="p-2 hover:bg-red-500/20 rounded-lg"
+                      title="Delete bucket"
+                    >
+                      <Trash2 className="w-4 h-4 text-red-400" />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -214,6 +306,18 @@ export default function KVStore() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      if (!selectedBucket) return;
+                      if (confirm(`Purge deleted-key tombstones from "${selectedBucket}"?`)) {
+                        purgeBucketMutation.mutate(selectedBucket);
+                      }
+                    }}
+                    className="btn-secondary flex items-center gap-2 text-sm py-2"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Purge
+                  </button>
                   <button
                     onClick={() => {
                       setModalMode("create");
@@ -262,6 +366,17 @@ export default function KVStore() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            const key = kv.key ?? "";
+                            setSelectedKey(key);
+                            getKeyMutation.mutate(key);
+                          }}
+                          className="p-2 hover:bg-dark-border rounded-lg"
+                          title="Get Key"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
                         <button
                           onClick={() => {
                             setSelectedKey(kv.key ?? '')
@@ -487,6 +602,47 @@ export default function KVStore() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Key Detail Modal */}
+      {selectedKeyResult && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="card max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold">Key Detail</h2>
+                <p className="text-sm text-dark-muted font-mono">
+                  {selectedKeyResult.key || selectedKey || "unknown-key"}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedKeyResult(null)}
+                className="p-2 hover:bg-dark-bg rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 overflow-y-auto">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="rounded-lg bg-dark-bg p-3">
+                  <p className="text-xs text-dark-muted">Revision</p>
+                  <p className="font-mono">{selectedKeyResult.revision ?? "N/A"}</p>
+                </div>
+                <div className="rounded-lg bg-dark-bg p-3">
+                  <p className="text-xs text-dark-muted">Created</p>
+                  <p className="font-mono">{formatTimestamp(selectedKeyResult.created)}</p>
+                </div>
+              </div>
+              <div>
+                <p className="mb-2 text-sm font-medium">Value</p>
+                <pre className="max-h-80 overflow-auto rounded-lg bg-dark-bg p-3 text-sm">
+                  <code className="text-green-400">{selectedKeyResult.value ?? ""}</code>
+                </pre>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { internal_handlers_Alert } from '../models/internal_handlers_Alert';
 import type { internal_handlers_AlertTrigger } from '../models/internal_handlers_AlertTrigger';
+import type { internal_handlers_CheckAlertsResponse } from '../models/internal_handlers_CheckAlertsResponse';
 import type { nats_monitoring_internal_dto_SuccessResponse } from '../models/nats_monitoring_internal_dto_SuccessResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -39,6 +40,18 @@ export class AlertsService {
             errors: {
                 400: `Bad Request`,
             },
+        });
+    }
+    /**
+     * Check alerts now
+     * Evaluates all enabled alert conditions immediately and returns how many triggered
+     * @returns internal_handlers_CheckAlertsResponse OK
+     * @throws ApiError
+     */
+    public static postAlertsCheck(): CancelablePromise<internal_handlers_CheckAlertsResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/alerts/check',
         });
     }
     /**

@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { ClusterService, StreamsService } from '../types'
 import {
   Server, HardDrive, Activity, CheckCircle, XCircle,
   RefreshCw, Copy, Database, Shield,
   Zap, Globe
 } from 'lucide-react'
+import { PageError, PageLoading } from '../components/ui/PageState'
 
 interface ClusterInfo {
   cluster_name: string
@@ -63,40 +64,70 @@ interface StreamReplica {
 export default function Cluster() {
   const [selectedStream, setSelectedStream] = useState<string | null>(null)
 
-  const { data: clusterInfo, refetch: refetchInfo } = useQuery({
+  const { data: clusterInfo, refetch: refetchInfo, isLoading: infoLoading, error: infoError } = useQuery({
     queryKey: ['clusterInfo'],
-    queryFn: () => axios.get<ClusterInfo>('/api/cluster/info').then(res => res.data),
+    queryFn: () => ClusterService.getClusterInfo() as Promise<ClusterInfo>,
     refetchInterval: 10000,
   })
 
-  const { data: clusterNodes, refetch: refetchNodes } = useQuery({
+  const { data: clusterNodes, refetch: refetchNodes, isLoading: nodesLoading, error: nodesError } = useQuery({
     queryKey: ['clusterNodes'],
-    queryFn: () => axios.get<ClusterNodes>('/api/cluster/nodes').then(res => res.data),
+    queryFn: () => ClusterService.getClusterNodes() as Promise<ClusterNodes>,
     refetchInterval: 10000,
   })
 
-  const { data: clusterHealth, refetch: refetchHealth } = useQuery({
+  const { data: clusterHealth, refetch: refetchHealth, isLoading: healthLoading, error: healthError } = useQuery({
     queryKey: ['clusterHealth'],
-    queryFn: () => axios.get<ClusterHealth>('/api/cluster/health').then(res => res.data),
+    queryFn: () => ClusterService.getClusterHealth() as Promise<ClusterHealth>,
     refetchInterval: 5000,
   })
 
-  const { data: streamReplicas, refetch: refetchReplicas } = useQuery({
+  const { data: streamReplicas, refetch: refetchReplicas, isLoading: replicasLoading, error: replicasError } = useQuery({
     queryKey: ['streamReplicas', selectedStream],
-    queryFn: () => axios.get<StreamReplica>(`/api/cluster/streams/${selectedStream}/replicas`).then(res => res.data),
+    queryFn: () => selectedStream
+      ? ClusterService.getClusterStreamsReplicas(selectedStream) as Promise<StreamReplica>
+      : Promise.resolve({} as StreamReplica),
     enabled: !!selectedStream,
   })
 
-  const { data: streams } = useQuery({
+  const { data: streams, isLoading: streamsLoading, error: streamsError, refetch: refetchStreams } = useQuery({
     queryKey: ['streams'],
-    queryFn: () => axios.get('/api/streams').then(res => res.data),
-  })
+    queryFn: () => StreamsService.getStreams(),
+  });
 
   const refreshAll = () => {
     refetchInfo()
     refetchNodes()
     refetchHealth()
+    refetchStreams()
     if (selectedStream) refetchReplicas()
+  }
+
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return "Unable to load cluster data";
+  };
+
+  if (infoLoading || nodesLoading || healthLoading || streamsLoading || (selectedStream && replicasLoading)) {
+    return <PageLoading text="Loading cluster data..." />;
+  }
+
+  if (infoError || nodesError || healthError || streamsError) {
+    return (
+      <PageError
+        message={getErrorMessage(infoError || nodesError || healthError || streamsError)}
+        onRetry={refreshAll}
+      />
+    );
+  }
+
+  if (selectedStream && replicasError) {
+    return (
+      <PageError
+        message={getErrorMessage(replicasError)}
+        onRetry={() => refetchReplicas()}
+      />
+    );
   }
 
   return (
@@ -322,7 +353,7 @@ export default function Cluster() {
             <div>
               <h3 className="font-medium mb-3">Select Stream</h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {streams?.map((stream: { name: string; config: { replicas: number } }) => (
+                {streams?.map((stream: any) => (
                   <div
                     key={stream.name}
                     onClick={() => setSelectedStream(stream.name)}

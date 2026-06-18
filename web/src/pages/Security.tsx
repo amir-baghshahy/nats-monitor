@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
+import { SecurityService } from '../types'
 import {
   Shield, Lock, Users, Plus, Edit, Trash2,
   Clock, FileText, Server, Activity, ToggleLeft, ToggleRight
 } from 'lucide-react'
+import { PageError, PageLoading } from '../components/ui/PageState'
 
 interface User {
   name: string
@@ -32,27 +33,32 @@ export default function Security() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: securityInfo } = useQuery({
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return "Unable to load security data";
+  };
+
+  const { data: securityInfo, isLoading: infoLoading, error: infoError, refetch: refetchInfo } = useQuery({
     queryKey: ['securityInfo'],
-    queryFn: () => axios.get('/api/security/info').then(res => res.data),
+    queryFn: () => SecurityService.getSecurityInfo(),
     refetchInterval: 30000,
   })
 
-  const { data: users } = useQuery({
+  const { data: users, isLoading: usersLoading, error: usersError } = useQuery({
     queryKey: ['securityUsers'],
-    queryFn: () => axios.get('/api/security/users').then(res => res.data),
+    queryFn: () => SecurityService.getSecurityUsers() as Promise<User[]>,
     enabled: activeTab === 'users',
   })
 
-  const { data: auditLogs } = useQuery({
+  const { data: auditLogs, isLoading: auditLoading, error: auditError } = useQuery({
     queryKey: ['auditLogs'],
-    queryFn: () => axios.get('/api/security/audit').then(res => res.data),
+    queryFn: () => SecurityService.getSecurityAudit() as unknown as Promise<AuditLog[]>,
     enabled: activeTab === 'audit',
   })
 
-  const { data: connectionStatus } = useQuery({
+  const { data: connectionStatus, isLoading: connectionsLoading, error: connectionsError } = useQuery({
     queryKey: ['connectionSecurity'],
-    queryFn: () => axios.get('/api/security/connections').then(res => res.data),
+    queryFn: () => SecurityService.getSecurityConnections(),
     refetchInterval: 10000,
   })
 
@@ -67,7 +73,7 @@ export default function Security() {
         },
         enabled: data.enabled !== false
       }
-      return axios.post('/api/security/users', payload)
+      return SecurityService.postSecurityUsers(payload as any)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['securityUsers'] })
@@ -77,7 +83,7 @@ export default function Security() {
 
   const updateUserMutation = useMutation({
     mutationFn: ({ name, data }: { name: string; data: Partial<User> }) =>
-      axios.put(`/api/security/users/${name}`, data),
+      SecurityService.putSecurityUsers(name, data as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['securityUsers'] })
       setShowUserModal(false)
@@ -86,7 +92,7 @@ export default function Security() {
   })
 
   const deleteUserMutation = useMutation({
-    mutationFn: (name: string) => axios.delete(`/api/security/users/${name}`),
+    mutationFn: (name: string) => SecurityService.deleteSecurityUsers(name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['securityUsers'] })
     },
@@ -101,6 +107,26 @@ export default function Security() {
 
   const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleString()
+  }
+
+  const activeLoading =
+    infoLoading ||
+    (activeTab === 'users' && usersLoading) ||
+    (activeTab === 'audit' && auditLoading) ||
+    connectionsLoading;
+
+  const activeError =
+    infoError ||
+    (activeTab === 'users' && usersError) ||
+    (activeTab === 'audit' && auditError) ||
+    connectionsError;
+
+  if (activeLoading) {
+    return <PageLoading text="Loading security data..." />;
+  }
+
+  if (activeError) {
+    return <PageError message={getErrorMessage(activeError)} onRetry={refetchInfo} />;
   }
 
   return (

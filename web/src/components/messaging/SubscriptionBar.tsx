@@ -46,6 +46,9 @@ export default function SubscriptionBar({
             className="input w-full font-mono"
             onKeyPress={handleKeyPress}
           />
+          <p className="text-xs text-dark-muted mt-2">
+            A subject is the NATS address messages are sent to. Subscribe to watch matching traffic.
+          </p>
         </div>
 
         {subscriptions.size > 0 && (

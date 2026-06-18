@@ -156,7 +156,7 @@ func main() {
 
 	streamHandler := handlers.NewStreamHandler(streamUseCase)
 	consumerHandler := handlers.NewConsumerHandler(consumerUseCase, messageUseCase, natsConn.nc, natsConn.js)
-	serverHandler := handlers.NewServerHandler(serverUseCase)
+	serverHandler := handlers.NewServerHandler(serverUseCase, messageUseCase)
 	coreNATSHandler := handlers.NewCoreNATShandler(natsConn.nc)
 	kvHandler := handlers.NewKVHandler(natsConn.nc, natsConn.js)
 	clusterHandler := handlers.NewClusterHandler(natsConn.nc, natsConn.js)
@@ -267,6 +267,7 @@ func main() {
 		apiGroup.GET("/alerts/:id", alertsHandler.GetAlert)
 		apiGroup.PUT("/alerts/:id", alertsHandler.UpdateAlert)
 		apiGroup.DELETE("/alerts/:id", alertsHandler.DeleteAlert)
+		apiGroup.POST("/alerts/check", alertsHandler.CheckAlertsNow)
 		apiGroup.GET("/alerts/triggers", alertsHandler.ListTriggers)
 		apiGroup.POST("/alerts/triggers/:id/ack", alertsHandler.AckTrigger)
 

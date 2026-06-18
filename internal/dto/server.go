@@ -26,10 +26,42 @@ type ConnectionInfo struct {
 	Name         string `json:"name"`
 	User         string `json:"user"`
 	IP           string `json:"ip"`
+	Port         int    `json:"port,omitempty"`
 	Server       string `json:"server"`
+	ServerID     string `json:"server_id,omitempty"`
 	SubsCount    int    `json:"subs_count"`
+	RTT          string `json:"rtt,omitempty"`
+	PendingBytes int64  `json:"pending_bytes,omitempty"`
+	InMsgs       int64  `json:"in_msgs,omitempty"`
+	OutMsgs      int64  `json:"out_msgs,omitempty"`
+	InBytes      int64  `json:"in_bytes,omitempty"`
+	OutBytes     int64  `json:"out_bytes,omitempty"`
 	ConnectedAt  string `json:"connected_at"`
 	LastActivity string `json:"last_activity"`
+}
+
+type StreamMessage struct {
+	Subject    string              `json:"subject"`
+	Sequence   uint64              `json:"sequence"`
+	Data       string              `json:"data"`
+	DataBase64 string              `json:"data_base64,omitempty"`
+	Headers    map[string][]string `json:"headers,omitempty"`
+	Timestamp  string              `json:"timestamp"`
+	Size       int                 `json:"size"`
+}
+
+type StreamMessagesResponse struct {
+	Stream   string          `json:"stream"`
+	Messages []StreamMessage `json:"messages"`
+	Total    int             `json:"total"`
+}
+
+type PaginatedMessagesResponse struct {
+	Stream   string          `json:"stream"`
+	Page     int             `json:"page"`
+	PageSize int             `json:"page_size"`
+	Total    int             `json:"total"`
+	Messages []StreamMessage `json:"messages"`
 }
 
 // ConnectionsResponse represents the connections list response
@@ -115,12 +147,18 @@ type SSEConnectionMessage struct {
 	Timestamp int64  `json:"timestamp"`
 }
 
+type ActiveSubscription struct {
+	Subject string `json:"subject"`
+	Count   int    `json:"count"`
+}
+
 // SubscriptionsResponse represents subscriptions info
 type SubscriptionsResponse struct {
-	Status    string `json:"status"`
-	Connected bool   `json:"connected"`
-	Server    string `json:"server"`
-	Count     int    `json:"count"`
+	Status        string               `json:"status"`
+	Connected     bool                 `json:"connected"`
+	Server        string               `json:"server"`
+	Count         int                  `json:"count"`
+	Subscriptions []ActiveSubscription `json:"subscriptions,omitempty"`
 }
 
 // ServiceDiscoveryResponse represents service discovery info

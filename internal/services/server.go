@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"nats-monitoring/internal/constants"
@@ -130,39 +131,208 @@ func (uc *ServerUseCase) GetConnections(ctx context.Context) (*Connections, erro
 	connections := []*models.Connection{}
 	connected := false
 
-	if uc.nc != nil && uc.nc.IsConnected() {
-		connected = true
-		url := uc.nc.ConnectedUrl()
-		serverName := "NATS Server"
+	if uc.nc == nil || !uc.nc.IsConnected() {
+		return &Connections{
+			List:      connections,
+			Total:     len(connections),
+			Connected: connected,
+		}, nil
+	}
 
-		// Try to get server name
-		if msg, err := uc.nc.Request("$SYS.REQ.SERVER.PING", []byte("{}"), constants.DefaultRequestTimeout); err == nil && msg != nil {
-			var serverResp struct {
-				Name string `json:"server_name"`
-			}
-			if json.Unmarshal(msg.Data, &serverResp) == nil && serverResp.Name != "" {
-				serverName = serverResp.Name
-			}
+	connected = true
+	serverName := "NATS Server"
+	serverID := ""
+	if msg, err := uc.nc.Request("$SYS.REQ.SERVER.PING", []byte("{}"), constants.DefaultRequestTimeout); err == nil && msg != nil {
+		var response struct {
+			Data   json.RawMessage `json:"data"`
+			Server struct {
+				Name string `json:"name"`
+				ID   string `json:"id"`
+			} `json:"server"`
 		}
+		if json.Unmarshal(msg.Data, &response) == nil {
+			if response.Server.Name != "" {
+				serverName = response.Server.Name
+			}
+			serverID = response.Server.ID
+		}
+	}
 
+	connz, err := uc.getConnz()
+	if err != nil {
 		connections = append(connections, &models.Connection{
 			CID:          0,
 			Type:         "monitoring",
 			Name:         "current",
 			User:         "",
-			IP:           url,
+			IP:           uc.nc.ConnectedUrl(),
 			Server:       serverName,
+			ServerID:     serverID,
 			SubsCount:    0,
 			ConnectedAt:  time.Now(),
 			LastActivity: time.Now(),
+		})
+		return &Connections{
+			List:      connections,
+			Total:     len(connections),
+			Connected: connected,
+		}, nil
+	}
+
+	for _, conn := range connz.Data.Connections {
+		connectedAt := parseServerTime(conn.Start)
+		lastActivity := parseServerTime(conn.LastActivity)
+		connections = append(connections, &models.Connection{
+			CID:          conn.CID,
+			Type:         conn.Type,
+			Name:         conn.Name,
+			User:         conn.User,
+			IP:           conn.IP,
+			Port:         conn.Port,
+			Server:       connz.ServerName(serverName),
+			ServerID:     connz.ServerID(serverID),
+			SubsCount:    conn.Subscriptions,
+			RTT:          conn.RTT,
+			PendingBytes: conn.PendingBytes,
+			InMsgs:       conn.InMsgs,
+			OutMsgs:      conn.OutMsgs,
+			InBytes:      conn.InBytes,
+			OutBytes:     conn.OutBytes,
+			ConnectedAt:  connectedAt,
+			LastActivity: lastActivity,
 		})
 	}
 
 	return &Connections{
 		List:      connections,
-		Total:     len(connections),
+		Total:     connz.TotalConnections(),
 		Connected: connected,
 	}, nil
+}
+
+// TerminateConnection closes a NATS client connection by CID using the server KICK request.
+func (uc *ServerUseCase) TerminateConnection(ctx context.Context, id string) error {
+	if id == "" {
+		return fmt.Errorf("connection id is required")
+	}
+
+	cid, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return fmt.Errorf("invalid connection id: %w", err)
+	}
+
+	connz, err := uc.getConnz()
+	if err != nil {
+		return fmt.Errorf("failed to get connection list: %w", err)
+	}
+
+	found := false
+	for _, conn := range connz.Data.Connections {
+		if conn.CID == cid {
+			found = true
+			break
+		}
+	}
+	if !found {
+		return fmt.Errorf("connection %s not found", id)
+	}
+
+	serverID := connz.ServerID("")
+	if serverID == "" {
+		return fmt.Errorf("server id not found for connection %s", id)
+	}
+
+	payload, _ := json.Marshal(map[string]uint64{"cid": cid})
+	if err := uc.nc.Publish(fmt.Sprintf("$SYS.REQ.SERVER.%s.KICK", serverID), payload); err != nil {
+		return fmt.Errorf("failed to request connection termination: %w", err)
+	}
+	if err := uc.nc.Flush(); err != nil {
+		return fmt.Errorf("failed to flush termination request: %w", err)
+	}
+
+	return nil
+}
+
+type connzResponse struct {
+	Data struct {
+		NumConnections int `json:"num_connections"`
+		Total          int `json:"total"`
+		Offset         int `json:"offset"`
+		Limit          int `json:"limit"`
+		Connections    []struct {
+			CID           uint64 `json:"cid"`
+			Type          string `json:"type"`
+			IP            string `json:"ip"`
+			Port          int    `json:"port"`
+			Start         string `json:"start"`
+			LastActivity  string `json:"last_activity"`
+			RTT           string `json:"rtt"`
+			PendingBytes  int64  `json:"pending_bytes"`
+			InMsgs        int64  `json:"in_msgs"`
+			OutMsgs       int64  `json:"out_msgs"`
+			InBytes       int64  `json:"in_bytes"`
+			OutBytes      int64  `json:"out_bytes"`
+			Subscriptions int    `json:"subscriptions"`
+			Name          string `json:"name"`
+			User          string `json:"user"`
+		} `json:"connections"`
+	} `json:"data"`
+	Server struct {
+		Name string `json:"name"`
+		ID   string `json:"id"`
+	} `json:"server"`
+}
+
+func (r connzResponse) TotalConnections() int {
+	if r.Data.Total > 0 {
+		return r.Data.Total
+	}
+	if r.Data.NumConnections > 0 {
+		return r.Data.NumConnections
+	}
+	return len(r.Data.Connections)
+}
+
+func (r connzResponse) ServerName(fallback string) string {
+	if r.Server.Name != "" {
+		return r.Server.Name
+	}
+	return fallback
+}
+
+func (r connzResponse) ServerID(fallback string) string {
+	if r.Server.ID != "" {
+		return r.Server.ID
+	}
+	return fallback
+}
+
+func (uc *ServerUseCase) getConnz() (*connzResponse, error) {
+	payload, _ := json.Marshal(map[string]any{
+		"subscriptions": false,
+		"offset":        0,
+		"limit":         1024,
+	})
+	msg, err := uc.nc.Request("$SYS.REQ.SERVER.PING.CONNZ", payload, constants.DefaultRequestTimeout)
+	if err != nil {
+		return nil, err
+	}
+
+	var response connzResponse
+	if err := json.Unmarshal(msg.Data, &response); err != nil {
+		return nil, err
+	}
+	return &response, nil
+}
+
+func parseServerTime(value string) time.Time {
+	if value == "" {
+		return time.Time{}
+	}
+	if parsed, err := time.Parse(time.RFC3339Nano, value); err == nil {
+		return parsed
+	}
+	return time.Time{}
 }
 
 // SubjectInfo represents subject information
@@ -172,14 +342,16 @@ type SubjectInfo struct {
 	LastSeen string
 }
 
-// GetSubjects returns subject information from stream configurations
+// GetSubjects returns subject information from stream configurations and active subscriptions
 func (uc *ServerUseCase) GetSubjects(ctx context.Context) ([]*SubjectInfo, error) {
-	msg, err := uc.nc.Request(constants.APIStreamList, []byte(`{"subjects_filter":">"}`), constants.LongRequestTimeout)
+	subjectsByName := make(map[string]*SubjectInfo)
+
+	streamMsg, err := uc.nc.Request(constants.APIStreamList, []byte(`{"subjects_filter":">"}`), constants.LongRequestTimeout)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get stream list: %w", err)
 	}
 
-	var response struct {
+	var streamResponse struct {
 		Streams []struct {
 			Config struct {
 				Subjects []string `json:"subjects"`
@@ -190,26 +362,75 @@ func (uc *ServerUseCase) GetSubjects(ctx context.Context) ([]*SubjectInfo, error
 		} `json:"streams"`
 	}
 
-	if err := json.Unmarshal(msg.Data, &response); err != nil {
+	if err := json.Unmarshal(streamMsg.Data, &streamResponse); err != nil {
 		return nil, fmt.Errorf("failed to parse stream list: %w", err)
 	}
 
-	subjects := []*SubjectInfo{}
-	seen := make(map[string]bool)
-
-	for _, stream := range response.Streams {
+	for _, stream := range streamResponse.Streams {
 		for _, subject := range stream.Config.Subjects {
-			if !seen[subject] {
-				seen[subject] = true
-				subjects = append(subjects, &SubjectInfo{
-					Name:  subject,
-					Count: int64(stream.State.Messages),
-				})
+			if subject == "" {
+				continue
 			}
+			info := subjectsByName[subject]
+			if info == nil {
+				info = &SubjectInfo{Name: subject}
+				subjectsByName[subject] = info
+			}
+			info.Count += int64(stream.State.Messages)
+		}
+	}
+
+	uc.mergeActiveSubscriptionSubjects(subjectsByName)
+
+	subjects := make([]*SubjectInfo, 0, len(subjectsByName))
+	for _, subject := range subjectsByName {
+		if subject.Name != "" {
+			subjects = append(subjects, subject)
 		}
 	}
 
 	return subjects, nil
+}
+
+func (uc *ServerUseCase) mergeActiveSubscriptionSubjects(subjects map[string]*SubjectInfo) {
+	payload, _ := json.Marshal(map[string]any{
+		"subscriptions": true,
+		"offset":        0,
+		"limit":         1024,
+	})
+	msg, err := uc.nc.Request("$SYS.REQ.SERVER.PING.SUBSZ", payload, constants.DefaultRequestTimeout)
+	if err != nil {
+		return
+	}
+
+	var response struct {
+		Data struct {
+			NumSubscriptions int `json:"num_subscriptions"`
+			Total            int `json:"total"`
+			Subscriptions    []struct {
+				Subject string `json:"subject"`
+			} `json:"subscriptions"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(msg.Data, &response); err != nil {
+		return
+	}
+
+	for _, sub := range response.Data.Subscriptions {
+		if sub.Subject == "" || isInternalSubject(sub.Subject) {
+			continue
+		}
+		info := subjects[sub.Subject]
+		if info == nil {
+			info = &SubjectInfo{Name: sub.Subject}
+			subjects[sub.Subject] = info
+		}
+		info.Count++
+	}
+}
+
+func isInternalSubject(subject string) bool {
+	return subject == "" || subject[0] == '$'
 }
 
 // SystemMetrics represents system metrics

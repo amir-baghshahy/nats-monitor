@@ -73,6 +73,9 @@ export default function PublishForm({
         {/* Subject */}
         <div>
           <label className="block text-sm font-medium mb-2">Subject</label>
+          <p className="text-xs text-dark-muted mb-2">
+            The NATS address this message is sent to, e.g. orders.created.
+          </p>
           <input
             type="text"
             placeholder="orders.created"

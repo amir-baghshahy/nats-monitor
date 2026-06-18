@@ -235,6 +235,26 @@ export default function Consumers() {
     return "status-success";
   };
 
+  const streamOptions = useMemo(
+    () =>
+      streams
+        ?.map((stream: Stream) => stream.config?.name)
+        .filter((name): name is string => Boolean(name)) || [],
+    [streams],
+  );
+
+  const activeFilterCount =
+    (searchQuery ? 1 : 0) +
+    (selectedStream !== "all" ? 1 : 0) +
+    (filterStatus !== "all" ? 1 : 0);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setSelectedStream("all");
+    setFilterStatus("all");
+    setShowMoreFilters(false);
+  };
+
   const toggleAll = () => {
     if (selectedConsumers.size === filteredConsumers.length) {
       clearConsumerSelection();
@@ -386,51 +406,140 @@ export default function Consumers() {
 
       {/* Search and Filters */}
       <div className="card mb-6">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-muted" />
-            <input
-              type="text"
-              placeholder="Search consumers by name or stream..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="input pl-10 w-full"
-            />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col xl:flex-row xl:items-center gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-dark-muted" />
+              <input
+                type="text"
+                placeholder="Search consumers by name or stream..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="input pl-11"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:w-[420px] xl:flex-none">
+              <select
+                value={selectedStream}
+                onChange={(e) => setSelectedStream(e.target.value)}
+                className="input"
+              >
+                <option value="all">All Streams</option>
+                {streamOptions.map((streamName) => (
+                  <option key={streamName} value={streamName}>
+                    {streamName}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as "all" | "active" | "stuck" | "idle")}
+                className="input"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="stuck">Stuck</option>
+                <option value="idle">Idle</option>
+              </select>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <select
-              value={selectedStream}
-              onChange={(e) => setSelectedStream(e.target.value)}
-              className="input"
-            >
-              <option value="all">All Streams</option>
-              {streams?.map((stream: Stream) => (
-                <option
-                  key={stream.config?.name}
-                  value={stream.config?.name}
+
+          <div className="flex flex-col gap-3 border-t border-dark-border/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-dark-muted">
+                Filters:
+              </span>
+              {activeFilterCount === 0 ? (
+                <span className="rounded-full bg-dark-bg px-3 py-1 text-xs text-dark-muted">
+                  Showing all consumers
+                </span>
+              ) : null}
+              {searchQuery ? (
+                <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs text-primary-300 ring-1 ring-primary-500/30">
+                  Search: {searchQuery}
+                </span>
+              ) : null}
+              {selectedStream !== "all" ? (
+                <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs text-primary-300 ring-1 ring-primary-500/30">
+                  Stream: {selectedStream}
+                </span>
+              ) : null}
+              {filterStatus !== "all" ? (
+                <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs text-primary-300 ring-1 ring-primary-500/30">
+                  Status: {getStatusLabel(filterStatus)}
+                </span>
+              ) : null}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={clearFilters}
+                disabled={activeFilterCount === 0}
+                className="btn-secondary"
+              >
+                Clear filters
+              </button>
+              <button
+                onClick={() => setShowMoreFilters(!showMoreFilters)}
+                className="btn-secondary"
+              >
+                <Filter className="h-4 w-4" />
+                {showMoreFilters ? "Less Filters" : "More Filters"}
+              </button>
+            </div>
+          </div>
+
+          {showMoreFilters && (
+            <div className="grid grid-cols-1 gap-4 rounded-2xl border border-dark-border/50 bg-dark-bg/40 p-4 md:grid-cols-3">
+              <div>
+                <p className="text-xs font-medium text-dark-muted">Quick status</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(["all", "active", "stuck", "idle"] as const).map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setFilterStatus(status)}
+                      className={`rounded-xl px-3 py-2 text-xs font-medium ring-1 transition-all ${
+                        filterStatus === status
+                          ? "bg-primary-600 text-white ring-primary-500/50"
+                          : "bg-dark-card text-dark-muted ring-dark-border hover:bg-dark-border hover:text-dark-text"
+                      }`}
+                    >
+                      {status === "all" ? "All" : getStatusLabel(status)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-dark-muted">Stream</p>
+                <select
+                  value={selectedStream}
+                  onChange={(e) => setSelectedStream(e.target.value)}
+                  className="input mt-3"
                 >
-                  {stream.config?.name}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="input"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="stuck">Stuck</option>
-              <option value="idle">Idle</option>
-            </select>
-            <button
-              onClick={() => setShowMoreFilters(!showMoreFilters)}
-              className="btn-secondary flex items-center gap-2"
-            >
-              <Filter className="w-4 h-4" />
-              {showMoreFilters ? "Less Filters" : "More Filters"}
-            </button>
-          </div>
+                  <option value="all">All Streams</option>
+                  {streamOptions.map((streamName) => (
+                    <option key={streamName} value={streamName}>
+                      {streamName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-dark-muted">Search</p>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Type to filter..."
+                  className="input mt-3"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

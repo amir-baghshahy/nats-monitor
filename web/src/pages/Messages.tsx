@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { MessagesService, StreamsService } from "../types";
 import type { nats_monitoring_internal_dto_StreamResponse as Stream } from "../types";
 import {
@@ -23,7 +22,7 @@ import {
 import { deleteMessage } from "../utils/natsOperations";
 import { useToast } from "../components/Toast";
 import { useSSE } from "../hooks/useSSE";
-
+import { CoreMessagingContent } from "./CoreMessaging";
 
 const MAX_DISPLAY_PAYLOAD_SIZE = 50 * 1024; // 50 KB
 
@@ -47,7 +46,11 @@ export default function Messages() {
     new Set(),
   );
   const [showPublishModal, setShowPublishModal] = useState(false);
+  const [activeMessageTab, setActiveMessageTab] = useState<"stream" | "core">(
+    "stream",
+  );
   const [messagesPerPage, setMessagesPerPage] = useState(25);
+  const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [copiedMessage, setCopiedMessage] = useState<number | null>(null);
@@ -111,18 +114,33 @@ export default function Messages() {
     }
   }, [streamList, selectedStream]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedStream, messagesPerPage]);
+
   // Fetch messages from API — disable polling when SSE is active to avoid redundant requests
-  const { data: messages, refetch: refetchMessages, isLoading: isLoadingMessages } = useQuery({
-    queryKey: ["messages", selectedStream],
+  const {
+    data: messagesPage,
+    refetch: refetchMessages,
+    isLoading: isLoadingMessages,
+  } = useQuery({
+    queryKey: ["messagesPage", selectedStream, currentPage, messagesPerPage],
     queryFn: () =>
-      axios
-        .get(`/api/messages?stream=${encodeURIComponent(selectedStream)}`)
-        .then((res) => res.data),
+      MessagesService.getMessagesPage(
+        selectedStream,
+        currentPage,
+        messagesPerPage,
+      ) as unknown as Promise<{
+        messages: any[];
+        total: number;
+      }>,
     enabled: !!selectedStream,
     refetchInterval: sseConnected ? false : 5000,
   });
 
-  const displayMessages = messages || [];
+  const displayMessages = messagesPage?.messages || [];
+  const totalMessages = messagesPage?.total || displayMessages.length;
+  const totalPages = Math.max(1, Math.ceil(totalMessages / messagesPerPage));
 
   const toggleMessageSelection = (sequence: number) => {
     const newSelected = new Set(selectedMessages);
@@ -211,6 +229,36 @@ export default function Messages() {
         </div>
       </div>
 
+      <div className="mb-6 border-b border-dark-border pb-3">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveMessageTab("stream")}
+            className={`rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
+              activeMessageTab === "stream"
+                ? "bg-primary-500/20 text-primary-400"
+                : "text-dark-muted hover:bg-dark-bg hover:text-dark-text"
+            }`}
+          >
+            Stream Messages
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveMessageTab("core")}
+            className={`rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
+              activeMessageTab === "core"
+                ? "bg-primary-500/20 text-primary-400"
+                : "text-dark-muted hover:bg-dark-bg hover:text-dark-text"
+            }`}
+          >
+            Core Messaging
+          </button>
+        </div>
+      </div>
+
+      {activeMessageTab === "stream" && (
+        <>
+
       {/* Stream Selector */}
       <div className="card mb-6">
         <div className="flex flex-col lg:flex-row gap-4">
@@ -267,7 +315,9 @@ export default function Messages() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-dark-muted">
-              Showing {displayMessages.length} messages
+              Showing {(currentPage - 1) * messagesPerPage + 1}-
+              {Math.min(currentPage * messagesPerPage, totalMessages)} of{" "}
+              {totalMessages.toLocaleString()} messages
             </span>
             <select
               value={messagesPerPage}
@@ -280,6 +330,23 @@ export default function Messages() {
             </select>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={currentPage <= 1}
+              className="btn-secondary text-sm py-1 px-3 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-dark-muted">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+              disabled={currentPage >= totalPages}
+              className="btn-secondary text-sm py-1 px-3 disabled:opacity-50"
+            >
+              Next
+            </button>
             <button
               onClick={() => refetchMessages()}
               className="btn-secondary text-sm py-1 px-3 flex items-center gap-2"
@@ -680,6 +747,10 @@ export default function Messages() {
           </div>
         </div>
       )}
+      </>
+      )}
+
+      {activeMessageTab === "core" && <CoreMessagingContent />}
     </div>
   );
 }

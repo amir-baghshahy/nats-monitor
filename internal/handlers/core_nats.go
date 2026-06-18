@@ -18,15 +18,47 @@ import (
 
 // CoreNATShandler handles Core NATS (non-JetStream) operations
 type CoreNATShandler struct {
-	nc *nats.Conn
-	mu sync.RWMutex
+	nc            *nats.Conn
+	mu            sync.RWMutex
+	subscriptions map[string]int
 }
 
 // NewCoreNATShandler creates a new Core NATS handler
 func NewCoreNATShandler(nc *nats.Conn) *CoreNATShandler {
 	return &CoreNATShandler{
-		nc: nc,
+		nc:            nc,
+		subscriptions: make(map[string]int),
 	}
+}
+
+func (h *CoreNATShandler) trackSubscribe(subject string) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.subscriptions[subject]++
+}
+
+func (h *CoreNATShandler) trackUnsubscribe(subject string) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if count := h.subscriptions[subject]; count <= 1 {
+		delete(h.subscriptions, subject)
+		return
+	}
+	h.subscriptions[subject]--
+}
+
+func (h *CoreNATShandler) activeSubscriptions() []dto.ActiveSubscription {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	subscriptions := make([]dto.ActiveSubscription, 0, len(h.subscriptions))
+	for subject, count := range h.subscriptions {
+		subscriptions = append(subscriptions, dto.ActiveSubscription{
+			Subject: subject,
+			Count:   count,
+		})
+	}
+	return subscriptions
 }
 
 // PublishMessage publishes a message to a NATS subject
@@ -215,6 +247,9 @@ func (h *CoreNATShandler) Subscribe(c *gin.Context) {
 		return
 	}
 
+	h.trackSubscribe(subject)
+	defer h.trackUnsubscribe(subject)
+
 	c.Writer.Header().Set("Content-Type", "text/event-stream")
 	c.Writer.Header().Set("Cache-Control", "no-cache")
 	c.Writer.Header().Set("Connection", "keep-alive")
@@ -291,15 +326,22 @@ func (h *CoreNATShandler) Subscribe(c *gin.Context) {
 // @Router /core/subscriptions [get]
 func (h *CoreNATShandler) GetActiveSubscriptions(c *gin.Context) {
 	h.mu.RLock()
-	defer h.mu.RUnlock()
+	status := h.nc.Status()
+	server := h.nc.ConnectedUrl()
+	h.mu.RUnlock()
 
-	subs := h.nc.Status()
+	subscriptions := h.activeSubscriptions()
+	total := 0
+	for _, subscription := range subscriptions {
+		total += subscription.Count
+	}
 
 	c.JSON(http.StatusOK, dto.SubscriptionsResponse{
-		Status:    subs.String(),
-		Connected: h.nc.IsConnected(),
-		Server:    h.nc.ConnectedUrl(),
-		Count:     0,
+		Status:        status.String(),
+		Connected:     h.nc.IsConnected(),
+		Server:        server,
+		Count:         total,
+		Subscriptions: subscriptions,
 	})
 }
 
@@ -368,6 +410,15 @@ func (h *CoreNATShandler) MonitorTraffic(c *gin.Context) {
 		})
 		return
 	}
+
+	for _, subject := range subjects {
+		h.trackSubscribe(subject)
+	}
+	defer func() {
+		for _, subject := range subjects {
+			h.trackUnsubscribe(subject)
+		}
+	}()
 
 	c.Writer.Header().Set("Content-Type", "text/event-stream")
 	c.Writer.Header().Set("Cache-Control", "no-cache")

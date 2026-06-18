@@ -15,6 +15,7 @@ import {
   WifiOff,
   Trash2,
   X,
+  Download,
 } from "lucide-react";
 import { useSSE } from "../hooks/useSSE";
 import {
@@ -25,7 +26,8 @@ import {
 } from "../hooks";
 import { SearchBar, Pagination, BulkActions } from "../components/common";
 import { StatusBadge, EmptyState } from "../components/ui";
-import { StreamsService } from "../types";
+import { StreamsService, ExportService } from "../types";
+import { useToast } from "../components/Toast";
 import type { nats_monitoring_internal_dto_StreamResponse as Stream } from "../types";
 import type { nats_monitoring_internal_dto_CreateStreamRequest } from "../types";
 import { formatBytes } from "../utils/formatters";
@@ -51,6 +53,17 @@ interface StreamStats {
 
 type StreamHealthStatus = "all" | "healthy" | "warning" | "critical";
 
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 const defaultFilters: StreamFilters = {
   search: "",
   storage: "all",
@@ -64,6 +77,7 @@ const defaultFilters: StreamFilters = {
 export default function Streams() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { connected: sseConnected } = useSSE("streams");
 
@@ -157,6 +171,56 @@ export default function Streams() {
     },
   });
 
+  const exportAllMutation = useMutation({
+    mutationFn: () => ExportService.getExportStreams(),
+    onSuccess: (blob) => {
+      downloadBlob(blob, `streams-${new Date().toISOString().slice(0, 10)}.json`);
+      toast("success", "Streams export downloaded");
+    },
+    onError: (error: any) => {
+      toast("error", error.response?.data?.error || "Failed to export streams");
+    },
+  });
+
+  const exportStreamMutation = useMutation({
+    mutationFn: ({
+      name,
+      format,
+      includeMessages,
+    }: {
+      name: string;
+      format: "json" | "csv" | "txt";
+      includeMessages?: boolean;
+    }) => ExportService.getExportStreams1(name, format, includeMessages),
+    onSuccess: (blob, variables) => {
+      downloadBlob(blob, `${variables.name}-${variables.format}`);
+      toast("success", "Stream export downloaded");
+    },
+    onError: (error: any) => {
+      toast("error", error.response?.data?.error || "Failed to export stream");
+    },
+  });
+
+  const exportMessagesMutation = useMutation({
+    mutationFn: ({
+      name,
+      subject,
+      limit,
+    }: {
+      name: string;
+      subject?: string;
+      limit?: number;
+    }) => ExportService.postExportStreamsMessages(name, subject, { subject, limit }),
+    onSuccess: (blob, variables) => {
+      const suffix = variables.subject ? variables.subject.replace(/\./g, "_") : "messages";
+      downloadBlob(blob, `${variables.name}-${suffix}.json`);
+      toast("success", "Messages export downloaded");
+    },
+    onError: (error: any) => {
+      toast("error", error.response?.data?.error || "Failed to export messages");
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: (data: nats_monitoring_internal_dto_CreateStreamRequest) =>
       StreamsService.postStreams(data),
@@ -208,6 +272,17 @@ export default function Streams() {
     if (confirm(`Purge all messages from "${streamName}"?`)) {
       purgeMutation.mutate(streamName);
     }
+  };
+
+  const handleExportStream = (
+    streamName: string,
+    format: "json" | "csv" | "txt" = "json",
+  ) => {
+    exportStreamMutation.mutate({ name: streamName, format });
+  };
+
+  const handleExportMessages = (streamName: string, subject?: string) => {
+    exportMessagesMutation.mutate({ name: streamName, subject, limit: 1000 });
   };
 
   const handleBulkDelete = () => {
@@ -341,42 +416,76 @@ export default function Streams() {
       </div>
 
       <div className="card mb-6">
-        <div className="flex items-center gap-4">
-          <SearchBar
-            value={filters.search}
-            onChange={(value) => updateFilter("search", value)}
-            className="flex-1"
-          />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col xl:flex-row xl:items-center gap-3">
+            <SearchBar
+              value={filters.search}
+              onChange={(value) => updateFilter("search", value)}
+              placeholder="Search streams by name or subject..."
+              className="flex-1"
+            />
 
-          <select
-            value={filters.storage}
-            onChange={(e) => updateFilter("storage", e.target.value as StreamFilters["storage"])}
-            className="input w-40"
-          >
-            <option value="all">All Storage</option>
-            <option value="file">File</option>
-            <option value="memory">Memory</option>
-          </select>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:w-[420px] xl:flex-none">
+              <select
+                value={filters.storage}
+                onChange={(e) => updateFilter("storage", e.target.value as StreamFilters["storage"])}
+                className="input"
+              >
+                <option value="all">All Storage</option>
+                <option value="file">File</option>
+                <option value="memory">Memory</option>
+              </select>
 
-          <select
-            value={filters.status}
-            onChange={(e) => updateFilter("status", e.target.value as StreamHealthStatus)}
-            className="input w-40"
-          >
-            <option value="all">All Status</option>
-            <option value="healthy">Healthy</option>
-            <option value="warning">Warning</option>
-            <option value="critical">Critical</option>
-          </select>
+              <select
+                value={filters.status}
+                onChange={(e) => updateFilter("status", e.target.value as StreamHealthStatus)}
+                className="input"
+              >
+                <option value="all">All Status</option>
+                <option value="healthy">Healthy</option>
+                <option value="warning">Warning</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+          </div>
 
-          {hasActiveFilters() && (
-            <button
-              onClick={resetFilters}
-              className="text-sm text-primary-400 hover:underline"
-            >
-              Clear filters
-            </button>
-          )}
+          <div className="flex flex-col gap-3 border-t border-dark-border/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-dark-muted">
+                Filters:
+              </span>
+              {!hasActiveFilters() ? (
+                <span className="rounded-full bg-dark-bg px-3 py-1 text-xs text-dark-muted">
+                  Showing all streams
+                </span>
+              ) : null}
+              {filters.search ? (
+                <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs text-primary-300 ring-1 ring-primary-500/30">
+                  Search: {filters.search}
+                </span>
+              ) : null}
+              {filters.storage !== "all" ? (
+                <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs text-primary-300 ring-1 ring-primary-500/30">
+                  Storage: {filters.storage}
+                </span>
+              ) : null}
+              {filters.status !== "all" ? (
+                <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs text-primary-300 ring-1 ring-primary-500/30">
+                  Status: {filters.status}
+                </span>
+              ) : null}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={resetFilters}
+                disabled={!hasActiveFilters()}
+                className="btn-secondary"
+              >
+                Clear filters
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -386,6 +495,11 @@ export default function Streams() {
         onSelectAll={handleSelectAll}
         onClearSelection={clearSelection}
         actions={[
+          {
+            label: "Export All",
+            icon: Download,
+            onClick: () => exportAllMutation.mutate(),
+          },
           {
             label: "Delete",
             icon: Trash2,
@@ -483,26 +597,42 @@ export default function Streams() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() =>
-                            navigate(
-                              `/streams/${encodeURIComponent(streamName)}`,
-                            )
-                          }
-                          className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
-                          title="View details"
-                        >
-                          <Eye className="w-4 h-4 text-dark-muted" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() =>
+                              navigate(
+                                `/streams/${encodeURIComponent(streamName)}`,
+                              )
+                            }
+                            className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
+                            title="View details"
+                          >
+                            <Eye className="w-4 h-4 text-dark-muted" />
+                          </button>
 
-                        <button
-                          onClick={() => handlePurge(streamName)}
-                          className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
-                          title="Purge messages"
-                        >
-                          <RefreshCw className="w-4 h-4 text-dark-muted" />
-                        </button>
+                          <button
+                            onClick={() => handleExportStream(streamName, "json")}
+                            className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
+                            title="Export stream"
+                          >
+                            <Download className="w-4 h-4 text-dark-muted" />
+                          </button>
+
+                          <button
+                            onClick={() => handleExportMessages(streamName)}
+                            className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
+                            title="Export messages"
+                          >
+                            <MessageSquare className="w-4 h-4 text-dark-muted" />
+                          </button>
+
+                          <button
+                            onClick={() => handlePurge(streamName)}
+                            className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
+                            title="Purge messages"
+                          >
+                            <RefreshCw className="w-4 h-4 text-dark-muted" />
+                          </button>
 
                         <button
                           onClick={() => handleDelete(streamName)}

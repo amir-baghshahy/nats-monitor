@@ -32,7 +32,7 @@ export class MessagesService {
     }
     /**
      * Get paginated stream messages
-     * Returns paginated messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.
+     * Returns paginated messages from a stream.
      * @param stream Stream name
      * @param page Page number
      * @param pageSize Page size
@@ -54,7 +54,7 @@ export class MessagesService {
             },
             errors: {
                 400: `Bad Request`,
-                501: `Not Implemented`,
+                500: `Internal Server Error`,
             },
         });
     }

@@ -117,6 +117,20 @@
         },
         "type": "object"
       },
+      "internal_handlers.CheckAlertsResponse": {
+        "properties": {
+          "evaluated": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "integer"
+          },
+          "triggered": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "internal_handlers.ConnectionConfig": {
         "properties": {
           "created_at": {
@@ -277,6 +291,17 @@
         "required": [
           "sequence"
         ],
+        "type": "object"
+      },
+      "nats-monitoring_internal_dto.ActiveSubscription": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "subject": {
+            "type": "string"
+          }
+        },
         "type": "object"
       },
       "nats-monitoring_internal_dto.ClusterConnectedServer": {
@@ -513,6 +538,12 @@
           "connected_at": {
             "type": "string"
           },
+          "in_bytes": {
+            "type": "integer"
+          },
+          "in_msgs": {
+            "type": "integer"
+          },
           "ip": {
             "type": "string"
           },
@@ -522,7 +553,25 @@
           "name": {
             "type": "string"
           },
+          "out_bytes": {
+            "type": "integer"
+          },
+          "out_msgs": {
+            "type": "integer"
+          },
+          "pending_bytes": {
+            "type": "integer"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "rtt": {
+            "type": "string"
+          },
           "server": {
+            "type": "string"
+          },
+          "server_id": {
             "type": "string"
           },
           "subs_count": {
@@ -1232,6 +1281,12 @@
           },
           "status": {
             "type": "string"
+          },
+          "subscriptions": {
+            "items": {
+              "$ref": "#/components/schemas/nats-monitoring_internal_dto.ActiveSubscription"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -1431,6 +1486,27 @@
           }
         },
         "summary": "Create an alert",
+        "tags": [
+          "alerts"
+        ]
+      }
+    },
+    "/alerts/check": {
+      "post": {
+        "description": "Evaluates all enabled alert conditions immediately and returns how many triggered",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/internal_handlers.CheckAlertsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Check alerts now",
         "tags": [
           "alerts"
         ]
@@ -3303,7 +3379,7 @@
     },
     "/messages/page": {
       "get": {
-        "description": "Returns paginated messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.",
+        "description": "Returns paginated messages from a stream.",
         "parameters": [
           {
             "description": "Stream name",
@@ -3344,7 +3420,7 @@
             },
             "description": "Bad Request"
           },
-          "501": {
+          "500": {
             "content": {
               "application/json": {
                 "schema": {
@@ -3352,7 +3428,7 @@
                 }
               }
             },
-            "description": "Not Implemented"
+            "description": "Internal Server Error"
           }
         },
         "summary": "Get paginated stream messages",

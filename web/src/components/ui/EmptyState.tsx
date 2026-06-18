@@ -1,44 +1,17 @@
 import { LucideIcon } from "lucide-react";
 
 interface EmptyStateProps {
-  /**
-   * Icon to display
-   */
   icon?: LucideIcon;
-
-  /**
-   * Main heading
-   */
   title: string;
-
-  /**
-   * Optional description
-   */
   description?: string;
-
-  /**
-   * Optional action button
-   */
   action?: {
     label: string;
     onClick: () => void;
   };
-
-  /**
-   * Size variant
-   * @default "normal"
-   */
   size?: "small" | "normal" | "large";
-
-  /**
-   * Custom icon class
-   */
   iconClassName?: string;
 }
 
-/**
- * EmptyState displays a placeholder when there's no data
- */
 export default function EmptyState({
   icon: Icon,
   title,
@@ -54,9 +27,9 @@ export default function EmptyState({
   };
 
   const iconSize = {
-    small: "w-10 h-10",
-    normal: "w-16 h-16",
-    large: "w-20 h-20",
+    small: "h-10 w-10",
+    normal: "h-16 w-16",
+    large: "h-20 w-20",
   };
 
   const titleSize = {
@@ -68,14 +41,14 @@ export default function EmptyState({
   return (
     <div className={`card text-center ${sizeClasses[size]}`}>
       {Icon && (
-        <Icon
-          className={`${iconSize[size]} ${iconClassName || "text-dark-muted"} mx-auto mb-4 opacity-50`}
-        />
+        <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-dark-bg/60 ${iconClassName || "text-dark-muted"}`}>
+          <Icon className={`${iconSize[size]}`} />
+        </div>
       )}
-      <h3 className={`${titleSize[size]} font-medium mb-2`}>{title}</h3>
-      {description && <p className="text-dark-muted mb-6">{description}</p>}
+      <h3 className={`${titleSize[size]} font-semibold text-dark-text`}>{title}</h3>
+      {description && <p className="mt-2 text-sm leading-6 text-dark-muted">{description}</p>}
       {action && (
-        <button onClick={action.onClick} className="btn-primary">
+        <button onClick={action.onClick} className="btn-primary mt-6">
           {action.label}
         </button>
       )}

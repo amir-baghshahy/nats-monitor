@@ -1,7 +1,7 @@
 import type { ConnectionConfig, ConnectionStatus } from "../types";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { TenancyService } from "../types";
 import {
   Server,
   Plus,
@@ -14,6 +14,7 @@ import {
   Globe,
   Star,
 } from "lucide-react";
+import { PageError, PageLoading } from "../components/ui/PageState";
 
 type ConnectionTestResult = {
   healthy?: boolean;
@@ -31,23 +32,27 @@ export default function Tenancy() {
   );
   const queryClient = useQueryClient();
 
-  const { data: connections } = useQuery({
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return "Unable to load tenancy data";
+  };
+
+  const { data: connections, isLoading: connectionsLoading, error: connectionsError, refetch: refetchConnections } = useQuery({
     queryKey: ["tenancyConnections"],
-    queryFn: () =>
-      axios.get("/api/tenancy/connections").then((res) => res.data),
+    queryFn: () => TenancyService.getTenancyConnections(),
     refetchInterval: 30000,
   });
 
-  const { data: statuses } = useQuery({
+  const { data: statuses, isLoading: statusesLoading, error: statusesError } = useQuery({
     queryKey: ["tenancyStatus"],
     queryFn: () =>
-      axios.get("/api/tenancy/status").then((res) => res.data.statuses || []),
+      TenancyService.getTenancyStatus() as unknown as Promise<{ statuses: ConnectionStatus[] }>,
     refetchInterval: 15000,
   });
 
   const createMutation = useMutation({
     mutationFn: (data: Partial<ConnectionConfig>) =>
-      axios.post("/api/tenancy/connections", data),
+      TenancyService.postTenancyConnections(data as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
       setShowModal(false);
@@ -61,7 +66,7 @@ export default function Tenancy() {
     }: {
       id: string;
       data: Partial<ConnectionConfig>;
-    }) => axios.put(`/api/tenancy/connections/${id}`, data),
+    }) => TenancyService.putTenancyConnections(id, data as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
       setEditingConnection(null);
@@ -70,7 +75,7 @@ export default function Tenancy() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => axios.delete(`/api/tenancy/connections/${id}`),
+    mutationFn: (id: string) => TenancyService.deleteTenancyConnections(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
     },
@@ -78,7 +83,7 @@ export default function Tenancy() {
 
   const setDefaultMutation = useMutation({
     mutationFn: (id: string) =>
-      axios.get(`/api/tenancy/connections/${id}/default`),
+      TenancyService.getTenancyConnectionsDefault(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
     },
@@ -86,14 +91,14 @@ export default function Tenancy() {
 
   const testConnectionMutation = useMutation({
     mutationFn: (url: string) =>
-      axios.post("/api/tenancy/connections/test", { url }),
+      TenancyService.postTenancyConnectionsTest({ url }),
     onSuccess: (data) => {
-      setTestResult(data.data as ConnectionTestResult);
+      setTestResult(data as ConnectionTestResult);
     },
   });
 
   const getStatusForConnection = (id: string) => {
-    return statuses?.find((s: ConnectionStatus) => s.id === id);
+    return (statuses as { statuses: ConnectionStatus[] } | undefined)?.statuses.find((s: ConnectionStatus) => s.id === id);
   };
 
   const handleTest = (url: string) => {
@@ -122,6 +127,19 @@ export default function Tenancy() {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
   };
+
+  if (connectionsLoading || statusesLoading) {
+    return <PageLoading text="Loading connections..." />;
+  }
+
+  if (connectionsError || statusesError) {
+    return (
+      <PageError
+        message={getErrorMessage(connectionsError || statusesError)}
+        onRetry={refetchConnections}
+      />
+    );
+  }
 
   const stats = {
     total: connections?.connections?.length || 0,

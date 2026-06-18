@@ -1,8 +1,7 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   RefreshCw,
-  Search,
-  Filter,
   XCircle,
   Server,
   Users,
@@ -11,17 +10,8 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
 import { useToast } from "../components/Toast";
+import ConnectionFilters from "../components/connections/ConnectionFilters";
 import { HealthService } from "../types";
 import type { nats_monitoring_internal_dto_ConnectionInfo as ConnectionInfo } from "../types";
 
@@ -75,8 +65,12 @@ export default function Connections() {
 
   const servers = [
     "all",
-    ...new Set(
-      connections.map((c: ConnectionInfo) => c.server).filter(Boolean),
+    ...Array.from(
+      new Set(
+        connections
+          .map((c: ConnectionInfo) => c.server)
+          .filter((server): server is string => Boolean(server)),
+      ),
     ),
   ];
   const serverData = servers
@@ -179,65 +173,60 @@ export default function Connections() {
 
       <div className="mb-6">
         <div className="card">
-          <h3 className="text-lg font-semibold mb-4">Server Distribution</h3>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={serverData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-                <XAxis dataKey="server" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "1px solid #374151",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Bar
-                  dataKey="connections"
-                  fill="#8b5cf6"
-                  radius={[8, 8, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-semibold">Server Distribution</h3>
+              <p className="text-sm text-dark-muted">
+                Connection spread across NATS servers
+              </p>
+            </div>
+            <span className="rounded-full bg-primary-500/10 px-3 py-1 text-sm text-primary-300">
+              {filteredConnections.length} total
+            </span>
           </div>
+
+          {serverData.length > 0 ? (
+            <div className="space-y-4">
+              {serverData.map((server) => {
+                const percentage =
+                  filteredConnections.length > 0
+                    ? Math.round((server.connections / filteredConnections.length) * 100)
+                    : 0;
+
+                return (
+                  <div key={server.server} className="space-y-2">
+                    <div className="flex items-center justify-between gap-4 text-sm">
+                      <span className="truncate font-medium">{server.server}</span>
+                      <span className="text-dark-muted">
+                        {server.connections} · {percentage}%
+                      </span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-dark-bg">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-primary-500 to-violet-500"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-dark-border bg-dark-bg/30 p-8 text-center text-dark-muted">
+              <Network className="mx-auto mb-3 h-10 w-10 opacity-50" />
+              <p>No server distribution data available.</p>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="card mb-6">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-muted" />
-            <input
-              type="text"
-              placeholder="Search by user or IP..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="input pl-10 w-full"
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <select
-              value={filterServer}
-              onChange={(e) => setFilterServer(e.target.value)}
-              className="input"
-            >
-              <option value="all">All Servers</option>
-              {servers
-                .filter((s): s is string => s !== "all")
-                .map((server) => (
-                  <option key={server} value={server}>
-                    {server}
-                  </option>
-                ))}
-            </select>
-            <button className="btn-secondary flex items-center gap-2">
-              <Filter className="w-4 h-4" />
-              More Filters
-            </button>
-          </div>
-        </div>
-      </div>
+      <ConnectionFilters
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        filterServer={filterServer}
+        setFilterServer={setFilterServer}
+        servers={servers}
+      />
 
       <div className="card overflow-hidden p-0">
         {isLoading ? (

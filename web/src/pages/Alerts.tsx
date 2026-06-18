@@ -1,7 +1,7 @@
 import type { Alert, AlertTrigger } from "../types";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { AlertsService } from "../types";
 import {
   Bell,
   Plus,
@@ -16,7 +16,10 @@ import {
   ToggleLeft,
   ToggleRight,
   Filter,
+  Zap,
 } from "lucide-react";
+import { PageError, PageLoading } from "../components/ui/PageState";
+import { useToast } from "../components/Toast";
 
 const SEVERITY_COLORS = {
   info: "bg-blue-500/20 text-blue-400 border-blue-500/50",
@@ -31,38 +34,48 @@ export default function Alerts() {
   const [filterSeverity, setFilterSeverity] = useState<string>("all");
 
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-  const { data: alerts } = useQuery({
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message;
+    return "Unable to load alerts";
+  };
+
+  const { data: alerts, isLoading: alertsLoading, error: alertsError, refetch: refetchAlerts } = useQuery({
     queryKey: ["alerts"],
-    queryFn: () => axios.get("/api/alerts").then((res) => res.data),
+    queryFn: () => AlertsService.getAlerts() as Promise<Alert[]>,
     refetchInterval: 10000,
   });
 
-  const { data: triggers } = useQuery({
+  const { data: triggers, isLoading: triggersLoading, error: triggersError, refetch: refetchTriggers } = useQuery({
     queryKey: ["alertTriggers"],
-    queryFn: () => axios.get("/api/alerts/triggers").then((res) => res.data),
+    queryFn: () => AlertsService.getAlertsTriggers() as Promise<AlertTrigger[]>,
     refetchInterval: 5000,
     enabled: activeTab === "triggers",
   });
 
   const createAlertMutation = useMutation({
-    mutationFn: (data: Partial<Alert>) => axios.post("/api/alerts", data),
+    mutationFn: (data: Partial<Alert>) => AlertsService.postAlerts(data as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
       setShowCreateModal(false);
+      toast("success", "Alert created");
     },
   });
 
   const updateAlertMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Alert> }) =>
-      axios.put(`/api/alerts/${id}`, data),
+      AlertsService.putAlerts(id, data as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
+      setSelectedAlert(null);
+      setShowCreateModal(false);
+      toast("success", "Alert updated");
     },
   });
 
   const deleteAlertMutation = useMutation({
-    mutationFn: (id: string) => axios.delete(`/api/alerts/${id}`),
+    mutationFn: (id: string) => AlertsService.deleteAlerts(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
     },
@@ -70,10 +83,10 @@ export default function Alerts() {
 
   const toggleAlertMutation = useMutation({
     mutationFn: (alert: Alert) =>
-      axios.put(`/api/alerts/${alert.id}`, {
+      AlertsService.putAlerts(alert.id, {
         ...alert,
         enabled: !alert.enabled,
-      }),
+      } as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alerts"] });
     },
@@ -81,9 +94,23 @@ export default function Alerts() {
 
   const ackTriggerMutation = useMutation({
     mutationFn: (id: string) =>
-      axios.post(`/api/alerts/triggers/${id}/ack`, {}),
+      AlertsService.postAlertsTriggersAck(id, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["alertTriggers"] });
+    },
+  });
+
+  const checkAlertsMutation = useMutation({
+    mutationFn: () => AlertsService.postAlertsCheck(),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["alertTriggers"] });
+      toast(
+        "success",
+        `${data.triggered} alert${data.triggered === 1 ? "" : "s"} triggered from ${data.evaluated} checked`,
+      );
+    },
+    onError: (error: any) => {
+      toast("error", error.response?.data?.error || "Failed to check alerts");
     },
   });
 
@@ -92,6 +119,26 @@ export default function Alerts() {
       if (filterSeverity === "all") return true;
       return alert.severity === filterSeverity;
     }) || [];
+
+  if (alertsLoading || (activeTab === "triggers" && triggersLoading)) {
+    return (
+      <PageLoading
+        text={activeTab === "triggers" ? "Loading alert triggers..." : "Loading alerts..."}
+      />
+    );
+  }
+
+  if (alertsError || triggersError) {
+    return (
+      <PageError
+        message={getErrorMessage(alertsError || triggersError)}
+        onRetry={() => {
+          refetchAlerts();
+          refetchTriggers();
+        }}
+      />
+    );
+  }
 
   const formatTimestamp = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();
@@ -127,6 +174,14 @@ export default function Alerts() {
         >
           <Plus className="w-4 h-4" />
           New Alert
+        </button>
+        <button
+          onClick={() => checkAlertsMutation.mutate()}
+          disabled={checkAlertsMutation.isPending}
+          className="btn-secondary flex items-center gap-2 disabled:opacity-50"
+        >
+          <Zap className="w-4 h-4" />
+          Check Now
         </button>
       </div>
 

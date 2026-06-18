@@ -112,6 +112,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/alerts/check": {
+            "post": {
+                "description": "Evaluates all enabled alert conditions immediately and returns how many triggered",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Check alerts now",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.CheckAlertsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/alerts/triggers": {
             "get": {
                 "description": "Returns triggered alert instances, optionally filtered",
@@ -1666,7 +1686,7 @@ const docTemplate = `{
         },
         "/messages/page": {
             "get": {
-                "description": "Returns paginated messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.",
+                "description": "Returns paginated messages from a stream.",
                 "produces": [
                     "application/json"
                 ],
@@ -1704,8 +1724,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
                         }
                     },
-                    "501": {
-                        "description": "Not Implemented",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
                         }
@@ -3516,6 +3536,20 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_handlers.CheckAlertsResponse": {
+            "type": "object",
+            "properties": {
+                "evaluated": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "integer"
+                },
+                "triggered": {
+                    "type": "integer"
+                }
+            }
+        },
         "internal_handlers.ConnectionConfig": {
             "type": "object",
             "properties": {
@@ -3675,6 +3709,17 @@ const docTemplate = `{
             "properties": {
                 "sequence": {
                     "type": "integer"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ActiveSubscription": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
                 }
             }
         },
@@ -3913,6 +3958,12 @@ const docTemplate = `{
                 "connected_at": {
                     "type": "string"
                 },
+                "in_bytes": {
+                    "type": "integer"
+                },
+                "in_msgs": {
+                    "type": "integer"
+                },
                 "ip": {
                     "type": "string"
                 },
@@ -3922,7 +3973,25 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "out_bytes": {
+                    "type": "integer"
+                },
+                "out_msgs": {
+                    "type": "integer"
+                },
+                "pending_bytes": {
+                    "type": "integer"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "rtt": {
+                    "type": "string"
+                },
                 "server": {
+                    "type": "string"
+                },
+                "server_id": {
                     "type": "string"
                 },
                 "subs_count": {
@@ -4632,6 +4701,12 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "subscriptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/nats-monitoring_internal_dto.ActiveSubscription"
+                    }
                 }
             }
         },

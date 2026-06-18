@@ -3,3 +3,8 @@ export { default as MessageList } from "./MessageList";
 export { default as SubscriptionBar } from "./SubscriptionBar";
 export { default as PublishForm } from "./PublishForm";
 export { default as RequestForm } from "./RequestForm";
+export { default as MessagingHeader } from "./MessagingHeader";
+export { default as MessagingTabs } from "./MessagingTabs";
+export { default as SubjectExplorer } from "./SubjectExplorer";
+export { default as ServiceDiscoveryPanel } from "./ServiceDiscoveryPanel";
+export { default as TrafficMonitorPanel } from "./TrafficMonitorPanel";

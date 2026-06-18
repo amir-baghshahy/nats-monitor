@@ -49,11 +49,12 @@ fmt:
 	@echo "Formatting Go code..."
 	@go fmt ./...
 
-# Generate Swagger 2.0 and OpenAPI 3.1 specs
+# Generate a single canonical OpenAPI 3.1 spec
 openapi:
-	@echo "Generating OpenAPI specs..."
-	@swag init -g cmd/server/main.go -o api/swagger --parseDependency --parseInternal
+	@echo "Generating OpenAPI 3.1 spec..."
+	@swag init -g cmd/server/main.go -o api/swagger --parseDependency --parseInternal -ot go,json
 	@go run cmd/openapi3gen/main.go
+	@rm -f api/swagger/swagger.json api/swagger/swagger.yaml api/swagger/openapi.yaml
 
 # Download Go dependencies
 deps:

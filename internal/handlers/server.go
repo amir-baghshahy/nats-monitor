@@ -1,23 +1,28 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"nats-monitoring/internal/constants"
 	"nats-monitoring/internal/dto"
+	"nats-monitoring/internal/models"
 	"nats-monitoring/internal/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ServerHandler handles server-related HTTP requests
 type ServerHandler struct {
-	useCase *services.ServerUseCase
+	useCase        *services.ServerUseCase
+	messageUseCase *services.MessageUseCase
 }
 
 // NewServerHandler creates a new server handler
-func NewServerHandler(useCase *services.ServerUseCase) *ServerHandler {
-	return &ServerHandler{useCase: useCase}
+func NewServerHandler(useCase *services.ServerUseCase, messageUseCase *services.MessageUseCase) *ServerHandler {
+	return &ServerHandler{useCase: useCase, messageUseCase: messageUseCase}
 }
 
 // GetDashboardStats returns dashboard statistics
@@ -111,8 +116,16 @@ func (h *ServerHandler) GetConnections(c *gin.Context) {
 			Name:         conn.Name,
 			User:         conn.User,
 			IP:           conn.IP,
+			Port:         conn.Port,
 			Server:       conn.Server,
+			ServerID:     conn.ServerID,
 			SubsCount:    conn.SubsCount,
+			RTT:          conn.RTT,
+			PendingBytes: conn.PendingBytes,
+			InMsgs:       conn.InMsgs,
+			OutMsgs:      conn.OutMsgs,
+			InBytes:      conn.InBytes,
+			OutBytes:     conn.OutBytes,
 			ConnectedAt:  formatTime(conn.ConnectedAt),
 			LastActivity: formatTime(conn.LastActivity),
 		}
@@ -169,44 +182,117 @@ func (h *ServerHandler) GetSubjects(c *gin.Context) {
 func (h *ServerHandler) GetMessages(c *gin.Context) {
 	stream := c.Query("stream")
 	if stream == "" {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "stream parameter required",
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "stream parameter required"})
+		return
+	}
+
+	limit := 25
+	if value := c.Query("limit"); value != "" {
+		if parsed, err := strconv.Atoi(value); err == nil && parsed > 0 {
+			limit = parsed
+		}
+	}
+	if limit > constants.MaxFetchCount {
+		limit = constants.MaxFetchCount
+	}
+
+	messages, err := h.messageUseCase.ListMessages(c.Request.Context(), stream, models.MessageFilter{
+		Limit: limit,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Error:   "Failed to get messages",
+			Details: err.Error(),
 		})
 		return
 	}
 
-	// This still requires the use case to be implemented
-	// For now, keeping the old logic but marking for refactoring
-	c.JSON(http.StatusNotImplemented, dto.ErrorResponse{
-		Error: "Endpoint requires refactoring",
+	c.JSON(http.StatusOK, dto.StreamMessagesResponse{
+		Stream:   stream,
+		Messages: toStreamMessages(messages),
+		Total:    len(messages),
 	})
 }
 
 // GetStreamMessagesByPage returns paginated messages from a stream
 // @Summary Get paginated stream messages
-// @Description Returns paginated messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.
+// @Description Returns paginated messages from a stream.
 // @Tags messages
 // @Produce json
 // @Param stream query string true "Stream name"
 // @Param page query int false "Page number" default(1)
 // @Param page_size query int false "Page size" default(25)
 // @Failure 400 {object} dto.ErrorResponse
-// @Failure 501 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
 // @Router /messages/page [get]
 func (h *ServerHandler) GetStreamMessagesByPage(c *gin.Context) {
 	stream := c.Query("stream")
 	if stream == "" {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "stream parameter required",
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "stream parameter required"})
+		return
+	}
+
+	page := 1
+	if value := c.Query("page"); value != "" {
+		if parsed, err := strconv.Atoi(value); err == nil && parsed > 0 {
+			page = parsed
+		}
+	}
+
+	pageSize := 25
+	if value := c.Query("page_size"); value != "" {
+		if parsed, err := strconv.Atoi(value); err == nil && parsed > 0 {
+			pageSize = parsed
+		}
+	}
+	if pageSize > constants.MaxFetchCount {
+		pageSize = constants.MaxFetchCount
+	}
+
+	messages, err := h.messageUseCase.ListMessages(c.Request.Context(), stream, models.MessageFilter{
+		Limit: pageSize,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Error:   "Failed to get messages",
+			Details: err.Error(),
 		})
 		return
 	}
 
-	// This still requires the use case to be implemented
-	// For now, keeping the old logic but marking for refactoring
-	c.JSON(http.StatusNotImplemented, dto.ErrorResponse{
-		Error: "Endpoint requires refactoring",
+	start := (page - 1) * pageSize
+	end := start + pageSize
+	if start > len(messages) {
+		messages = []*models.Message{}
+	} else if end > len(messages) {
+		messages = messages[start:]
+	} else {
+		messages = messages[start:end]
+	}
+
+	c.JSON(http.StatusOK, dto.PaginatedMessagesResponse{
+		Stream:   stream,
+		Page:     page,
+		PageSize: pageSize,
+		Total:    len(messages),
+		Messages: toStreamMessages(messages),
 	})
+}
+
+func toStreamMessages(messages []*models.Message) []dto.StreamMessage {
+	result := make([]dto.StreamMessage, 0, len(messages))
+	for _, msg := range messages {
+		result = append(result, dto.StreamMessage{
+			Subject:    msg.Subject,
+			Sequence:   msg.Sequence,
+			Data:       string(msg.Data),
+			DataBase64: base64.StdEncoding.EncodeToString(msg.Data),
+			Headers:    msg.Headers,
+			Timestamp:  msg.Timestamp.Format(time.RFC3339),
+			Size:       len(msg.Data),
+		})
+	}
+	return result
 }
 
 // GetSystemMetrics returns system metrics from NATS server
@@ -302,11 +388,16 @@ func (h *ServerHandler) GetRateMetrics(c *gin.Context) {
 // @Router /connections/{id} [delete]
 func (h *ServerHandler) TerminateConnection(c *gin.Context) {
 	id := c.Param("id")
-	c.JSON(http.StatusNotImplemented, dto.ErrorResponse{
-		Error:   "Connection termination requires NATS monitoring",
-		Details: "Feature not available without NATS server monitoring enabled",
-		Code:    id,
-	})
+	if err := h.useCase.TerminateConnection(c.Request.Context(), id); err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Error:   "Failed to terminate connection",
+			Details: err.Error(),
+			Code:    id,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "Connection terminated successfully"})
 }
 
 // HealthCheck handles GET /health
