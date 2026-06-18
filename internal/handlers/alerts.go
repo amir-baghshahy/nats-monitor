@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 )
 
 // AlertSeverity represents the severity level of an alert
@@ -276,6 +277,12 @@ func (h *AlertsHandler) getStreamMessageCount(streamName string) (int64, error) 
 }
 
 // ListAlerts returns all alerts
+// @Summary List alerts
+// @Description Returns all configured alert definitions
+// @Tags alerts
+// @Produce json
+// @Success 200 {array} Alert
+// @Router /alerts [get]
 func (h *AlertsHandler) ListAlerts(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -289,10 +296,19 @@ func (h *AlertsHandler) ListAlerts(c *gin.Context) {
 }
 
 // CreateAlert creates a new alert
+// @Summary Create an alert
+// @Description Creates a new alert configuration
+// @Tags alerts
+// @Accept json
+// @Produce json
+// @Param request body Alert true "Alert configuration"
+// @Success 201 {object} Alert
+// @Failure 400 {object} dto.ErrorResponse
+// @Router /alerts [post]
 func (h *AlertsHandler) CreateAlert(c *gin.Context) {
 	var alert Alert
 	if err := c.ShouldBindJSON(&alert); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
@@ -312,6 +328,14 @@ func (h *AlertsHandler) CreateAlert(c *gin.Context) {
 }
 
 // GetAlert returns a specific alert
+// @Summary Get an alert
+// @Description Returns a single alert configuration by ID
+// @Tags alerts
+// @Produce json
+// @Param id path string true "Alert ID"
+// @Success 200 {object} Alert
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /alerts/{id} [get]
 func (h *AlertsHandler) GetAlert(c *gin.Context) {
 	id := c.Param("id")
 
@@ -320,7 +344,7 @@ func (h *AlertsHandler) GetAlert(c *gin.Context) {
 	h.mu.RUnlock()
 
 	if !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "alert not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "alert not found"})
 		return
 	}
 
@@ -328,12 +352,23 @@ func (h *AlertsHandler) GetAlert(c *gin.Context) {
 }
 
 // UpdateAlert updates an alert
+// @Summary Update an alert
+// @Description Updates an existing alert configuration
+// @Tags alerts
+// @Accept json
+// @Produce json
+// @Param id path string true "Alert ID"
+// @Param request body Alert true "Alert configuration"
+// @Success 200 {object} Alert
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /alerts/{id} [put]
 func (h *AlertsHandler) UpdateAlert(c *gin.Context) {
 	id := c.Param("id")
 
 	var updates Alert
 	if err := c.ShouldBindJSON(&updates); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
@@ -342,7 +377,7 @@ func (h *AlertsHandler) UpdateAlert(c *gin.Context) {
 
 	alert, exists := h.alerts[id]
 	if !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "alert not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "alert not found"})
 		return
 	}
 
@@ -360,6 +395,14 @@ func (h *AlertsHandler) UpdateAlert(c *gin.Context) {
 }
 
 // DeleteAlert deletes an alert
+// @Summary Delete an alert
+// @Description Deletes an alert configuration by ID
+// @Tags alerts
+// @Produce json
+// @Param id path string true "Alert ID"
+// @Success 200 {object} dto.SuccessResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /alerts/{id} [delete]
 func (h *AlertsHandler) DeleteAlert(c *gin.Context) {
 	id := c.Param("id")
 
@@ -367,16 +410,24 @@ func (h *AlertsHandler) DeleteAlert(c *gin.Context) {
 	defer h.mu.Unlock()
 
 	if _, exists := h.alerts[id]; !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "alert not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "alert not found"})
 		return
 	}
 
 	delete(h.alerts, id)
 
-	c.JSON(http.StatusOK, gin.H{"message": "alert deleted"})
+	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "alert deleted"})
 }
 
 // ListTriggers returns alert triggers
+// @Summary List alert triggers
+// @Description Returns triggered alert instances, optionally filtered
+// @Tags alerts
+// @Produce json
+// @Param alert_id query string false "Filter by alert ID"
+// @Param acked query string false "Filter by acked state (true/false)"
+// @Success 200 {array} AlertTrigger
+// @Router /alerts/triggers [get]
 func (h *AlertsHandler) ListTriggers(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -409,6 +460,15 @@ func (h *AlertsHandler) ListTriggers(c *gin.Context) {
 }
 
 // AckTrigger acknowledges a trigger
+// @Summary Acknowledge an alert trigger
+// @Description Acknowledges one or more triggers for the given alert ID
+// @Tags alerts
+// @Accept json
+// @Produce json
+// @Param id path string true "Alert ID"
+// @Param request body object false "Acknowledging user" example({"user":"alice"})
+// @Success 200 {object} dto.SuccessResponse
+// @Router /alerts/triggers/{id}/ack [post]
 func (h *AlertsHandler) AckTrigger(c *gin.Context) {
 	id := c.Param("id")
 
@@ -431,5 +491,5 @@ func (h *AlertsHandler) AckTrigger(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "trigger acknowledged"})
+	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "trigger acknowledged"})
 }

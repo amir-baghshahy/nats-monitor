@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"nats-monitoring/internal/constants"
-	"nats-monitoring/internal/models"
 	"nats-monitoring/internal/dto"
+	"nats-monitoring/internal/models"
 )
 
 // StreamToResponse converts a domain Stream to StreamResponse DTO

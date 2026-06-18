@@ -119,6 +119,15 @@ func (h *HistoryHandler) collectData() {
 }
 
 // GetStreamHistory returns historical data for a stream
+// @Summary Get stream history
+// @Description Returns historical metric data points for a stream
+// @Tags history
+// @Produce json
+// @Param name path string true "Stream name"
+// @Param type query string false "Metric type (messages, bytes)" default(messages)
+// @Param duration query string false "Time window (1h, 6h, 24h, 7d)" default(24h)
+// @Success 200 {object} object "stream history"
+// @Router /history/streams/{name} [get]
 func (h *HistoryHandler) GetStreamHistory(c *gin.Context) {
 	streamName := c.Param("name")
 	metricType := c.DefaultQuery("type", "messages") // messages, bytes
@@ -163,6 +172,15 @@ func (h *HistoryHandler) GetStreamHistory(c *gin.Context) {
 }
 
 // GetAnalysis returns statistical analysis of metrics
+// @Summary Get stream metric analysis
+// @Description Returns statistical analysis (min/max/avg/trend) of a stream metric
+// @Tags history
+// @Produce json
+// @Param name path string true "Stream name"
+// @Param type query string false "Metric type (messages, bytes)" default(messages)
+// @Param duration query string false "Time window (1h, 6h, 24h, 7d)" default(24h)
+// @Success 200 {object} object "metric analysis"
+// @Router /history/streams/{name}/analysis [get]
 func (h *HistoryHandler) GetAnalysis(c *gin.Context) {
 	streamName := c.Param("name")
 	metricType := c.DefaultQuery("type", "messages")
@@ -256,6 +274,13 @@ func (h *HistoryHandler) GetAnalysis(c *gin.Context) {
 }
 
 // GetReport returns a summary report of all streams
+// @Summary Get history report
+// @Description Returns a summary report of all streams with latest metric values
+// @Tags history
+// @Produce json
+// @Param duration query string false "Time window" default(24h)
+// @Success 200 {object} object "history report"
+// @Router /history/report [get]
 func (h *HistoryHandler) GetReport(c *gin.Context) {
 	duration := c.DefaultQuery("duration", "24h")
 

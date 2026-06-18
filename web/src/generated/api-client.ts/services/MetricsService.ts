@@ -2,10 +2,35 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { internal_handlers_MetricsResponse } from '../models/internal_handlers_MetricsResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class MetricsService {
+    /**
+     * Get metrics
+     * Returns collected stream metrics series, optionally filtered by stream, type and duration
+     * @param stream Filter by stream name
+     * @param type Metric type (messages, bytes, lag)
+     * @param duration Time window (15m, 1h, 6h, 24h)
+     * @returns internal_handlers_MetricsResponse OK
+     * @throws ApiError
+     */
+    public static getMetrics(
+        stream?: string,
+        type?: string,
+        duration: string = '1h',
+    ): CancelablePromise<internal_handlers_MetricsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/metrics',
+            query: {
+                'stream': stream,
+                'type': type,
+                'duration': duration,
+            },
+        });
+    }
     /**
      * Get rate metrics
      * @param duration Duration in seconds
@@ -14,7 +39,7 @@ export class MetricsService {
      */
     public static getMetricsRates(
         duration: number = 60,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/metrics/rates',
@@ -27,11 +52,53 @@ export class MetricsService {
         });
     }
     /**
+     * Get stream metrics
+     * Returns collected metric series for a specific stream
+     * @param name Stream name
+     * @returns any stream metrics
+     * @throws ApiError
+     */
+    public static getMetricsStreams(
+        name: string,
+    ): CancelablePromise<Record<string, any>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/metrics/streams/{name}',
+            path: {
+                'name': name,
+            },
+        });
+    }
+    /**
+     * Get consumer metrics
+     * Returns lag, delivery, and ack metrics for a specific consumer
+     * @param name Stream name
+     * @param consumer Consumer name
+     * @returns any consumer metrics
+     * @throws ApiError
+     */
+    public static getMetricsStreamsConsumers(
+        name: string,
+        consumer: string,
+    ): CancelablePromise<Record<string, any>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/metrics/streams/{name}/consumers/{consumer}',
+            path: {
+                'name': name,
+                'consumer': consumer,
+            },
+            errors: {
+                404: `Not Found`,
+            },
+        });
+    }
+    /**
      * Get system metrics
      * @returns any System metrics
      * @throws ApiError
      */
-    public static getMetricsSystem(): CancelablePromise<any> {
+    public static getMetricsSystem(): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/metrics/system',

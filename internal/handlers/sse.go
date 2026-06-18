@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 )
 
 // SSEEvent represents a Server-Sent Event
@@ -275,6 +276,14 @@ func (h *SSEHub) Close() {
 }
 
 // HandleSSE handles SSE connections
+// @Summary Server-Sent Events stream
+// @Description Opens a Server-Sent Events stream for real-time stream/consumer/dashboard updates
+// @Tags events
+// @Produce text/event-stream
+// @Param channel query string false "Event channel (streams, consumers, dashboard, all)" default(all)
+// @Success 200 {string} string "text/event-stream"
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /events [get]
 func (h *SSEHub) HandleSSE(c *gin.Context) {
 	// Set SSE headers
 	c.Writer.Header().Set("Content-Type", "text/event-stream")
@@ -287,10 +296,9 @@ func (h *SSEHub) HandleSSE(c *gin.Context) {
 		channel = "all"
 	}
 
-	// Get flusher
 	flusher, ok := c.Writer.(http.Flusher)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Streaming not supported"})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Streaming not supported"})
 		return
 	}
 

@@ -4,20 +4,20 @@ import "time"
 
 // Stream represents a NATS JetStream stream
 type Stream struct {
-	Name      string    `json:"name"`
-	Subjects  []string  `json:"subjects"`
-	Storage   string    `json:"storage"`
-	Retention string    `json:"retention"`
-	Replicas  int       `json:"replicas"`
-	Messages  uint64    `json:"messages"`
-	Bytes     uint64    `json:"bytes"`
-	Consumers int       `json:"consumers"`
-	NumPending uint64   `json:"num_pending"`
-	FirstSeq  uint64    `json:"first_seq"`
-	LastSeq   uint64    `json:"last_seq"`
-	FirstTs   time.Time `json:"first_ts"`
-	LastTs    time.Time `json:"last_ts"`
-	CreatedAt time.Time `json:"created_at"`
+	Name       string    `json:"name"`
+	Subjects   []string  `json:"subjects"`
+	Storage    string    `json:"storage"`
+	Retention  string    `json:"retention"`
+	Replicas   int       `json:"replicas"`
+	Messages   uint64    `json:"messages"`
+	Bytes      uint64    `json:"bytes"`
+	Consumers  int       `json:"consumers"`
+	NumPending uint64    `json:"num_pending"`
+	FirstSeq   uint64    `json:"first_seq"`
+	LastSeq    uint64    `json:"last_seq"`
+	FirstTs    time.Time `json:"first_ts"`
+	LastTs     time.Time `json:"last_ts"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 // StreamConfig represents stream configuration (for compatibility)
@@ -61,17 +61,17 @@ func (s *Stream) ToStreamWithConfig() *StreamWithConfig {
 			Replicas:  s.Replicas,
 		},
 		State: &StreamState{
-			Messages:   s.Messages,
-			Bytes:      s.Bytes,
-			Consumers:  s.Consumers,
-			NumPending: s.NumPending,
-			FirstSeq:   s.FirstSeq,
-			LastSeq:    s.LastSeq,
-			FirstTs:    s.FirstTs,
-			LastTs:     s.LastTs,
+			Messages:    s.Messages,
+			Bytes:       s.Bytes,
+			Consumers:   s.Consumers,
+			NumPending:  s.NumPending,
+			FirstSeq:    s.FirstSeq,
+			LastSeq:     s.LastSeq,
+			FirstTs:     s.FirstTs,
+			LastTs:      s.LastTs,
 			DeleteMarks: 0,
-			MaxAge: "",
-			MaxBytes: 0,
+			MaxAge:      "",
+			MaxBytes:    0,
 		},
 	}
 }

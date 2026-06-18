@@ -1,4 +1,4 @@
-.PHONY: dev dev-backend dev-frontend build clean
+.PHONY: dev dev-backend dev-frontend build clean test fmt deps openapi
 
 # Run both backend and frontend in development
 dev:
@@ -48,6 +48,12 @@ test:
 fmt:
 	@echo "Formatting Go code..."
 	@go fmt ./...
+
+# Generate Swagger 2.0 and OpenAPI 3.1 specs
+openapi:
+	@echo "Generating OpenAPI specs..."
+	@swag init -g cmd/server/main.go -o api/swagger --parseDependency --parseInternal
+	@go run cmd/openapi3gen/main.go
 
 # Download Go dependencies
 deps:

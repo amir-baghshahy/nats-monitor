@@ -81,7 +81,6 @@ type RateMetricsResponse struct {
 	BytesRecvPerSec    uint64  `json:"bytes_recv_per_sec"`
 }
 
-
 // PublishMessageResponse represents a publish message response
 type PublishMessageResponse struct {
 	Success   bool   `json:"success"`
@@ -126,15 +125,15 @@ type SubscriptionsResponse struct {
 
 // ServiceDiscoveryResponse represents service discovery info
 type ServiceDiscoveryResponse struct {
-	Connected     bool   `json:"connected"`
-	Status        string `json:"status"`
-	ServerURL     string `json:"server_url"`
-	ServerCount   int    `json:"server_count"`
-	ServerName    string `json:"server_name"`
-	Version       string `json:"version"`
-	Host          string `json:"host"`
-	Port          int    `json:"port"`
-	MaxPayload    int64  `json:"max_payload"`
-	AuthRequired  bool   `json:"auth_required"`
-	TLSRequired   bool   `json:"tls_required"`
+	Connected    bool   `json:"connected"`
+	Status       string `json:"status"`
+	ServerURL    string `json:"server_url"`
+	ServerCount  int    `json:"server_count"`
+	ServerName   string `json:"server_name"`
+	Version      string `json:"version"`
+	Host         string `json:"host"`
+	Port         int    `json:"port"`
+	MaxPayload   int64  `json:"max_payload"`
+	AuthRequired bool   `json:"auth_required"`
+	TLSRequired  bool   `json:"tls_required"`
 }

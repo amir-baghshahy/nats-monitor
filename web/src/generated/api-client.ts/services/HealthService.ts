@@ -16,7 +16,7 @@ export class HealthService {
      * @returns any Account information
      * @throws ApiError
      */
-    public static getAccountInfo(): CancelablePromise<any> {
+    public static getAccountInfo(): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/account/info',
@@ -92,7 +92,7 @@ export class HealthService {
      * @returns any Server information
      * @throws ApiError
      */
-    public static getServerInfo(): CancelablePromise<any> {
+    public static getServerInfo(): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/server/info',

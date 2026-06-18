@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 )
 
 // KVHandler handles KV store operations
@@ -22,6 +23,13 @@ func NewKVHandler(nc *nats.Conn, js nats.JetStreamContext) *KVHandler {
 }
 
 // ListBuckets returns all KV buckets
+// @Summary List KV buckets
+// @Description Returns all JetStream Key-Value store buckets
+// @Tags kv
+// @Produce json
+// @Success 200 {array} dto.KVBucketInfo
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets [get]
 func (h *KVHandler) ListBuckets(c *gin.Context) {
 	// List all keystores in the current account
 	storeNames := []string{}
@@ -33,7 +41,7 @@ func (h *KVHandler) ListBuckets(c *gin.Context) {
 		req := fmt.Sprintf(`{"offset":%d,"limit":%d}`, offset, limit)
 		msg, err := h.nc.Request("$JS.API.STREAM.LIST", []byte(req), 5*time.Second)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to list streams: %v", err)})
+			c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: fmt.Sprintf("Failed to list streams: %v", err)})
 			return
 		}
 
@@ -55,7 +63,7 @@ func (h *KVHandler) ListBuckets(c *gin.Context) {
 		}
 
 		if err := json.Unmarshal(msg.Data, &response); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to parse response: %v", err)})
+			c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: fmt.Sprintf("Failed to parse response: %v", err)})
 			return
 		}
 
@@ -82,7 +90,7 @@ func (h *KVHandler) ListBuckets(c *gin.Context) {
 	}
 
 	// Get bucket information for each store
-	buckets := []gin.H{}
+	buckets := []dto.KVBucketInfo{}
 	for _, name := range storeNames {
 		// Extract bucket name (remove KV_ prefix)
 		bucketName := name[3:]
@@ -101,11 +109,11 @@ func (h *KVHandler) ListBuckets(c *gin.Context) {
 			continue
 		}
 
-		buckets = append(buckets, gin.H{
-			"name":        name,
-			"bucket_name": bucketName,
-			"values":      status.Values(),
-			"bytes":       status.Bytes(),
+		buckets = append(buckets, dto.KVBucketInfo{
+			Name:       name,
+			BucketName: bucketName,
+			Values:     status.Values(),
+			Bytes:      status.Bytes(),
 		})
 	}
 
@@ -113,29 +121,49 @@ func (h *KVHandler) ListBuckets(c *gin.Context) {
 }
 
 // GetBucket returns detailed bucket information
+// @Summary Get a KV bucket
+// @Description Returns detailed information about a single KV bucket
+// @Tags kv
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Success 200 {object} dto.KVBucketInfo
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name} [get]
 func (h *KVHandler) GetBucket(c *gin.Context) {
 	bucketName := c.Param("name")
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "bucket not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "bucket not found"})
 		return
 	}
 
 	status, err := kv.Status()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"name":   bucketName,
-		"values": status.Values(),
-		"bytes":  status.Bytes(),
+	c.JSON(http.StatusOK, dto.KVBucketInfo{
+		Name:       bucketName,
+		BucketName: bucketName,
+		Values:     status.Values(),
+		Bytes:      status.Bytes(),
 	})
 }
 
 // CreateBucket creates a new KV bucket
+// @Summary Create a KV bucket
+// @Description Creates a new JetStream Key-Value store bucket
+// @Tags kv
+// @Accept json
+// @Produce json
+// @Param request body object true "Bucket configuration" example({"name":"mybucket","history":1,"ttl":0,"max_bytes":0,"max_value_size":0,"compression":false,"replicas":1,"storage":"file"})
+// @Success 201 {object} dto.KVBucketCreateResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets [post]
 func (h *KVHandler) CreateBucket(c *gin.Context) {
 	var req struct {
 		Name         string `json:"name" binding:"required"`
@@ -149,20 +177,20 @@ func (h *KVHandler) CreateBucket(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
 	// Validate bucket name
 	if req.Name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Bucket name is required"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "Bucket name is required"})
 		return
 	}
 
 	// Validate bucket name format (NATS requires valid names)
 	for i, ch := range req.Name {
 		if !((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' || ch == '-' || (i > 0 && (ch == '.'))) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid bucket name: must contain only letters, numbers, underscores, hyphens, and dots (cannot start with dot)"})
+			c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "Invalid bucket name: must contain only letters, numbers, underscores, hyphens, and dots (cannot start with dot)"})
 			return
 		}
 	}
@@ -170,11 +198,11 @@ func (h *KVHandler) CreateBucket(c *gin.Context) {
 	// Validate payload sizes
 	const maxPayloadSize = 1 << 30 // 1GB
 	if req.MaxBytes > maxPayloadSize {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "max_bytes exceeds maximum allowed size"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "max_bytes exceeds maximum allowed size"})
 		return
 	}
 	if req.MaxValueSize > maxPayloadSize {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "max_value_size exceeds maximum allowed size"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "max_value_size exceeds maximum allowed size"})
 		return
 	}
 
@@ -209,61 +237,78 @@ func (h *KVHandler) CreateBucket(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to create bucket: %v", err)})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: fmt.Sprintf("Failed to create bucket: %v", err)})
 		return
 	}
 
 	status, _ := kv.Status()
 
-	c.JSON(http.StatusCreated, gin.H{
-		"name":    req.Name,
-		"values":  status.Values(),
-		"history": history,
+	c.JSON(http.StatusCreated, dto.KVBucketCreateResponse{
+		Name:    req.Name,
+		Values:  status.Values(),
+		History: history,
 	})
 }
 
 // DeleteBucket deletes a KV bucket
+// @Summary Delete a KV bucket
+// @Description Deletes a JetStream Key-Value store bucket
+// @Tags kv
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Success 200 {object} dto.KVBucketDeleteResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name} [delete]
 func (h *KVHandler) DeleteBucket(c *gin.Context) {
 	bucketName := c.Param("name")
 
 	err := h.js.DeleteKeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "bucket deleted", "name": bucketName})
+	c.JSON(http.StatusOK, dto.KVBucketDeleteResponse{Message: "bucket deleted", Name: bucketName})
 }
 
 // ListKeys returns all keys in a bucket
+// @Summary List keys in a KV bucket
+// @Description Returns all keys (with values and revisions) in a KV bucket
+// @Tags kv
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Success 200 {array} dto.KVKeyEntry
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name}/keys [get]
 func (h *KVHandler) ListKeys(c *gin.Context) {
 	bucketName := c.Param("name")
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "bucket not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "bucket not found"})
 		return
 	}
 
 	// List all keys
 	keysList, err := kv.Keys()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	keys := []gin.H{}
+	keys := []dto.KVKeyEntry{}
 	for _, key := range keysList {
 		entry, err := kv.Get(key)
 		if err != nil {
 			continue
 		}
 
-		keys = append(keys, gin.H{
-			"key":      key,
-			"value":    string(entry.Value()),
-			"revision": entry.Revision(),
-			"created":  entry.Created(),
+		keys = append(keys, dto.KVKeyEntry{
+			Key:      key,
+			Value:    string(entry.Value()),
+			Revision: entry.Revision(),
+			Created:  entry.Created(),
 		})
 	}
 
@@ -271,70 +316,90 @@ func (h *KVHandler) ListKeys(c *gin.Context) {
 }
 
 // GetKey returns a specific key from a bucket
+// @Summary Get a KV key
+// @Description Returns the value and revision of a single key in a KV bucket
+// @Tags kv
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Param key query string true "Key name"
+// @Success 200 {object} dto.KVKeyEntry
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name}/key [get]
 func (h *KVHandler) GetKey(c *gin.Context) {
 	bucketName := c.Param("name")
 	key := c.Query("key")
 	if key == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "key parameter required"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "key parameter required"})
 		return
 	}
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "bucket not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "bucket not found"})
 		return
 	}
 
 	entry, err := kv.Get(key)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "key not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "key not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"key":      key,
-		"value":    string(entry.Value()),
-		"revision": entry.Revision(),
-		"created":  entry.Created(),
-		"delta":    entry.Delta(),
+	c.JSON(http.StatusOK, dto.KVKeyEntry{
+		Key:      key,
+		Value:    string(entry.Value()),
+		Revision: entry.Revision(),
+		Created:  entry.Created(),
 	})
 }
 
 // GetKeyHistory returns the history of a key
+// @Summary Get KV key history
+// @Description Returns the revision history of a single key in a KV bucket
+// @Tags kv
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Param key query string true "Key name"
+// @Success 200 {array} dto.KVKeyHistoryEntry
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name}/history [get]
 func (h *KVHandler) GetKeyHistory(c *gin.Context) {
 	bucketName := c.Param("name")
 	key := c.Query("key")
 	if key == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "key parameter required"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "key parameter required"})
 		return
 	}
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "bucket not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "bucket not found"})
 		return
 	}
 
 	// Get history watcher
 	watcher, err := kv.Watch(key, nil, nats.IgnoreDeletes(), nats.UpdatesOnly())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 	defer watcher.Stop()
 
-	history := []gin.H{}
+	history := []dto.KVKeyHistoryEntry{}
 	for entry := range watcher.Updates() {
 		if entry == nil {
 			break
 		}
 
-		history = append(history, gin.H{
-			"key":       entry.Key(),
-			"value":     string(entry.Value()),
-			"revision":  entry.Revision(),
-			"created":   entry.Created(),
-			"operation": entry.Operation().String(),
+		history = append(history, dto.KVKeyHistoryEntry{
+			Key:       entry.Key(),
+			Value:     string(entry.Value()),
+			Revision:  entry.Revision(),
+			Created:   entry.Created(),
+			Operation: entry.Operation().String(),
 		})
 	}
 
@@ -342,6 +407,18 @@ func (h *KVHandler) GetKeyHistory(c *gin.Context) {
 }
 
 // PutKey creates or updates a key
+// @Summary Put a KV key
+// @Description Creates or updates a key in a KV bucket
+// @Tags kv
+// @Accept json
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Param request body object true "Key/value to write" example({"key":"foo","value":"bar"})
+// @Success 200 {object} dto.KVKeyPutResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name}/key [put]
 func (h *KVHandler) PutKey(c *gin.Context) {
 	bucketName := c.Param("name")
 
@@ -351,73 +428,84 @@ func (h *KVHandler) PutKey(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "bucket not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "bucket not found"})
 		return
 	}
 
 	_, err = kv.Put(req.Key, []byte(req.Value))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "key created/updated",
-		"key":     req.Key,
-	})
+	c.JSON(http.StatusOK, dto.KVKeyPutResponse{Message: "key created/updated", Key: req.Key})
 }
 
 // DeleteKey deletes a key
+// @Summary Delete a KV key
+// @Description Deletes a key from a KV bucket
+// @Tags kv
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Param key query string true "Key name"
+// @Success 200 {object} dto.KVKeyDeleteResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name}/key [delete]
 func (h *KVHandler) DeleteKey(c *gin.Context) {
 	bucketName := c.Param("name")
 	key := c.Query("key")
 	if key == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "key parameter required"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "key parameter required"})
 		return
 	}
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "bucket not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "bucket not found"})
 		return
 	}
 
 	err = kv.Delete(key)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "key deleted",
-		"key":     key,
-	})
+	c.JSON(http.StatusOK, dto.KVKeyDeleteResponse{Message: "key deleted", Key: key})
 }
 
 // PurgeBucket removes all deleted keys from a bucket
+// @Summary Purge a KV bucket
+// @Description Removes all deleted-key tombstones from a KV bucket
+// @Tags kv
+// @Produce json
+// @Param name path string true "Bucket name"
+// @Success 200 {object} dto.KVPurgeResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /kv/buckets/{name}/purge [post]
 func (h *KVHandler) PurgeBucket(c *gin.Context) {
 	bucketName := c.Param("name")
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "bucket not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "bucket not found"})
 		return
 	}
 
 	err = kv.PurgeDeletes()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "bucket purged",
-		"name":    bucketName,
-	})
+	c.JSON(http.StatusOK, dto.KVPurgeResponse{Message: "bucket purged", Name: bucketName})
 }

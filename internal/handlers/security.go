@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 )
 
 // SecurityHandler handles security-related operations
@@ -54,6 +55,12 @@ type UserPermissions struct {
 }
 
 // GetSecurityInfo returns security and account information
+// @Summary Get security info
+// @Description Returns account information, limits, and server security settings
+// @Tags security
+// @Produce json
+// @Success 200 {object} object "security info"
+// @Router /security/info [get]
 func (h *SecurityHandler) GetSecurityInfo(c *gin.Context) {
 	// Get account info with fallback
 	accountName := "Unknown"
@@ -130,37 +137,69 @@ func (h *SecurityHandler) GetSecurityInfo(c *gin.Context) {
 
 // GetUsers is not implemented. NATS user management requires operator-level
 // JWT/NKey tooling that is outside the scope of this monitoring service.
+// @Summary List users
+// @Description Returns NATS users (not implemented)
+// @Tags security
+// @Produce json
+// @Success 200 {array} User
+// @Failure 501 {object} dto.ErrorResponse
+// @Router /security/users [get]
 func (h *SecurityHandler) GetUsers(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, gin.H{
-		"error": "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)",
-	})
+	c.JSON(http.StatusNotImplemented, dto.ErrorResponse{Error: "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)"})
 }
 
 // CreateUser is not implemented. NATS user management requires operator-level
 // JWT/NKey tooling that is outside the scope of this monitoring service.
+// @Summary Create a user
+// @Description Creates a NATS user (not implemented)
+// @Tags security
+// @Accept json
+// @Produce json
+// @Param request body User true "User to create"
+// @Success 201 {object} User
+// @Failure 501 {object} dto.ErrorResponse
+// @Router /security/users [post]
 func (h *SecurityHandler) CreateUser(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, gin.H{
-		"error": "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)",
-	})
+	c.JSON(http.StatusNotImplemented, dto.ErrorResponse{Error: "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)"})
 }
 
 // UpdateUser is not implemented. NATS user management requires operator-level
 // JWT/NKey tooling that is outside the scope of this monitoring service.
+// @Summary Update a user
+// @Description Updates a NATS user (not implemented)
+// @Tags security
+// @Accept json
+// @Produce json
+// @Param name path string true "User name"
+// @Param request body User true "User update"
+// @Success 200 {object} User
+// @Failure 501 {object} dto.ErrorResponse
+// @Router /security/users/{name} [put]
 func (h *SecurityHandler) UpdateUser(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, gin.H{
-		"error": "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)",
-	})
+	c.JSON(http.StatusNotImplemented, dto.ErrorResponse{Error: "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)"})
 }
 
 // DeleteUser is not implemented. NATS user management requires operator-level
 // JWT/NKey tooling that is outside the scope of this monitoring service.
+// @Summary Delete a user
+// @Description Deletes a NATS user (not implemented)
+// @Tags security
+// @Produce json
+// @Param name path string true "User name"
+// @Success 200 {object} dto.SuccessResponse
+// @Failure 501 {object} dto.ErrorResponse
+// @Router /security/users/{name} [delete]
 func (h *SecurityHandler) DeleteUser(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, gin.H{
-		"error": "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)",
-	})
+	c.JSON(http.StatusNotImplemented, dto.ErrorResponse{Error: "user management is not implemented; configure users via the NATS operator tooling (nsc/nk)"})
 }
 
 // GetAuditLogs returns audit logs (placeholder for demo)
+// @Summary Get audit logs
+// @Description Returns audit log entries
+// @Tags security
+// @Produce json
+// @Success 200 {array} object
+// @Router /security/audit [get]
 func (h *SecurityHandler) GetAuditLogs(c *gin.Context) {
 	// In a real implementation, this would query an audit log stream
 	logs := []gin.H{
@@ -191,6 +230,12 @@ func (h *SecurityHandler) GetAuditLogs(c *gin.Context) {
 }
 
 // GetConnectionStatus returns connection security status
+// @Summary Get connection security status
+// @Description Returns server details and connection security (auth/TLS) status
+// @Tags security
+// @Produce json
+// @Success 200 {object} object "connection status"
+// @Router /security/connections [get]
 func (h *SecurityHandler) GetConnectionStatus(c *gin.Context) {
 	serverName := "NATS Server"
 	serverHost := "Unknown"

@@ -30,6 +30,16 @@ func NewCoreNATShandler(nc *nats.Conn) *CoreNATShandler {
 }
 
 // PublishMessage publishes a message to a NATS subject
+// @Summary Publish a Core NATS message
+// @Description Publishes a message to a NATS subject (non-JetStream)
+// @Tags core-nats
+// @Accept json
+// @Produce json
+// @Param request body dto.PublishMessageRequest true "Message to publish"
+// @Success 200 {object} dto.PublishMessageResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /core/publish [post]
 func (h *CoreNATShandler) PublishMessage(c *gin.Context) {
 	var req dto.PublishMessageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -81,6 +91,18 @@ func (h *CoreNATShandler) PublishMessage(c *gin.Context) {
 }
 
 // Request sends a request and waits for response
+// @Summary Send a Core NATS request
+// @Description Publishes a request message and waits for a reply (request/reply pattern)
+// @Tags core-nats
+// @Accept json
+// @Produce json
+// @Param request body dto.RequestMessageRequest true "Request message"
+// @Success 200 {object} dto.MessageResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 408 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Failure 503 {object} dto.ErrorResponse
+// @Router /core/request [post]
 func (h *CoreNATShandler) Request(c *gin.Context) {
 	var req dto.RequestMessageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -168,6 +190,15 @@ func (h *CoreNATShandler) Request(c *gin.Context) {
 }
 
 // Subscribe subscribes to a NATS subject with SSE
+// @Summary Subscribe to a subject (SSE stream)
+// @Description Opens a Server-Sent Events stream of messages published to the given subject
+// @Tags core-nats
+// @Produce text/event-stream
+// @Param subject query string true "NATS subject to subscribe to"
+// @Success 200 {string} string "text/event-stream"
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /core/subscribe [get]
 func (h *CoreNATShandler) Subscribe(c *gin.Context) {
 	subject := c.Query("subject")
 	if subject == "" {
@@ -252,6 +283,12 @@ func (h *CoreNATShandler) Subscribe(c *gin.Context) {
 }
 
 // GetActiveSubscriptions returns currently active subscriptions info
+// @Summary Get active subscriptions info
+// @Description Returns connection status and active subscription information
+// @Tags core-nats
+// @Produce json
+// @Success 200 {object} dto.SubscriptionsResponse
+// @Router /core/subscriptions [get]
 func (h *CoreNATShandler) GetActiveSubscriptions(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -267,6 +304,12 @@ func (h *CoreNATShandler) GetActiveSubscriptions(c *gin.Context) {
 }
 
 // GetServiceDiscovery returns information about services in the NATS cluster
+// @Summary Get service discovery info
+// @Description Returns connection and server discovery information for the NATS cluster
+// @Tags core-nats
+// @Produce json
+// @Success 200 {object} dto.ServiceDiscoveryResponse
+// @Router /core/services [get]
 func (h *CoreNATShandler) GetServiceDiscovery(c *gin.Context) {
 	status := h.nc.Status()
 
@@ -293,21 +336,30 @@ func (h *CoreNATShandler) GetServiceDiscovery(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.ServiceDiscoveryResponse{
-		Connected:     h.nc.IsConnected(),
-		Status:        status.String(),
-		ServerURL:     connectedUrl,
-		ServerCount:   serverCount,
-		ServerName:    serverResp.ServerName,
-		Version:       serverResp.Version,
-		Host:          serverResp.HostName,
-		Port:          serverResp.Port,
-		MaxPayload:    serverResp.MaxPayload,
-		AuthRequired:  serverResp.AuthRequired,
-		TLSRequired:   serverResp.TLSRequired,
+		Connected:    h.nc.IsConnected(),
+		Status:       status.String(),
+		ServerURL:    connectedUrl,
+		ServerCount:  serverCount,
+		ServerName:   serverResp.ServerName,
+		Version:      serverResp.Version,
+		Host:         serverResp.HostName,
+		Port:         serverResp.Port,
+		MaxPayload:   serverResp.MaxPayload,
+		AuthRequired: serverResp.AuthRequired,
+		TLSRequired:  serverResp.TLSRequired,
 	})
 }
 
 // MonitorTraffic starts a traffic monitoring session
+// @Summary Monitor subject traffic (SSE stream)
+// @Description Opens a Server-Sent Events stream of traffic for the given subjects
+// @Tags core-nats
+// @Produce text/event-stream
+// @Param subjects query []string true "Subjects to monitor (repeatable)"
+// @Success 200 {string} string "text/event-stream"
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /core/monitor [get]
 func (h *CoreNATShandler) MonitorTraffic(c *gin.Context) {
 	subjects := c.QueryArray("subjects")
 	if len(subjects) == 0 {

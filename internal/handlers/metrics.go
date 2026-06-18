@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 )
 
 // MetricDataPoint represents a single metric data point
@@ -189,6 +190,15 @@ func (h *MetricsHandler) collectMetrics() {
 }
 
 // GetMetrics returns the current metrics
+// @Summary Get metrics
+// @Description Returns collected stream metrics series, optionally filtered by stream, type and duration
+// @Tags metrics
+// @Produce json
+// @Param stream query string false "Filter by stream name"
+// @Param type query string false "Metric type (messages, bytes, lag)"
+// @Param duration query string false "Time window (15m, 1h, 6h, 24h)" default(1h)
+// @Success 200 {object} MetricsResponse
+// @Router /metrics [get]
 func (h *MetricsHandler) GetMetrics(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -254,6 +264,13 @@ func (h *MetricsHandler) GetMetrics(c *gin.Context) {
 }
 
 // GetStreamMetrics returns metrics for a specific stream
+// @Summary Get stream metrics
+// @Description Returns collected metric series for a specific stream
+// @Tags metrics
+// @Produce json
+// @Param name path string true "Stream name"
+// @Success 200 {object} object "stream metrics"
+// @Router /metrics/streams/{name} [get]
 func (h *MetricsHandler) GetStreamMetrics(c *gin.Context) {
 	streamName := c.Param("name")
 
@@ -275,6 +292,15 @@ func (h *MetricsHandler) GetStreamMetrics(c *gin.Context) {
 }
 
 // GetConsumerMetrics returns metrics for consumers
+// @Summary Get consumer metrics
+// @Description Returns lag, delivery, and ack metrics for a specific consumer
+// @Tags metrics
+// @Produce json
+// @Param name path string true "Stream name"
+// @Param consumer path string true "Consumer name"
+// @Success 200 {object} object "consumer metrics"
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /metrics/streams/{name}/consumers/{consumer} [get]
 func (h *MetricsHandler) GetConsumerMetrics(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -282,7 +308,7 @@ func (h *MetricsHandler) GetConsumerMetrics(c *gin.Context) {
 	// Get consumer info
 	info, err := h.js.ConsumerInfo(streamName, consumerName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "consumer not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "consumer not found"})
 		return
 	}
 

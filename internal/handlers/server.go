@@ -74,10 +74,10 @@ func (h *ServerHandler) GetAccountInfo(c *gin.Context) {
 			"count": info.Consumers,
 		},
 		"limits": gin.H{
-			"max_memory":     info.MaxMemory,
-			"max_storage":    info.MaxStorage,
-			"max_streams":    info.MaxStreams,
-			"max_consumers":  info.MaxConsumers,
+			"max_memory":    info.MaxMemory,
+			"max_storage":   info.MaxStorage,
+			"max_streams":   info.MaxStreams,
+			"max_consumers": info.MaxConsumers,
 		},
 		"domain": info.Domain,
 	}
@@ -158,6 +158,14 @@ func (h *ServerHandler) GetSubjects(c *gin.Context) {
 }
 
 // GetMessages returns messages from a stream
+// @Summary Get stream messages
+// @Description Lists messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.
+// @Tags messages
+// @Produce json
+// @Param stream query string true "Stream name"
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 501 {object} dto.ErrorResponse
+// @Router /messages [get]
 func (h *ServerHandler) GetMessages(c *gin.Context) {
 	stream := c.Query("stream")
 	if stream == "" {
@@ -175,6 +183,16 @@ func (h *ServerHandler) GetMessages(c *gin.Context) {
 }
 
 // GetStreamMessagesByPage returns paginated messages from a stream
+// @Summary Get paginated stream messages
+// @Description Returns paginated messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.
+// @Tags messages
+// @Produce json
+// @Param stream query string true "Stream name"
+// @Param page query int false "Page number" default(1)
+// @Param page_size query int false "Page size" default(25)
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 501 {object} dto.ErrorResponse
+// @Router /messages/page [get]
 func (h *ServerHandler) GetStreamMessagesByPage(c *gin.Context) {
 	stream := c.Query("stream")
 	if stream == "" {

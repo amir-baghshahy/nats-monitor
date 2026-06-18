@@ -67,8 +67,8 @@ func (uc *ServerUseCase) GetDashboardStats(ctx context.Context) (*DashboardStats
 	}
 
 	stats := &DashboardStats{
-		Streams:   len(response.Streams),
-		Status:    "connected",
+		Streams:     len(response.Streams),
+		Status:      "connected",
 		Connections: 1,
 	}
 
@@ -83,14 +83,14 @@ func (uc *ServerUseCase) GetDashboardStats(ctx context.Context) (*DashboardStats
 
 // AccountInfo represents JetStream account information
 type AccountInfo struct {
-	Memory     uint64
-	Storage    uint64
-	Streams    int
-	Consumers  int
-	Domain     string
-	MaxMemory  uint64
-	MaxStorage uint64
-	MaxStreams int
+	Memory       uint64
+	Storage      uint64
+	Streams      int
+	Consumers    int
+	Domain       string
+	MaxMemory    uint64
+	MaxStorage   uint64
+	MaxStreams   int
 	MaxConsumers int
 }
 
@@ -214,16 +214,16 @@ func (uc *ServerUseCase) GetSubjects(ctx context.Context) ([]*SubjectInfo, error
 
 // SystemMetrics represents system metrics
 type SystemMetrics struct {
-	MemoryUsed     uint64
-	MemoryMax      uint64
-	MemoryUsage    float64
-	StorageUsed    uint64
-	StorageMax     uint64
-	StorageUsage   float64
-	Connections    int
-	Streams        int
-	Consumers      int
-	Timestamp      int64
+	MemoryUsed   uint64
+	MemoryMax    uint64
+	MemoryUsage  float64
+	StorageUsed  uint64
+	StorageMax   uint64
+	StorageUsage float64
+	Connections  int
+	Streams      int
+	Consumers    int
+	Timestamp    int64
 }
 
 // GetSystemMetrics returns system metrics

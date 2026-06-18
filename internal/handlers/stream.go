@@ -31,7 +31,7 @@ func (h *StreamHandler) ListStreams(c *gin.Context) {
 	streams, err := h.useCase.ListStreams(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: "Failed to list streams",
+			Error:   "Failed to list streams",
 			Details: err.Error(),
 		})
 		return
@@ -54,7 +54,7 @@ func (h *StreamHandler) GetStream(c *gin.Context) {
 	stream, err := h.useCase.GetStream(c.Request.Context(), name)
 	if err != nil {
 		c.JSON(http.StatusNotFound, dto.ErrorResponse{
-			Error: "Stream not found",
+			Error:   "Stream not found",
 			Details: err.Error(),
 		})
 		return
@@ -76,26 +76,26 @@ func (h *StreamHandler) CreateStream(c *gin.Context) {
 	var req dto.CreateStreamRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "Invalid request",
+			Error:   "Invalid request",
 			Details: err.Error(),
 		})
 		return
 	}
 
 	stream := &services.StreamCreate{
-		Name:     req.Name,
-		Subjects: req.Subjects,
-		Storage:  req.Storage,
+		Name:      req.Name,
+		Subjects:  req.Subjects,
+		Storage:   req.Storage,
 		Retention: req.Retention,
-		Replicas: req.Replicas,
-		MaxAge:   req.MaxAge,
-		MaxBytes: req.MaxBytes,
+		Replicas:  req.Replicas,
+		MaxAge:    req.MaxAge,
+		MaxBytes:  req.MaxBytes,
 	}
 
 	result, err := h.useCase.CreateStream(c.Request.Context(), stream)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: "Failed to create stream",
+			Error:   "Failed to create stream",
 			Details: err.Error(),
 		})
 		return
@@ -120,7 +120,7 @@ func (h *StreamHandler) UpdateStream(c *gin.Context) {
 	var req dto.UpdateStreamRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "Invalid request",
+			Error:   "Invalid request",
 			Details: err.Error(),
 		})
 		return
@@ -135,7 +135,7 @@ func (h *StreamHandler) UpdateStream(c *gin.Context) {
 	result, err := h.useCase.UpdateStream(c.Request.Context(), stream)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: "Failed to update stream",
+			Error:   "Failed to update stream",
 			Details: err.Error(),
 		})
 		return
@@ -157,7 +157,7 @@ func (h *StreamHandler) DeleteStream(c *gin.Context) {
 	name := c.Param("name")
 	if err := h.useCase.DeleteStream(c.Request.Context(), name); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: "Failed to delete stream",
+			Error:   "Failed to delete stream",
 			Details: err.Error(),
 		})
 		return
@@ -180,7 +180,7 @@ func (h *StreamHandler) PurgeStream(c *gin.Context) {
 	var req dto.PurgeStreamRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error: "Invalid request",
+			Error:   "Invalid request",
 			Details: err.Error(),
 		})
 		return
@@ -189,7 +189,7 @@ func (h *StreamHandler) PurgeStream(c *gin.Context) {
 	remaining, err := h.useCase.PurgeStream(c.Request.Context(), name, req.Subject, req.Sequence)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error: "Failed to purge stream",
+			Error:   "Failed to purge stream",
 			Details: err.Error(),
 		})
 		return

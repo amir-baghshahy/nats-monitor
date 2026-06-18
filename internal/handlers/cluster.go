@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 )
 
 // ClusterHandler handles cluster monitoring operations
@@ -40,6 +41,13 @@ type NodeInfo struct {
 }
 
 // GetClusterInfo returns cluster information
+// @Summary Get cluster information
+// @Description Returns JetStream cluster topology and server information
+// @Tags cluster
+// @Produce json
+// @Success 200 {object} dto.ClusterInfoResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /cluster/info [get]
 func (h *ClusterHandler) GetClusterInfo(c *gin.Context) {
 	// Get server info using $JS.API.SERVER.PING with fallback
 	serverName := ""
@@ -81,36 +89,42 @@ func (h *ClusterHandler) GetClusterInfo(c *gin.Context) {
 		jsAPI = fmt.Sprintf("%d", accountInfo.API.Level)
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"cluster_name": clusterName,
-		"is_clustered": isClustered,
-		"server_name":  serverName,
-		"cluster_url":  clusterURL,
-		"jetstream": gin.H{
-			"enabled":   true,
-			"domain":    jsDomain,
-			"tier":      jsTier,
-			"api_level": jsAPI,
+	c.JSON(http.StatusOK, dto.ClusterInfoResponse{
+		ClusterName: clusterName,
+		IsClustered: isClustered,
+		ServerName:  serverName,
+		ClusterURL:  clusterURL,
+		JetStream: dto.ClusterJetStreamInfo{
+			Enabled:  true,
+			Domain:   jsDomain,
+			Tier:     jsTier,
+			APILevel: jsAPI,
 		},
 	})
 }
 
 // GetClusterNodes returns information about cluster nodes
+// @Summary Get cluster nodes
+// @Description Returns information about each node in the NATS cluster
+// @Tags cluster
+// @Produce json
+// @Success 200 {object} dto.ClusterNodesResponse
+// @Router /cluster/nodes [get]
 func (h *ClusterHandler) GetClusterNodes(c *gin.Context) {
 	// Try to get cluster info from ROUTERZ
 	msg, err := h.nc.Request("$SYS.CLUSTER.INFO", []byte{}, 2*time.Second)
 	if err != nil {
 		// If not available, return current connection info
-		c.JSON(http.StatusOK, gin.H{
-			"nodes": []gin.H{{
-				"id":      h.nc.ConnectedServerId(),
-				"name":    h.nc.ConnectedUrl(),
-				"current": true,
-				"healthy": h.nc.IsConnected(),
-				"lag":     0,
-				"active":  true,
+		c.JSON(http.StatusOK, dto.ClusterNodesResponse{
+			Nodes: []dto.ClusterNodeResponse{{
+				ID:      h.nc.ConnectedServerId(),
+				Name:    h.nc.ConnectedUrl(),
+				Current: true,
+				Healthy: h.nc.IsConnected(),
+				Lag:     0,
+				Active:  true,
 			}},
-			"clustered": false,
+			Clustered: false,
 		})
 		return
 	}
@@ -126,85 +140,164 @@ func (h *ClusterHandler) GetClusterNodes(c *gin.Context) {
 	}
 
 	if err := json.Unmarshal(msg.Data, &clusterInfo); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	nodes := []gin.H{}
+	nodes := make([]dto.ClusterNodeResponse, 0, len(clusterInfo.Nodes))
 	for _, node := range clusterInfo.Nodes {
-		nodes = append(nodes, gin.H{
-			"id":      node.ID,
-			"name":    node.ID,
-			"current": node.Current,
-			"healthy": !node.Offline,
-			"lag":     0, // Not available without monitoring
-			"active":  node.Active,
+		nodes = append(nodes, dto.ClusterNodeResponse{
+			ID:      node.ID,
+			Name:    node.ID,
+			Current: node.Current,
+			Healthy: !node.Offline,
+			Lag:     0,
+			Active:  node.Active,
 		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"nodes":        nodes,
-		"clustered":    true,
-		"cluster_name": clusterInfo.Name,
+	c.JSON(http.StatusOK, dto.ClusterNodesResponse{
+		Nodes:       nodes,
+		Clustered:   true,
+		ClusterName: clusterInfo.Name,
 	})
 }
 
 // GetStreamReplicas returns replication info for a stream
+// @Summary Get stream replicas
+// @Description Returns replication, mirror, source, and cluster placement info for a stream
+// @Tags cluster
+// @Produce json
+// @Param name path string true "Stream name"
+// @Success 200 {object} dto.ClusterStreamReplicaResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /cluster/streams/{name}/replicas [get]
 func (h *ClusterHandler) GetStreamReplicas(c *gin.Context) {
 	streamName := c.Param("name")
 
 	info, err := h.js.StreamInfo(streamName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "stream not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "stream not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"stream":       streamName,
-		"replicas":     info.Config.Replicas,
-		"placement":    info.Config.Placement,
-		"mirror":       info.Config.Mirror,
-		"sources":      info.Config.Sources,
-		"cluster":      info.Cluster,
-		"is_clustered": info.Cluster != nil,
+	placement := clusterPlacementToResponse(info.Config.Placement)
+	mirror := clusterStreamSourceToResponse(info.Config.Mirror)
+	sources := make([]dto.ClusterStreamSource, 0, len(info.Config.Sources))
+	for _, source := range info.Config.Sources {
+		if source != nil {
+			sources = append(sources, dto.ClusterStreamSource{
+				Name:   source.Name,
+				Domain: source.Domain,
+			})
+		}
+	}
+
+	c.JSON(http.StatusOK, dto.ClusterStreamReplicaResponse{
+		Stream:      streamName,
+		Replicas:    info.Config.Replicas,
+		Placement:   placement,
+		Mirror:      mirror,
+		Sources:     sources,
+		Cluster:     clusterInfoToResponse(info.Cluster),
+		IsClustered: info.Cluster != nil,
 	})
 }
 
 // GetClusterHealth returns overall cluster health
+// @Summary Get cluster health
+// @Description Returns connection and JetStream health status of the cluster
+// @Tags cluster
+// @Produce json
+// @Success 200 {object} dto.ClusterHealthResponse
+// @Failure 503 {object} dto.ClusterHealthResponse
+// @Router /cluster/health [get]
 func (h *ClusterHandler) GetClusterHealth(c *gin.Context) {
 	// Get server health
-	health := gin.H{
-		"connected": h.nc.IsConnected(),
-		"status":    "ok",
+	health := dto.ClusterHealthResponse{
+		Connected: h.nc.IsConnected(),
+		Status:    "ok",
 	}
 
 	if !h.nc.IsConnected() {
-		health["status"] = "disconnected"
+		health.Status = "disconnected"
 		c.JSON(http.StatusServiceUnavailable, health)
 		return
 	}
 
-	// Get server stats
 	status := h.nc.Status()
-	health["server_status"] = status.String()
+	health.ServerStatus = status.String()
 
-	// Get connected server info
-	health["connected_server"] = gin.H{
-		"id":  h.nc.ConnectedServerId(),
-		"url": h.nc.ConnectedUrl(),
+	health.ConnectedServer = &dto.ClusterConnectedServer{
+		ID:  h.nc.ConnectedServerId(),
+		URL: h.nc.ConnectedUrl(),
 	}
 
-	// Check JetStream health
 	accountInfo, err := h.js.AccountInfo()
 	if err != nil {
-		health["jetstream"] = gin.H{"status": "error", "error": err.Error()}
+		health.JetStream = &dto.ClusterJetStreamHealth{Status: "error", Error: err.Error()}
 	} else {
-		health["jetstream"] = gin.H{
-			"status": "ok",
-			"domain": accountInfo.Domain,
-			"tiers":  accountInfo.Tier,
+		health.JetStream = &dto.ClusterJetStreamHealth{
+			Status: "ok",
+			Domain: accountInfo.Domain,
+			Tiers:  accountInfo.Tier,
 		}
 	}
 
 	c.JSON(http.StatusOK, health)
+}
+
+func clusterPlacementToResponse(placement *nats.Placement) *dto.ClusterPlacementResponse {
+	if placement == nil {
+		return nil
+	}
+	return &dto.ClusterPlacementResponse{
+		Cluster: placement.Cluster,
+		Tags:    placement.Tags,
+	}
+}
+
+func clusterStreamSourceToResponse(source *nats.StreamSource) *dto.ClusterStreamSource {
+	if source == nil {
+		return nil
+	}
+	return &dto.ClusterStreamSource{
+		Name:   source.Name,
+		Domain: source.Domain,
+	}
+}
+
+func clusterInfoToResponse(info *nats.ClusterInfo) *dto.ClusterStreamClusterResponse {
+	if info == nil {
+		return nil
+	}
+
+	replicas := make([]dto.ClusterInfoPeerResponse, 0, len(info.Replicas))
+	for _, replica := range info.Replicas {
+		if replica == nil {
+			continue
+		}
+		replicas = append(replicas, dto.ClusterInfoPeerResponse{
+			Name:    replica.Name,
+			Current: replica.Current,
+			Offline: replica.Offline,
+			Active:  uint64(replica.Active),
+			Lag:     replica.Lag,
+		})
+	}
+
+	leaderSince := ""
+	if info.LeaderSince != nil {
+		leaderSince = info.LeaderSince.Format(time.RFC3339)
+	}
+
+	return &dto.ClusterStreamClusterResponse{
+		Name:           info.Name,
+		RaftGroup:      info.RaftGroup,
+		Leader:         info.Leader,
+		LeaderSince:    leaderSince,
+		SystemAccount:  info.SystemAcc,
+		TrafficAccount: info.TrafficAcc,
+		Replicas:       replicas,
+	}
 }

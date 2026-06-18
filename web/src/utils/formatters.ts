@@ -78,8 +78,12 @@ export const detectMessageFormat = (
   try {
     JSON.parse(data);
     return "json";
-  } catch {}
+  } catch {
+    return detectBinaryOrText(data)
+  }
+};
 
+const detectBinaryOrText = (data: string): "binary" | "text" => {
   // Check for binary/non-printable characters
   for (let i = 0; i < Math.min(100, data.length); i++) {
     const code = data.charCodeAt(i);

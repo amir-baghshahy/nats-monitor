@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 )
 
 // ConnectionConfig represents a NATS connection configuration
@@ -47,7 +48,7 @@ type TenancyHandler struct {
 func NewTenancyHandler(natsURL string, nc *nats.Conn) *TenancyHandler {
 	h := &TenancyHandler{
 		connections: make(map[string]*ConnectionConfig),
-		nc: nc,
+		nc:          nc,
 	}
 
 	// Add default connection from environment
@@ -79,6 +80,12 @@ func NewTenancyHandler(natsURL string, nc *nats.Conn) *TenancyHandler {
 }
 
 // ListConnections returns all configured connections
+// @Summary List tenancy connections
+// @Description Returns all configured multi-tenancy NATS connections
+// @Tags tenancy
+// @Produce json
+// @Success 200 {object} object "connections list"
+// @Router /tenancy/connections [get]
 func (h *TenancyHandler) ListConnections(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -95,6 +102,14 @@ func (h *TenancyHandler) ListConnections(c *gin.Context) {
 }
 
 // GetConnection returns a specific connection
+// @Summary Get a tenancy connection
+// @Description Returns a single configured NATS connection by ID
+// @Tags tenancy
+// @Produce json
+// @Param id path string true "Connection ID"
+// @Success 200 {object} ConnectionConfig
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /tenancy/connections/{id} [get]
 func (h *TenancyHandler) GetConnection(c *gin.Context) {
 	id := c.Param("id")
 
@@ -103,7 +118,7 @@ func (h *TenancyHandler) GetConnection(c *gin.Context) {
 	h.mu.RUnlock()
 
 	if !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "connection not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "connection not found"})
 		return
 	}
 
@@ -111,15 +126,24 @@ func (h *TenancyHandler) GetConnection(c *gin.Context) {
 }
 
 // CreateConnection creates a new connection
+// @Summary Create a tenancy connection
+// @Description Creates a new multi-tenancy NATS connection configuration
+// @Tags tenancy
+// @Accept json
+// @Produce json
+// @Param request body ConnectionConfig true "Connection configuration"
+// @Success 201 {object} ConnectionConfig
+// @Failure 400 {object} dto.ErrorResponse
+// @Router /tenancy/connections [post]
 func (h *TenancyHandler) CreateConnection(c *gin.Context) {
 	var req ConnectionConfig
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
 	if req.Name == "" || req.URL == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "name and url are required"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "name and url are required"})
 		return
 	}
 
@@ -137,12 +161,23 @@ func (h *TenancyHandler) CreateConnection(c *gin.Context) {
 }
 
 // UpdateConnection updates a connection
+// @Summary Update a tenancy connection
+// @Description Updates an existing multi-tenancy NATS connection configuration
+// @Tags tenancy
+// @Accept json
+// @Produce json
+// @Param id path string true "Connection ID"
+// @Param request body ConnectionConfig true "Connection configuration"
+// @Success 200 {object} ConnectionConfig
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /tenancy/connections/{id} [put]
 func (h *TenancyHandler) UpdateConnection(c *gin.Context) {
 	id := c.Param("id")
 
 	var req ConnectionConfig
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
@@ -151,7 +186,7 @@ func (h *TenancyHandler) UpdateConnection(c *gin.Context) {
 
 	existing, exists := h.connections[id]
 	if !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "connection not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "connection not found"})
 		return
 	}
 
@@ -172,6 +207,15 @@ func (h *TenancyHandler) UpdateConnection(c *gin.Context) {
 }
 
 // DeleteConnection deletes a connection
+// @Summary Delete a tenancy connection
+// @Description Deletes a multi-tenancy NATS connection configuration (the default connection cannot be deleted)
+// @Tags tenancy
+// @Produce json
+// @Param id path string true "Connection ID"
+// @Success 200 {object} dto.SuccessResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /tenancy/connections/{id} [delete]
 func (h *TenancyHandler) DeleteConnection(c *gin.Context) {
 	id := c.Param("id")
 
@@ -180,29 +224,38 @@ func (h *TenancyHandler) DeleteConnection(c *gin.Context) {
 
 	conn, exists := h.connections[id]
 	if !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "connection not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "connection not found"})
 		return
 	}
 
 	// Prevent deleting default connection
 	if conn.IsDefault {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "cannot delete default connection"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "cannot delete default connection"})
 		return
 	}
 
 	delete(h.connections, id)
 
-	c.JSON(http.StatusOK, gin.H{"message": "connection deleted"})
+	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "connection deleted"})
 }
 
 // TestConnection tests a connection configuration
+// @Summary Test a connection
+// @Description Attempts to connect to a NATS URL and reports connectivity and latency
+// @Tags tenancy
+// @Accept json
+// @Produce json
+// @Param request body object true "Connection test request" example({"url":"nats://localhost:4222"})
+// @Success 200 {object} object "connection test result"
+// @Failure 400 {object} dto.ErrorResponse
+// @Router /tenancy/connections/test [post]
 func (h *TenancyHandler) TestConnection(c *gin.Context) {
 	var req struct {
 		URL string `json:"url" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
@@ -251,6 +304,12 @@ func (h *TenancyHandler) TestConnection(c *gin.Context) {
 }
 
 // GetConnectionStatus returns status of all connections
+// @Summary Get tenancy connection status
+// @Description Returns the connectivity status of all configured connections
+// @Tags tenancy
+// @Produce json
+// @Success 200 {object} object "connection statuses"
+// @Router /tenancy/status [get]
 func (h *TenancyHandler) GetConnectionStatus(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -304,6 +363,14 @@ func (h *TenancyHandler) GetConnectionStatus(c *gin.Context) {
 }
 
 // SetDefaultConnection sets a connection as default
+// @Summary Set default connection
+// @Description Marks a connection as the default NATS connection
+// @Tags tenancy
+// @Produce json
+// @Param id path string true "Connection ID"
+// @Success 200 {object} ConnectionConfig
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /tenancy/connections/{id}/default [get]
 func (h *TenancyHandler) SetDefaultConnection(c *gin.Context) {
 	id := c.Param("id")
 
@@ -312,7 +379,7 @@ func (h *TenancyHandler) SetDefaultConnection(c *gin.Context) {
 
 	conn, exists := h.connections[id]
 	if !exists {
-		c.JSON(http.StatusNotFound, gin.H{"error": "connection not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "connection not found"})
 		return
 	}
 

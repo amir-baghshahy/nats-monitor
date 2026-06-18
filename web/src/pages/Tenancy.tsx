@@ -1,131 +1,140 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
+import type { ConnectionConfig, ConnectionStatus } from "../types";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import {
-  Server, Plus, Edit, Trash2, CheckCircle, XCircle,
-  RefreshCw, Play, Globe, Star
-} from 'lucide-react'
+  Server,
+  Plus,
+  Edit,
+  Trash2,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  Play,
+  Globe,
+  Star,
+} from "lucide-react";
 
-interface ConnectionConfig {
-  id: string
-  name: string
-  url: string
-  description: string
-  enabled: boolean
-  is_default: boolean
-  created_at: string
-  updated_at: string
-}
-
-interface ConnectionStatus {
-  id: string
-  name: string
-  connected: boolean
-  healthy: boolean
-  latency?: string
-  error?: string
-  last_checked: string
-}
+type ConnectionTestResult = {
+  healthy?: boolean;
+  latency?: string | number;
+  error?: string;
+};
 
 export default function Tenancy() {
-  const [showModal, setShowModal] = useState(false)
-  const [editingConnection, setEditingConnection] = useState<ConnectionConfig | null>(null)
-  const [testingUrl, setTestingUrl] = useState('')
-  const [testResult, setTestResult] = useState<any>(null)
-  const queryClient = useQueryClient()
+  const [showModal, setShowModal] = useState(false);
+  const [editingConnection, setEditingConnection] =
+    useState<ConnectionConfig | null>(null);
+  const [testingUrl, setTestingUrl] = useState("");
+  const [testResult, setTestResult] = useState<ConnectionTestResult | null>(
+    null,
+  );
+  const queryClient = useQueryClient();
 
   const { data: connections } = useQuery({
-    queryKey: ['tenancyConnections'],
-    queryFn: () => axios.get('/api/tenancy/connections').then(res => res.data),
+    queryKey: ["tenancyConnections"],
+    queryFn: () =>
+      axios.get("/api/tenancy/connections").then((res) => res.data),
     refetchInterval: 30000,
-  })
+  });
 
   const { data: statuses } = useQuery({
-    queryKey: ['tenancyStatus'],
-    queryFn: () => axios.get('/api/tenancy/status').then(res => res.data.statuses || []),
+    queryKey: ["tenancyStatus"],
+    queryFn: () =>
+      axios.get("/api/tenancy/status").then((res) => res.data.statuses || []),
     refetchInterval: 15000,
-  })
+  });
 
   const createMutation = useMutation({
     mutationFn: (data: Partial<ConnectionConfig>) =>
-      axios.post('/api/tenancy/connections', data),
+      axios.post("/api/tenancy/connections", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tenancyConnections'] })
-      setShowModal(false)
+      queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
+      setShowModal(false);
     },
-  })
+  });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<ConnectionConfig> }) =>
-      axios.put(`/api/tenancy/connections/${id}`, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<ConnectionConfig>;
+    }) => axios.put(`/api/tenancy/connections/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tenancyConnections'] })
-      setEditingConnection(null)
-      setShowModal(false)
+      queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
+      setEditingConnection(null);
+      setShowModal(false);
     },
-  })
+  });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) =>
-      axios.delete(`/api/tenancy/connections/${id}`),
+    mutationFn: (id: string) => axios.delete(`/api/tenancy/connections/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tenancyConnections'] })
+      queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
     },
-  })
+  });
 
   const setDefaultMutation = useMutation({
     mutationFn: (id: string) =>
       axios.get(`/api/tenancy/connections/${id}/default`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tenancyConnections'] })
+      queryClient.invalidateQueries({ queryKey: ["tenancyConnections"] });
     },
-  })
+  });
 
   const testConnectionMutation = useMutation({
     mutationFn: (url: string) =>
-      axios.post('/api/tenancy/connections/test', { url }),
+      axios.post("/api/tenancy/connections/test", { url }),
     onSuccess: (data) => {
-      setTestResult(data.data)
+      setTestResult(data.data as ConnectionTestResult);
     },
-  })
+  });
 
   const getStatusForConnection = (id: string) => {
-    return statuses?.find((s: ConnectionStatus) => s.id === id)
-  }
+    return statuses?.find((s: ConnectionStatus) => s.id === id);
+  };
 
   const handleTest = (url: string) => {
-    setTestingUrl(url)
-    setTestResult(null)
-    testConnectionMutation.mutate(url)
-  }
+    setTestingUrl(url);
+    setTestResult(null);
+    testConnectionMutation.mutate(url);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
 
     const data = {
-      name: formData.get('name') as string,
-      url: formData.get('url') as string,
-      description: formData.get('description') as string,
-    }
+      name: (formData.get("name") as string) || "",
+      url: (formData.get("url") as string) || "",
+      description: (formData.get("description") as string) || "",
+    };
 
     if (editingConnection) {
-      updateMutation.mutate({ id: editingConnection.id, data })
+      updateMutation.mutate({ id: editingConnection.id ?? "", data });
     } else {
-      createMutation.mutate(data)
+      createMutation.mutate(data);
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString()
-  }
+    return new Date(dateString).toLocaleString();
+  };
 
   const stats = {
     total: connections?.connections?.length || 0,
-    active: Array.isArray(statuses) ? statuses.filter((s: ConnectionStatus) => s.connected)?.length || 0 : 0,
-    healthy: Array.isArray(statuses) ? statuses.filter((s: ConnectionStatus) => s.healthy)?.length || 0 : 0,
-    default: connections?.connections?.find((c: ConnectionConfig) => c.is_default)?.name || 'None',
-  }
+    active: Array.isArray(statuses)
+      ? statuses.filter((s: ConnectionStatus) => s.connected)?.length || 0
+      : 0,
+    healthy: Array.isArray(statuses)
+      ? statuses.filter((s: ConnectionStatus) => s.healthy)?.length || 0
+      : 0,
+    default:
+      connections?.connections?.find((c: ConnectionConfig) => c.is_default)
+        ?.name || "None",
+  };
 
   return (
     <div className="p-4 md:p-8">
@@ -142,8 +151,8 @@ export default function Tenancy() {
         </div>
         <button
           onClick={() => {
-            setEditingConnection(null)
-            setShowModal(true)
+            setEditingConnection(null);
+            setShowModal(true);
           }}
           className="btn-primary flex items-center gap-2"
         >
@@ -208,21 +217,24 @@ export default function Tenancy() {
         </h3>
         <div className="space-y-4">
           {connections?.connections?.map((conn: ConnectionConfig) => {
-            const status = getStatusForConnection(conn.id)
+            const connectionId = conn.id ?? conn.name ?? conn.url ?? "";
+            const connectionName = conn.name ?? "Unnamed connection";
+            const connectionUrl = conn.url ?? "";
+            const status = getStatusForConnection(connectionId);
 
             return (
               <div
-                key={conn.id}
+                key={connectionId}
                 className={`p-4 rounded-lg border transition-colors ${
                   conn.is_default
-                    ? 'border-primary-500/50 bg-primary-500/5'
-                    : 'border-dark-border bg-dark-bg/50'
+                    ? "border-primary-500/50 bg-primary-500/5"
+                    : "border-dark-border bg-dark-bg/50"
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h4 className="font-medium">{conn.name}</h4>
+                      <h4 className="font-medium">{connectionName}</h4>
                       {conn.is_default && (
                         <span className="text-xs px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">
                           Default
@@ -245,23 +257,28 @@ export default function Tenancy() {
                       ) : (
                         <span className="flex items-center gap-1 text-xs text-red-400">
                           <XCircle className="w-3 h-3" />
-                          {status?.error || 'Disconnected'}
+                          {status?.error || "Disconnected"}
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-dark-muted mb-2">{conn.description || 'No description'}</p>
+                    <p className="text-sm text-dark-muted mb-2">
+                      {conn.description || "No description"}
+                    </p>
                     <div className="flex items-center gap-4 text-xs text-dark-muted">
-                      <span className="font-mono">{conn.url}</span>
+                      <span className="font-mono">{connectionUrl}</span>
                       {status?.latency && (
                         <span>Latency: {status.latency}</span>
                       )}
-                      <span>Last checked: {status ? formatDate(status.last_checked) : 'N/A'}</span>
+                      <span>
+                        Last checked:{" "}
+                        {status ? formatDate(status.last_checked) : "N/A"}
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {!conn.is_default && (
                       <button
-                        onClick={() => setDefaultMutation.mutate(conn.id)}
+                        onClick={() => setDefaultMutation.mutate(connectionId)}
                         className="p-2 hover:bg-yellow-500/20 text-yellow-400 rounded-lg"
                         title="Set as default"
                       >
@@ -269,17 +286,19 @@ export default function Tenancy() {
                       </button>
                     )}
                     <button
-                      onClick={() => handleTest(conn.url)}
+                      onClick={() => handleTest(connectionUrl)}
                       disabled={testConnectionMutation.isPending}
                       className="p-2 hover:bg-blue-500/20 text-blue-400 rounded-lg"
                       title="Test connection"
                     >
-                      <RefreshCw className={`w-4 h-4 ${testConnectionMutation.isPending && testingUrl === conn.url ? 'animate-spin' : ''}`} />
+                      <RefreshCw
+                        className={`w-4 h-4 ${testConnectionMutation.isPending && testingUrl === connectionUrl ? "animate-spin" : ""}`}
+                      />
                     </button>
                     <button
                       onClick={() => {
-                        setEditingConnection(conn)
-                        setShowModal(true)
+                        setEditingConnection(conn);
+                        setShowModal(true);
                       }}
                       className="p-2 hover:bg-dark-border rounded-lg"
                       title="Edit"
@@ -289,8 +308,10 @@ export default function Tenancy() {
                     {!conn.is_default && (
                       <button
                         onClick={() => {
-                          if (confirm(`Delete connection "${conn.name}"?`)) {
-                            deleteMutation.mutate(conn.id)
+                          if (
+                            confirm(`Delete connection "${connectionName}"?`)
+                          ) {
+                            deleteMutation.mutate(connectionId);
                           }
                         }}
                         className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg"
@@ -303,16 +324,20 @@ export default function Tenancy() {
                 </div>
 
                 {/* Test Result */}
-                {testResult && testingUrl === conn.url && (
-                  <div className={`mt-3 p-3 rounded-lg text-sm ${
-                    testResult.healthy
-                      ? 'bg-green-500/10 text-green-400'
-                      : 'bg-red-500/10 text-red-400'
-                  }`}>
+                {testResult && testingUrl === connectionUrl && (
+                  <div
+                    className={`mt-3 p-3 rounded-lg text-sm ${
+                      testResult.healthy
+                        ? "bg-green-500/10 text-green-400"
+                        : "bg-red-500/10 text-red-400"
+                    }`}
+                  >
                     {testResult.healthy ? (
                       <div className="flex items-center gap-2">
                         <CheckCircle className="w-4 h-4" />
-                        <span>Connection successful - Latency: {testResult.latency}</span>
+                        <span>
+                          Connection successful - Latency: {testResult.latency}
+                        </span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
@@ -323,7 +348,7 @@ export default function Tenancy() {
                   </div>
                 )}
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -334,13 +359,13 @@ export default function Tenancy() {
           <div className="card max-w-md w-full">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold">
-                {editingConnection ? 'Edit Connection' : 'Add Connection'}
+                {editingConnection ? "Edit Connection" : "Add Connection"}
               </h2>
               <button
                 onClick={() => {
-                  setShowModal(false)
-                  setEditingConnection(null)
-                  setTestResult(null)
+                  setShowModal(false);
+                  setEditingConnection(null);
+                  setTestResult(null);
                 }}
                 className="p-2 hover:bg-dark-bg rounded-lg"
               >
@@ -371,7 +396,9 @@ export default function Tenancy() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Description</label>
+                <label className="block text-sm font-medium mb-2">
+                  Description
+                </label>
                 <textarea
                   name="description"
                   defaultValue={editingConnection?.description}
@@ -387,21 +414,23 @@ export default function Tenancy() {
                   name="enabled"
                   defaultChecked={editingConnection?.enabled ?? true}
                 />
-                <label htmlFor="enabled" className="text-sm">Enabled</label>
+                <label htmlFor="enabled" className="text-sm">
+                  Enabled
+                </label>
               </div>
               <div className="flex items-center gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => {
-                    setShowModal(false)
-                    setEditingConnection(null)
+                    setShowModal(false);
+                    setEditingConnection(null);
                   }}
                   className="btn-secondary"
                 >
                   Cancel
                 </button>
                 <button type="submit" className="btn-primary">
-                  {editingConnection ? 'Update' : 'Create'} Connection
+                  {editingConnection ? "Update" : "Create"} Connection
                 </button>
               </div>
             </form>
@@ -409,5 +438,5 @@ export default function Tenancy() {
         </div>
       )}
     </div>
-  )
+  );
 }

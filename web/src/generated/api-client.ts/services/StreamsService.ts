@@ -28,19 +28,40 @@ export class StreamsService {
     }
     /**
      * Create a new stream
-     * @param request Stream creation request
+     * @param requestBody Stream creation request
      * @returns nats_monitoring_internal_dto_StreamResponse Created
      * @throws ApiError
      */
     public static postStreams(
-        request: nats_monitoring_internal_dto_CreateStreamRequest,
+        requestBody: nats_monitoring_internal_dto_CreateStreamRequest,
     ): CancelablePromise<nats_monitoring_internal_dto_StreamResponse> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/streams',
-            body: request,
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `Bad Request`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Delete a stream
+     * @param name Stream name
+     * @returns nats_monitoring_internal_dto_SuccessResponse OK
+     * @throws ApiError
+     */
+    public static deleteStreams(
+        name: string,
+    ): CancelablePromise<nats_monitoring_internal_dto_SuccessResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/streams/{name}',
+            path: {
+                'name': name,
+            },
+            errors: {
                 500: `Internal Server Error`,
             },
         });
@@ -69,13 +90,13 @@ export class StreamsService {
     /**
      * Update a stream
      * @param name Stream name
-     * @param request Stream update request
+     * @param requestBody Stream update request
      * @returns nats_monitoring_internal_dto_StreamResponse OK
      * @throws ApiError
      */
     public static putStreams(
         name: string,
-        request: nats_monitoring_internal_dto_UpdateStreamRequest,
+        requestBody: nats_monitoring_internal_dto_UpdateStreamRequest,
     ): CancelablePromise<nats_monitoring_internal_dto_StreamResponse> {
         return __request(OpenAPI, {
             method: 'PUT',
@@ -83,7 +104,8 @@ export class StreamsService {
             path: {
                 'name': name,
             },
-            body: request,
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `Bad Request`,
                 500: `Internal Server Error`,
@@ -91,35 +113,15 @@ export class StreamsService {
         });
     }
     /**
-     * Delete a stream
-     * @param name Stream name
-     * @returns nats_monitoring_internal_dto_SuccessResponse OK
-     * @throws ApiError
-     */
-    public static deleteStreams(
-        name: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_SuccessResponse> {
-        return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/streams/{name}',
-            path: {
-                'name': name,
-            },
-            errors: {
-                500: `Internal Server Error`,
-            },
-        });
-    }
-    /**
      * Purge messages from a stream
      * @param name Stream name
-     * @param request Purge options
+     * @param requestBody Purge options
      * @returns nats_monitoring_internal_dto_PurgeStreamResponse OK
      * @throws ApiError
      */
     public static postStreamsPurge(
         name: string,
-        request?: nats_monitoring_internal_dto_PurgeStreamRequest,
+        requestBody?: nats_monitoring_internal_dto_PurgeStreamRequest,
     ): CancelablePromise<nats_monitoring_internal_dto_PurgeStreamResponse> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -127,7 +129,8 @@ export class StreamsService {
             path: {
                 'name': name,
             },
-            body: request,
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 500: `Internal Server Error`,
             },

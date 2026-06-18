@@ -51,6 +51,370 @@ const docTemplate = `{
                 }
             }
         },
+        "/alerts": {
+            "get": {
+                "description": "Returns all configured alert definitions",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "List alerts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_handlers.Alert"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new alert configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Create an alert",
+                "parameters": [
+                    {
+                        "description": "Alert configuration",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.Alert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.Alert"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/triggers": {
+            "get": {
+                "description": "Returns triggered alert instances, optionally filtered",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "List alert triggers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by alert ID",
+                        "name": "alert_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter by acked state (true/false)",
+                        "name": "acked",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_handlers.AlertTrigger"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/triggers/{id}/ack": {
+            "post": {
+                "description": "Acknowledges one or more triggers for the given alert ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Acknowledge an alert trigger",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Acknowledging user",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/{id}": {
+            "get": {
+                "description": "Returns a single alert configuration by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Get an alert",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.Alert"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates an existing alert configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Update an alert",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Alert configuration",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.Alert"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.Alert"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes an alert configuration by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "alerts"
+                ],
+                "summary": "Delete an alert",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Alert ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cluster/health": {
+            "get": {
+                "description": "Returns connection and JetStream health status of the cluster",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cluster"
+                ],
+                "summary": "Get cluster health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterHealthResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterHealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cluster/info": {
+            "get": {
+                "description": "Returns JetStream cluster topology and server information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cluster"
+                ],
+                "summary": "Get cluster information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterInfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cluster/nodes": {
+            "get": {
+                "description": "Returns information about each node in the NATS cluster",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cluster"
+                ],
+                "summary": "Get cluster nodes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterNodesResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cluster/streams/{name}/replicas": {
+            "get": {
+                "description": "Returns replication, mirror, source, and cluster placement info for a stream",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cluster"
+                ],
+                "summary": "Get stream replicas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamReplicaResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/connections": {
             "get": {
                 "consumes": [
@@ -190,6 +554,236 @@ const docTemplate = `{
                 }
             }
         },
+        "/core/monitor": {
+            "get": {
+                "description": "Opens a Server-Sent Events stream of traffic for the given subjects",
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "core-nats"
+                ],
+                "summary": "Monitor subject traffic (SSE stream)",
+                "parameters": [
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Subjects to monitor (repeatable)",
+                        "name": "subjects",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "text/event-stream",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/core/publish": {
+            "post": {
+                "description": "Publishes a message to a NATS subject (non-JetStream)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "core-nats"
+                ],
+                "summary": "Publish a Core NATS message",
+                "parameters": [
+                    {
+                        "description": "Message to publish",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.PublishMessageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.PublishMessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/core/request": {
+            "post": {
+                "description": "Publishes a request message and waits for a reply (request/reply pattern)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "core-nats"
+                ],
+                "summary": "Send a Core NATS request",
+                "parameters": [
+                    {
+                        "description": "Request message",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.RequestMessageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "408": {
+                        "description": "Request Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/core/services": {
+            "get": {
+                "description": "Returns connection and server discovery information for the NATS cluster",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "core-nats"
+                ],
+                "summary": "Get service discovery info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ServiceDiscoveryResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/core/subscribe": {
+            "get": {
+                "description": "Opens a Server-Sent Events stream of messages published to the given subject",
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "core-nats"
+                ],
+                "summary": "Subscribe to a subject (SSE stream)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "NATS subject to subscribe to",
+                        "name": "subject",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "text/event-stream",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/core/subscriptions": {
+            "get": {
+                "description": "Returns connection status and active subscription information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "core-nats"
+                ],
+                "summary": "Get active subscriptions info",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.SubscriptionsResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/dashboard/stats": {
             "get": {
                 "consumes": [
@@ -218,6 +812,234 @@ const docTemplate = `{
                 }
             }
         },
+        "/events": {
+            "get": {
+                "description": "Opens a Server-Sent Events stream for real-time stream/consumer/dashboard updates",
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Server-Sent Events stream",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "all",
+                        "description": "Event channel (streams, consumers, dashboard, all)",
+                        "name": "channel",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "text/event-stream",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/export/streams": {
+            "get": {
+                "description": "Exports a summary of all streams as JSON",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "export"
+                ],
+                "summary": "Export all streams",
+                "responses": {
+                    "200": {
+                        "description": "Exported streams summary",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/export/streams/{name}": {
+            "get": {
+                "description": "Exports stream data in the requested format (json, csv, txt)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "export"
+                ],
+                "summary": "Export a stream",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "json",
+                        "description": "Export format (json, csv, txt)",
+                        "name": "format",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Include messages in the export",
+                        "name": "include_messages",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exported stream data",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/export/streams/{name}/consumers/{consumer}": {
+            "get": {
+                "description": "Exports consumer data in the requested format (json, csv, txt)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "export"
+                ],
+                "summary": "Export a consumer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Consumer name",
+                        "name": "consumer",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "json",
+                        "description": "Export format (json, csv, txt)",
+                        "name": "format",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exported consumer data",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/export/streams/{name}/messages": {
+            "post": {
+                "description": "Exports messages from a stream, optionally filtered by subject, as JSON",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "export"
+                ],
+                "summary": "Export messages from a stream",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter subject",
+                        "name": "subject",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Export options",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exported messages",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "consumes": [
@@ -241,6 +1063,692 @@ const docTemplate = `{
                         "description": "Service Unavailable",
                         "schema": {
                             "$ref": "#/definitions/nats-monitoring_internal_dto.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/report": {
+            "get": {
+                "description": "Returns a summary report of all streams with latest metric values",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Get history report",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "24h",
+                        "description": "Time window",
+                        "name": "duration",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "history report",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/streams/{name}": {
+            "get": {
+                "description": "Returns historical metric data points for a stream",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Get stream history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "messages",
+                        "description": "Metric type (messages, bytes)",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "24h",
+                        "description": "Time window (1h, 6h, 24h, 7d)",
+                        "name": "duration",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "stream history",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/history/streams/{name}/analysis": {
+            "get": {
+                "description": "Returns statistical analysis (min/max/avg/trend) of a stream metric",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "history"
+                ],
+                "summary": "Get stream metric analysis",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "default": "messages",
+                        "description": "Metric type (messages, bytes)",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "24h",
+                        "description": "Time window (1h, 6h, 24h, 7d)",
+                        "name": "duration",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "metric analysis",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/kv/buckets": {
+            "get": {
+                "description": "Returns all JetStream Key-Value store buckets",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "List KV buckets",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketInfo"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new JetStream Key-Value store bucket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Create a KV bucket",
+                "parameters": [
+                    {
+                        "description": "Bucket configuration",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketCreateResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/kv/buckets/{name}": {
+            "get": {
+                "description": "Returns detailed information about a single KV bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Get a KV bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketInfo"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a JetStream Key-Value store bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Delete a KV bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketDeleteResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/kv/buckets/{name}/history": {
+            "get": {
+                "description": "Returns the revision history of a single key in a KV bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Get KV key history",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Key name",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyHistoryEntry"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/kv/buckets/{name}/key": {
+            "get": {
+                "description": "Returns the value and revision of a single key in a KV bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Get a KV key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Key name",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyEntry"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Creates or updates a key in a KV bucket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Put a KV key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Key/value to write",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyPutResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a key from a KV bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Delete a KV key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Key name",
+                        "name": "key",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyDeleteResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/kv/buckets/{name}/keys": {
+            "get": {
+                "description": "Returns all keys (with values and revisions) in a KV bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "List keys in a KV bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyEntry"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/kv/buckets/{name}/purge": {
+            "post": {
+                "description": "Removes all deleted-key tombstones from a KV bucket",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kv"
+                ],
+                "summary": "Purge a KV bucket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bucket name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVPurgeResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/messages": {
+            "get": {
+                "description": "Lists messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Get stream messages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "stream",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/messages/page": {
+            "get": {
+                "description": "Returns paginated messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Get paginated stream messages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "stream",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 25,
+                        "description": "Page size",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics": {
+            "get": {
+                "description": "Returns collected stream metrics series, optionally filtered by stream, type and duration",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "metrics"
+                ],
+                "summary": "Get metrics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by stream name",
+                        "name": "stream",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Metric type (messages, bytes, lag)",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "1h",
+                        "description": "Time window (15m, 1h, 6h, 24h)",
+                        "name": "duration",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.MetricsResponse"
                         }
                     }
                 }
@@ -283,6 +1791,77 @@ const docTemplate = `{
                 }
             }
         },
+        "/metrics/streams/{name}": {
+            "get": {
+                "description": "Returns collected metric series for a specific stream",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "metrics"
+                ],
+                "summary": "Get stream metrics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "stream metrics",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics/streams/{name}/consumers/{consumer}": {
+            "get": {
+                "description": "Returns lag, delivery, and ack metrics for a specific consumer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "metrics"
+                ],
+                "summary": "Get consumer metrics",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stream name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Consumer name",
+                        "name": "consumer",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "consumer metrics",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/metrics/system": {
             "get": {
                 "consumes": [
@@ -304,6 +1883,216 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/security/audit": {
+            "get": {
+                "description": "Returns audit log entries",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "security"
+                ],
+                "summary": "Get audit logs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/security/connections": {
+            "get": {
+                "description": "Returns server details and connection security (auth/TLS) status",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "security"
+                ],
+                "summary": "Get connection security status",
+                "responses": {
+                    "200": {
+                        "description": "connection status",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/security/info": {
+            "get": {
+                "description": "Returns account information, limits, and server security settings",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "security"
+                ],
+                "summary": "Get security info",
+                "responses": {
+                    "200": {
+                        "description": "security info",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/security/users": {
+            "get": {
+                "description": "Returns NATS users (not implemented)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "security"
+                ],
+                "summary": "List users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_handlers.User"
+                            }
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a NATS user (not implemented)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "security"
+                ],
+                "summary": "Create a user",
+                "parameters": [
+                    {
+                        "description": "User to create",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.User"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/security/users/{name}": {
+            "put": {
+                "description": "Updates a NATS user (not implemented)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "security"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.User"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a NATS user (not implemented)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "security"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                        }
+                    },
+                    "501": {
+                        "description": "Not Implemented",
                         "schema": {
                             "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
                         }
@@ -1330,9 +3119,532 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/tenancy/connections": {
+            "get": {
+                "description": "Returns all configured multi-tenancy NATS connections",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "List tenancy connections",
+                "responses": {
+                    "200": {
+                        "description": "connections list",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new multi-tenancy NATS connection configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "Create a tenancy connection",
+                "parameters": [
+                    {
+                        "description": "Connection configuration",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.ConnectionConfig"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.ConnectionConfig"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenancy/connections/test": {
+            "post": {
+                "description": "Attempts to connect to a NATS URL and reports connectivity and latency",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "Test a connection",
+                "parameters": [
+                    {
+                        "description": "Connection test request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "connection test result",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenancy/connections/{id}": {
+            "get": {
+                "description": "Returns a single configured NATS connection by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "Get a tenancy connection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Connection ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.ConnectionConfig"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Updates an existing multi-tenancy NATS connection configuration",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "Update a tenancy connection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Connection ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Connection configuration",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.ConnectionConfig"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.ConnectionConfig"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a multi-tenancy NATS connection configuration (the default connection cannot be deleted)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "Delete a tenancy connection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Connection ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenancy/connections/{id}/default": {
+            "get": {
+                "description": "Marks a connection as the default NATS connection",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "Set default connection",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Connection ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handlers.ConnectionConfig"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenancy/status": {
+            "get": {
+                "description": "Returns the connectivity status of all configured connections",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenancy"
+                ],
+                "summary": "Get tenancy connection status",
+                "responses": {
+                    "200": {
+                        "description": "connection statuses",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "internal_handlers.Alert": {
+            "type": "object",
+            "properties": {
+                "channels": {
+                    "description": "Notification channels: \"email\", \"webhook\", \"slack\"",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "condition": {
+                    "$ref": "#/definitions/internal_handlers.AlertCondition"
+                },
+                "cooldown": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_trigger": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "severity": {
+                    "$ref": "#/definitions/internal_handlers.AlertSeverity"
+                },
+                "trigger_count": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handlers.AlertCondition": {
+            "type": "object",
+            "properties": {
+                "consumer": {
+                    "description": "Optional consumer filter",
+                    "type": "string"
+                },
+                "operator": {
+                    "description": "\"\u003e\", \"\u003c\", \"=\", \"\u003e=\", \"\u003c=\"",
+                    "type": "string"
+                },
+                "stream": {
+                    "description": "Optional stream filter",
+                    "type": "string"
+                },
+                "threshold": {
+                    "description": "Threshold value",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "\"lag\", \"latency\", \"messages\", \"consumer_lag\", \"storage\"",
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handlers.AlertSeverity": {
+            "type": "string",
+            "enum": [
+                "info",
+                "warning",
+                "critical"
+            ],
+            "x-enum-varnames": [
+                "SeverityInfo",
+                "SeverityWarning",
+                "SeverityCritical"
+            ]
+        },
+        "internal_handlers.AlertTrigger": {
+            "type": "object",
+            "properties": {
+                "acked": {
+                    "type": "boolean"
+                },
+                "acked_at": {
+                    "type": "string"
+                },
+                "acked_by": {
+                    "type": "string"
+                },
+                "alert_id": {
+                    "type": "string"
+                },
+                "alert_name": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "message": {
+                    "type": "string"
+                },
+                "severity": {
+                    "$ref": "#/definitions/internal_handlers.AlertSeverity"
+                },
+                "triggered_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handlers.ConnectionConfig": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_default": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handlers.MetricDataPoint": {
+            "type": "object",
+            "properties": {
+                "label": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "internal_handlers.MetricSeries": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_handlers.MetricDataPoint"
+                    }
+                },
+                "labels": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handlers.MetricsResponse": {
+            "type": "object",
+            "properties": {
+                "consumers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_handlers.MetricSeries"
+                    }
+                },
+                "streams": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_handlers.MetricSeries"
+                    }
+                },
+                "system": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_handlers.MetricSeries"
+                    }
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_handlers.User": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "$ref": "#/definitions/internal_handlers.UserPermissions"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handlers.UserPermissions": {
+            "type": "object",
+            "properties": {
+                "publish": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "subscribe": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "nats-monitoring_internal_dto.AckMessageRequest": {
             "type": "object",
             "required": [
@@ -1363,6 +3675,232 @@ const docTemplate = `{
             "properties": {
                 "sequence": {
                     "type": "integer"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterConnectedServer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterHealthResponse": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "connected_server": {
+                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterConnectedServer"
+                },
+                "jetstream": {
+                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterJetStreamHealth"
+                },
+                "server_status": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterInfoPeerResponse": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "integer"
+                },
+                "current": {
+                    "type": "boolean"
+                },
+                "lag": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "offline": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterInfoResponse": {
+            "type": "object",
+            "properties": {
+                "cluster_name": {
+                    "type": "string"
+                },
+                "cluster_url": {
+                    "type": "string"
+                },
+                "is_clustered": {
+                    "type": "boolean"
+                },
+                "jetstream": {
+                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterJetStreamInfo"
+                },
+                "server_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterJetStreamHealth": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tiers": {}
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterJetStreamInfo": {
+            "type": "object",
+            "properties": {
+                "api_level": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "tier": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterNodeResponse": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "current": {
+                    "type": "boolean"
+                },
+                "healthy": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lag": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterNodesResponse": {
+            "type": "object",
+            "properties": {
+                "cluster_name": {
+                    "type": "string"
+                },
+                "clustered": {
+                    "type": "boolean"
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterNodeResponse"
+                    }
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterPlacementResponse": {
+            "type": "object",
+            "properties": {
+                "cluster": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterStreamClusterResponse": {
+            "type": "object",
+            "properties": {
+                "leader": {
+                    "type": "string"
+                },
+                "leader_since": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "raft_group": {
+                    "type": "string"
+                },
+                "replicas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterInfoPeerResponse"
+                    }
+                },
+                "system_account": {
+                    "type": "boolean"
+                },
+                "traffic_account": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterStreamReplicaResponse": {
+            "type": "object",
+            "properties": {
+                "cluster": {
+                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamClusterResponse"
+                },
+                "is_clustered": {
+                    "type": "boolean"
+                },
+                "mirror": {
+                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamSource"
+                },
+                "placement": {
+                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterPlacementResponse"
+                },
+                "replicas": {
+                    "type": "integer"
+                },
+                "sources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamSource"
+                    }
+                },
+                "stream": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ClusterStreamSource": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -1602,6 +4140,144 @@ const docTemplate = `{
                 }
             }
         },
+        "nats-monitoring_internal_dto.KVBucketCreateResponse": {
+            "type": "object",
+            "properties": {
+                "history": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "integer"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.KVBucketDeleteResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.KVBucketInfo": {
+            "type": "object",
+            "properties": {
+                "bucket_name": {
+                    "type": "string"
+                },
+                "bytes": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "integer"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.KVKeyDeleteResponse": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.KVKeyEntry": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.KVKeyHistoryEntry": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.KVKeyPutResponse": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.KVPurgeResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "nats-monitoring_internal_dto.NackMessageRequest": {
             "type": "object",
             "required": [
@@ -1695,6 +4371,23 @@ const docTemplate = `{
                 }
             }
         },
+        "nats-monitoring_internal_dto.PublishMessageResponse": {
+            "type": "object",
+            "properties": {
+                "size": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
         "nats-monitoring_internal_dto.PurgeStreamRequest": {
             "type": "object",
             "properties": {
@@ -1742,6 +4435,32 @@ const docTemplate = `{
                 }
             }
         },
+        "nats-monitoring_internal_dto.RequestMessageRequest": {
+            "type": "object",
+            "required": [
+                "subject"
+            ],
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "integer"
+                }
+            }
+        },
         "nats-monitoring_internal_dto.ResetLagRequest": {
             "type": "object",
             "properties": {
@@ -1758,6 +4477,44 @@ const docTemplate = `{
                 },
                 "new_sequence": {
                     "type": "integer"
+                }
+            }
+        },
+        "nats-monitoring_internal_dto.ServiceDiscoveryResponse": {
+            "type": "object",
+            "properties": {
+                "auth_required": {
+                    "type": "boolean"
+                },
+                "connected": {
+                    "type": "boolean"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "max_payload": {
+                    "type": "integer"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "server_count": {
+                    "type": "integer"
+                },
+                "server_name": {
+                    "type": "string"
+                },
+                "server_url": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tls_required": {
+                    "type": "boolean"
+                },
+                "version": {
+                    "type": "string"
                 }
             }
         },
@@ -1861,6 +4618,23 @@ const docTemplate = `{
                 }
             }
         },
+        "nats-monitoring_internal_dto.SubscriptionsResponse": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "server": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "nats-monitoring_internal_dto.SuccessResponse": {
             "type": "object",
             "properties": {
@@ -1922,6 +4696,30 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "time.Duration": {
+            "type": "integer",
+            "format": "int64",
+            "enum": [
+                -9223372036854775808,
+                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000
+            ],
+            "x-enum-varnames": [
+                "minDuration",
+                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour"
+            ]
         }
     }
 }`

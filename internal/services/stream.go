@@ -19,11 +19,11 @@ type StreamCreate struct {
 }
 
 type StreamUpdate struct {
-	Name      string
-	Subjects  []string
-	Replicas  int
-	MaxAge    string
-	MaxBytes  uint64
+	Name     string
+	Subjects []string
+	Replicas int
+	MaxAge   string
+	MaxBytes uint64
 }
 
 // StreamUseCase handles stream business logic

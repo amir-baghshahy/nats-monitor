@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
+	"nats-monitoring/internal/dto"
 	"nats-monitoring/internal/utils"
 )
 
@@ -53,6 +54,17 @@ type ExportRequest struct {
 }
 
 // ExportStream exports stream data
+// @Summary Export a stream
+// @Description Exports stream data in the requested format (json, csv, txt)
+// @Tags export
+// @Produce json
+// @Param name path string true "Stream name"
+// @Param format query string false "Export format (json, csv, txt)" default(json)
+// @Param include_messages query boolean false "Include messages in the export"
+// @Success 200 {file} file "Exported stream data"
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /export/streams/{name} [get]
 func (h *ExportHandler) ExportStream(c *gin.Context) {
 	streamName := c.Param("name")
 	format := ExportFormat(c.DefaultQuery("format", "json"))
@@ -60,7 +72,7 @@ func (h *ExportHandler) ExportStream(c *gin.Context) {
 
 	info, err := h.js.StreamInfo(streamName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "stream not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "stream not found"})
 		return
 	}
 
@@ -72,7 +84,7 @@ func (h *ExportHandler) ExportStream(c *gin.Context) {
 	case FormatTXT:
 		h.exportStreamTXT(c, info, includeMessages)
 	default:
-		c.JSON(http.StatusBadRequest, gin.H{"error": "unsupported format"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "unsupported format"})
 	}
 }
 
@@ -177,6 +189,17 @@ Created: %s
 }
 
 // ExportConsumer exports consumer data
+// @Summary Export a consumer
+// @Description Exports consumer data in the requested format (json, csv, txt)
+// @Tags export
+// @Produce json
+// @Param name path string true "Stream name"
+// @Param consumer path string true "Consumer name"
+// @Param format query string false "Export format (json, csv, txt)" default(json)
+// @Success 200 {file} file "Exported consumer data"
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Router /export/streams/{name}/consumers/{consumer} [get]
 func (h *ExportHandler) ExportConsumer(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -184,7 +207,7 @@ func (h *ExportHandler) ExportConsumer(c *gin.Context) {
 
 	info, err := h.js.ConsumerInfo(streamName, consumerName)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "consumer not found"})
+		c.JSON(http.StatusNotFound, dto.ErrorResponse{Error: "consumer not found"})
 		return
 	}
 
@@ -196,7 +219,7 @@ func (h *ExportHandler) ExportConsumer(c *gin.Context) {
 	case FormatTXT:
 		h.exportConsumerTXT(c, streamName, info)
 	default:
-		c.JSON(http.StatusBadRequest, gin.H{"error": "unsupported format"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "unsupported format"})
 	}
 }
 
@@ -298,6 +321,18 @@ Created: %s
 }
 
 // ExportMessages exports messages from a stream
+// @Summary Export messages from a stream
+// @Description Exports messages from a stream, optionally filtered by subject, as JSON
+// @Tags export
+// @Accept json
+// @Produce json
+// @Param name path string true "Stream name"
+// @Param subject query string false "Filter subject"
+// @Param request body object false "Export options" example({"subject":"orders.created","limit":1000})
+// @Success 200 {file} file "Exported messages"
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /export/streams/{name}/messages [post]
 func (h *ExportHandler) ExportMessages(c *gin.Context) {
 	streamName := c.Param("name")
 	subject := c.Query("subject")
@@ -326,14 +361,14 @@ func (h *ExportHandler) ExportMessages(c *gin.Context) {
 	}
 
 	if _, err := h.js.AddConsumer(streamName, cfg); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to create consumer: %v", err)})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: fmt.Sprintf("failed to create consumer: %v", err)})
 		return
 	}
 	defer h.js.DeleteConsumer(streamName, consumerName)
 
 	msgInfo, err := h.js.ConsumerInfo(streamName, consumerName)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
@@ -343,7 +378,7 @@ func (h *ExportHandler) ExportMessages(c *gin.Context) {
 	messages := []gin.H{}
 	sub, err := h.js.PullSubscribe(streamName, consumerName, nil)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 	defer sub.Unsubscribe()
@@ -376,11 +411,18 @@ func (h *ExportHandler) ExportMessages(c *gin.Context) {
 }
 
 // ExportAllStreams exports all streams
+// @Summary Export all streams
+// @Description Exports a summary of all streams as JSON
+// @Tags export
+// @Produce json
+// @Success 200 {file} file "Exported streams summary"
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /export/streams [get]
 func (h *ExportHandler) ExportAllStreams(c *gin.Context) {
 
 	msg, err := h.nc.Request("$JS.API.STREAM.LIST", []byte("{}"), 2*time.Second)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 
@@ -397,7 +439,7 @@ func (h *ExportHandler) ExportAllStreams(c *gin.Context) {
 	}
 
 	if err := json.Unmarshal(msg.Data, &response); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
 

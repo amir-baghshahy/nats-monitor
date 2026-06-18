@@ -9,15 +9,65 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class MessagesService {
     /**
+     * Get stream messages
+     * Lists messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.
+     * @param stream Stream name
+     * @returns void
+     * @throws ApiError
+     */
+    public static getMessages(
+        stream: string,
+    ): CancelablePromise<void> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/messages',
+            query: {
+                'stream': stream,
+            },
+            errors: {
+                400: `Bad Request`,
+                501: `Not Implemented`,
+            },
+        });
+    }
+    /**
+     * Get paginated stream messages
+     * Returns paginated messages from a stream. This endpoint currently returns 501 until message retrieval is implemented.
+     * @param stream Stream name
+     * @param page Page number
+     * @param pageSize Page size
+     * @returns void
+     * @throws ApiError
+     */
+    public static getMessagesPage(
+        stream: string,
+        page: number = 1,
+        pageSize: number = 25,
+    ): CancelablePromise<void> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/messages/page',
+            query: {
+                'stream': stream,
+                'page': page,
+                'page_size': pageSize,
+            },
+            errors: {
+                400: `Bad Request`,
+                501: `Not Implemented`,
+            },
+        });
+    }
+    /**
      * Publish a message to a stream
      * @param name Stream name
-     * @param request Message to publish
+     * @param requestBody Message to publish
      * @returns nats_monitoring_internal_dto_SuccessResponse OK
      * @throws ApiError
      */
     public static postStreamsMessagesPublish(
         name: string,
-        request: nats_monitoring_internal_dto_PublishMessageRequest,
+        requestBody: nats_monitoring_internal_dto_PublishMessageRequest,
     ): CancelablePromise<nats_monitoring_internal_dto_SuccessResponse> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -25,7 +75,8 @@ export class MessagesService {
             path: {
                 'name': name,
             },
-            body: request,
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `Bad Request`,
                 500: `Internal Server Error`,
