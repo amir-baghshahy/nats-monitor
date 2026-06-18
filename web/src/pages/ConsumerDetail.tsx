@@ -48,6 +48,15 @@ export default function ConsumerDetail() {
   const [isPaused, setIsPaused] = useState(false);
   const [isTabHidden, setIsTabHidden] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCloneModal, setShowCloneModal] = useState(false);
+  const [cloneName, setCloneName] = useState("");
+  const [editForm, setEditForm] = useState({
+    ack_policy: "explicit",
+    deliver_policy: "all",
+    replay_policy: "instant",
+    max_deliver: -1,
+  });
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -157,6 +166,60 @@ export default function ConsumerDetail() {
   ) => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
+  };
+
+  const updateMutation = useMutation({
+    mutationFn: (payload: {
+      ack_policy?: string;
+      deliver_policy?: string;
+      replay_policy?: string;
+      max_deliver?: number;
+    }) =>
+      ConsumersService.putStreamsConsumers(
+        consumerData.stream ?? "",
+        name || "",
+        payload as any,
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["consumer", name] });
+      refetch();
+      setShowEditModal(false);
+      showToast("Consumer updated", "success");
+    },
+    onError: (err: any) => showToast(err?.body?.error || "Update failed", "error"),
+  });
+
+  const cloneMutation = useMutation({
+    mutationFn: (newName: string) =>
+      ConsumersService.postStreamsConsumers(consumerData.stream ?? "", {
+        name: newName,
+        durable: newName,
+        ack_policy: (consumerData.config?.ack_policy as any) || "explicit",
+        deliver_policy: (consumerData.config?.deliver_policy as any) || "all",
+        replay_policy: (consumerData.config?.replay_policy as any) || "instant",
+        max_deliver: consumerData.config?.max_deliver ?? -1,
+      }),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["consumers"] });
+      setShowCloneModal(false);
+      showToast(`Consumer "${result.name}" created`, "success");
+    },
+    onError: (err: any) => showToast(err?.body?.error || "Clone failed", "error"),
+  });
+
+  const handleOpenEdit = () => {
+    setEditForm({
+      ack_policy: consumerData.config?.ack_policy || "explicit",
+      deliver_policy: consumerData.config?.deliver_policy || "all",
+      replay_policy: consumerData.config?.replay_policy || "instant",
+      max_deliver: consumerData.config?.max_deliver ?? -1,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleOpenClone = () => {
+    setCloneName(`${name}-copy`);
+    setShowCloneModal(true);
   };
 
   const handleResetLag = async () => {
@@ -653,7 +716,7 @@ export default function ConsumerDetail() {
           <div className="card">
             <h3 className="text-lg font-semibold mb-4">Consumer Actions</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <button className="btn-secondary flex items-center gap-2">
+              <button onClick={handleOpenEdit} className="btn-secondary flex items-center gap-2">
                 <Settings className="w-4 h-4" />
                 Edit Config
               </button>
@@ -671,7 +734,7 @@ export default function ConsumerDetail() {
                 )}
                 Reset Lag
               </button>
-              <button className="btn-secondary flex items-center gap-2">
+              <button onClick={handleOpenClone} className="btn-secondary flex items-center gap-2">
                 <Copy className="w-4 h-4" />
                 Clone Consumer
               </button>
@@ -688,6 +751,127 @@ export default function ConsumerDetail() {
                   <Trash2 className="w-4 h-4" />
                 )}
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Consumer Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-dark-card rounded-xl w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-dark-border">
+              <h2 className="text-xl font-semibold">Edit Consumer: {name}</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="p-2 hover:bg-dark-bg rounded-lg transition-colors text-dark-muted"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Ack Policy</label>
+                <select
+                  className="input w-full"
+                  value={editForm.ack_policy}
+                  onChange={(e) => setEditForm({ ...editForm, ack_policy: e.target.value })}
+                >
+                  <option value="explicit">Explicit</option>
+                  <option value="all">All</option>
+                  <option value="none">None</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Deliver Policy</label>
+                <select
+                  className="input w-full"
+                  value={editForm.deliver_policy}
+                  onChange={(e) => setEditForm({ ...editForm, deliver_policy: e.target.value })}
+                >
+                  <option value="all">All</option>
+                  <option value="last">Last</option>
+                  <option value="new">New</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Replay Policy</label>
+                <select
+                  className="input w-full"
+                  value={editForm.replay_policy}
+                  onChange={(e) => setEditForm({ ...editForm, replay_policy: e.target.value })}
+                >
+                  <option value="instant">Instant</option>
+                  <option value="original">Original</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Max Deliver (-1 = unlimited)</label>
+                <input
+                  type="number"
+                  className="input w-full"
+                  min={-1}
+                  value={editForm.max_deliver}
+                  onChange={(e) => setEditForm({ ...editForm, max_deliver: parseInt(e.target.value) || -1 })}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 p-6 border-t border-dark-border">
+              <button onClick={() => setShowEditModal(false)} className="btn-secondary">Cancel</button>
+              <button
+                onClick={() => updateMutation.mutate({
+                  ack_policy: editForm.ack_policy,
+                  deliver_policy: editForm.deliver_policy,
+                  replay_policy: editForm.replay_policy,
+                  max_deliver: editForm.max_deliver,
+                })}
+                disabled={updateMutation.isPending}
+                className="btn-primary flex items-center gap-2"
+              >
+                {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clone Consumer Modal */}
+      {showCloneModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-dark-card rounded-xl w-full max-w-md shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-dark-border">
+              <h2 className="text-xl font-semibold">Clone Consumer</h2>
+              <button
+                onClick={() => setShowCloneModal(false)}
+                className="p-2 hover:bg-dark-bg rounded-lg transition-colors text-dark-muted"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6">
+              <label className="block text-sm text-dark-muted mb-1">New Consumer Name</label>
+              <input
+                type="text"
+                className="input w-full"
+                value={cloneName}
+                onChange={(e) => setCloneName(e.target.value)}
+                placeholder="my-consumer-copy"
+              />
+              <p className="text-xs text-dark-muted mt-2">
+                Creates a new durable consumer on stream <span className="font-mono">{consumerData.stream}</span> with the same configuration.
+              </p>
+            </div>
+            <div className="flex justify-end gap-3 p-6 border-t border-dark-border">
+              <button onClick={() => setShowCloneModal(false)} className="btn-secondary">Cancel</button>
+              <button
+                onClick={() => cloneMutation.mutate(cloneName)}
+                disabled={cloneMutation.isPending || !cloneName.trim()}
+                className="btn-primary flex items-center gap-2"
+              >
+                {cloneMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                Clone
               </button>
             </div>
           </div>

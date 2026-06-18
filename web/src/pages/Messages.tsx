@@ -20,6 +20,7 @@ import {
   Check,
 } from "lucide-react";
 import { deleteMessage } from "../utils/natsOperations";
+import { ExportService } from "../types";
 import { useToast } from "../components/Toast";
 import { useSSE } from "../hooks/useSSE";
 import { CoreMessagingContent } from "./CoreMessaging";
@@ -88,6 +89,25 @@ export default function Messages() {
       setTimeout(() => setCopiedMessage(null), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
+    }
+  };
+
+  const exportSelectedMessages = async () => {
+    if (!selectedStream) {
+      toast("error", "Select a stream first");
+      return;
+    }
+    try {
+      const blob = await ExportService.postExportStreamsMessages(selectedStream);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${selectedStream}-messages.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast("success", "Export downloaded");
+    } catch (err: any) {
+      toast("error", err?.message || "Export failed");
     }
   };
 
@@ -204,7 +224,7 @@ export default function Messages() {
           {selectedMessages.size > 0 && (
             <>
               <button
-                onClick={() => toast("info", "Export coming soon")}
+                onClick={exportSelectedMessages}
                 className="btn-secondary flex items-center gap-2"
               >
                 <Download className="w-4 h-4" />

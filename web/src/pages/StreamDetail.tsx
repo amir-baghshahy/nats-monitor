@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ConsumersService, StreamsService } from "../types";
 import {
   ArrowLeft,
@@ -30,6 +30,7 @@ import { purgeStream, deleteStream } from "../utils/natsOperations";
 export default function StreamDetail() {
   const { name } = useParams<{ name: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<
     "overview" | "messages" | "consumers" | "config"
   >("overview");
@@ -39,6 +40,13 @@ export default function StreamDetail() {
     message: string;
     type: "success" | "error";
   } | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    subjects: "",
+    replicas: 1,
+    max_age: "",
+    max_bytes: 0,
+  });
 
   const { data: stream, refetch } = useQuery({
     queryKey: ["stream", name],
@@ -53,6 +61,18 @@ export default function StreamDetail() {
         consumers.filter((consumer) => consumer.stream === name),
       ),
     refetchInterval: 5000,
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (payload: { subjects?: string[]; replicas?: number; max_age?: string; max_bytes?: number }) =>
+      StreamsService.putStreams(name || "", payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stream", name] });
+      refetch();
+      setShowEditModal(false);
+      showToast("Stream updated", "success");
+    },
+    onError: (err: any) => showToast(err?.body?.error || "Update failed", "error"),
   });
 
   if (!name) return <div>Stream not found</div>;
@@ -70,7 +90,7 @@ export default function StreamDetail() {
       subjects: [],
       storage: "",
       retention: "",
-      max_age: 0,
+      max_age: "",
       max_bytes: 0,
       max_msg_size: 0,
       replicas: 0,
@@ -134,7 +154,26 @@ export default function StreamDetail() {
   };
 
   const handleEditConfig = () => {
-    setActiveTab("config");
+    setEditForm({
+      subjects: (streamData.config?.subjects || []).join(", "),
+      replicas: streamData.config?.replicas || 1,
+      max_age: streamData.config?.max_age || "",
+      max_bytes: streamData.config?.max_bytes || 0,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateStream = () => {
+    const subjectsArr = editForm.subjects
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    updateMutation.mutate({
+      subjects: subjectsArr.length > 0 ? subjectsArr : undefined,
+      replicas: editForm.replicas > 0 ? editForm.replicas : undefined,
+      max_age: editForm.max_age || undefined,
+      max_bytes: editForm.max_bytes > 0 ? editForm.max_bytes : undefined,
+    });
   };
 
   const handleCloneStream = () => {
@@ -601,6 +640,79 @@ export default function StreamDetail() {
               >
                 <CopyIcon className="w-4 h-4" />
                 Clone Stream
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Stream Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-dark-card rounded-xl w-full max-w-lg shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-dark-border">
+              <h2 className="text-xl font-semibold">Edit Stream: {name}</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="p-2 hover:bg-dark-bg rounded-lg transition-colors text-dark-muted"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Subjects (comma-separated)</label>
+                <input
+                  type="text"
+                  className="input w-full"
+                  value={editForm.subjects}
+                  onChange={(e) => setEditForm({ ...editForm, subjects: e.target.value })}
+                  placeholder="orders.*, events.*"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Replicas</label>
+                <input
+                  type="number"
+                  className="input w-full"
+                  min={1}
+                  max={5}
+                  value={editForm.replicas}
+                  onChange={(e) => setEditForm({ ...editForm, replicas: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Max Age (e.g. 24h, 7d — empty = unlimited)</label>
+                <input
+                  type="text"
+                  className="input w-full"
+                  value={editForm.max_age}
+                  onChange={(e) => setEditForm({ ...editForm, max_age: e.target.value })}
+                  placeholder="24h"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-dark-muted mb-1">Max Bytes (0 = unlimited)</label>
+                <input
+                  type="number"
+                  className="input w-full"
+                  min={0}
+                  value={editForm.max_bytes}
+                  onChange={(e) => setEditForm({ ...editForm, max_bytes: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 p-6 border-t border-dark-border">
+              <button onClick={() => setShowEditModal(false)} className="btn-secondary">
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateStream}
+                disabled={updateMutation.isPending}
+                className="btn-primary flex items-center gap-2"
+              >
+                {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Changes
               </button>
             </div>
           </div>
