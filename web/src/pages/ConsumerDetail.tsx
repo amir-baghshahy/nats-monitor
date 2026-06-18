@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { ConsumersService } from "../types";
 import type {
-  nats_monitoring_internal_dto_AckMessageRequest,
-  nats_monitoring_internal_dto_AckTermMessageRequest,
-  nats_monitoring_internal_dto_NackMessageRequest,
+  github_com_amir_nats_monitor_internal_dto_AckMessageRequest,
+  github_com_amir_nats_monitor_internal_dto_AckTermMessageRequest,
+  github_com_amir_nats_monitor_internal_dto_NackMessageRequest,
 } from "../types";
 import {
   ArrowLeft,
@@ -16,7 +16,6 @@ import {
   TrendingUp,
   Activity,
   MessageSquare,
-  Zap,
   AlertTriangle,
   CheckCircle,
   RefreshCw,
@@ -41,6 +40,7 @@ import {
 
 export default function ConsumerDetail() {
   const { name } = useParams<{ name: string }>();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<
     "overview" | "messages" | "config"
@@ -101,7 +101,7 @@ export default function ConsumerDetail() {
 
   const ackMutation = useMutation({
     mutationFn: (sequence: number) => {
-      const payload: nats_monitoring_internal_dto_AckMessageRequest = {
+      const payload: github_com_amir_nats_monitor_internal_dto_AckMessageRequest = {
         sequence,
       };
       return ConsumersService.postStreamsConsumersAck(
@@ -118,7 +118,7 @@ export default function ConsumerDetail() {
 
   const nackMutation = useMutation({
     mutationFn: ({ sequence, delay }: { sequence: number; delay?: number }) => {
-      const payload: nats_monitoring_internal_dto_NackMessageRequest = {
+      const payload: github_com_amir_nats_monitor_internal_dto_NackMessageRequest = {
         sequence,
       };
       if (delay !== undefined) payload.delay = delay;
@@ -136,7 +136,7 @@ export default function ConsumerDetail() {
 
   const termMutation = useMutation({
     mutationFn: (sequence: number) => {
-      const payload: nats_monitoring_internal_dto_AckTermMessageRequest = {
+      const payload: github_com_amir_nats_monitor_internal_dto_AckTermMessageRequest = {
         sequence,
       };
       return ConsumersService.postStreamsConsumersTerm(
@@ -207,7 +207,7 @@ export default function ConsumerDetail() {
     if (result.success) {
       showToast(result.message, "success");
       queryClient.invalidateQueries({ queryKey: ["consumers"] });
-      window.location.href = `/streams/${encodeURIComponent(consumerData.stream)}`;
+      navigate(`/streams/${encodeURIComponent(consumerData.stream ?? "")}`);
     } else {
       showToast(result.message, "error");
     }
@@ -342,19 +342,6 @@ export default function ConsumerDetail() {
         </div>
         <div className="card">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-green-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">
-                {(consumerData as { ack_rate?: string }).ack_rate ?? "N/A"}
-              </p>
-              <p className="text-xs text-dark-muted">ACK Rate</p>
-            </div>
-          </div>
-        </div>
-        <div className="card">
-          <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
               <MessageSquare className="w-5 h-5 text-blue-400" />
             </div>
@@ -372,7 +359,9 @@ export default function ConsumerDetail() {
               <FastForward className="w-5 h-5 text-purple-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">1.2M</p>
+              <p className="text-2xl font-bold">
+                {(consumerData as { num_delivered?: number }).num_delivered?.toLocaleString() ?? "N/A"}
+              </p>
               <p className="text-xs text-dark-muted">Delivered</p>
             </div>
           </div>
@@ -383,8 +372,10 @@ export default function ConsumerDetail() {
               <CheckCircle className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">98.5%</p>
-              <p className="text-xs text-dark-muted">ACK %</p>
+              <p className="text-2xl font-bold">
+                {(consumerData as { ack_rate?: string }).ack_rate ?? "N/A"}
+              </p>
+              <p className="text-xs text-dark-muted">ACK Rate</p>
             </div>
           </div>
         </div>
@@ -394,8 +385,10 @@ export default function ConsumerDetail() {
               <Activity className="w-5 h-5 text-primary-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">23ms</p>
-              <p className="text-xs text-dark-muted">Avg Latency</p>
+              <p className="text-2xl font-bold">
+                {(consumerData as { paused?: boolean }).paused ? "Paused" : "Active"}
+              </p>
+              <p className="text-xs text-dark-muted">State</p>
             </div>
           </div>
         </div>
@@ -621,30 +614,40 @@ export default function ConsumerDetail() {
                 </div>
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Ack Wait</span>
-                  <span className="font-medium">30s</span>
+                  <span className="font-medium">
+                    {(consumerData.config as any)?.ack_wait ?? "N/A"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Max Waiting</span>
-                  <span className="font-medium">512</span>
+                  <span className="font-medium">
+                    {(consumerData.config as any)?.max_waiting ?? "N/A"}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-dark-bg/50 rounded-lg">
                   <span className="text-dark-muted">Max Batch</span>
-                  <span className="font-medium">256</span>
+                  <span className="font-medium">
+                    {(consumerData.config as any)?.max_batch ?? "N/A"}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Filter Subject */}
-          <div className="card">
-            <h3 className="text-lg font-semibold mb-4">Filter Subject</h3>
-            <div className="p-3 bg-dark-bg/50 rounded-lg">
-              <p className="font-mono text-sm">orders.{`>`}</p>
-              <p className="text-xs text-dark-muted mt-1">
-                Only messages matching this subject will be delivered
-              </p>
+          {(consumerData.config as any)?.filter_subject && (
+            <div className="card">
+              <h3 className="text-lg font-semibold mb-4">Filter Subject</h3>
+              <div className="p-3 bg-dark-bg/50 rounded-lg">
+                <p className="font-mono text-sm">
+                  {(consumerData.config as any).filter_subject}
+                </p>
+                <p className="text-xs text-dark-muted mt-1">
+                  Only messages matching this subject will be delivered
+                </p>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Actions */}
           <div className="card">

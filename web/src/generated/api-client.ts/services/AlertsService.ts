@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { github_com_amir_nats_monitor_internal_dto_SuccessResponse } from '../models/github_com_amir_nats_monitor_internal_dto_SuccessResponse';
 import type { internal_handlers_Alert } from '../models/internal_handlers_Alert';
 import type { internal_handlers_AlertTrigger } from '../models/internal_handlers_AlertTrigger';
 import type { internal_handlers_CheckAlertsResponse } from '../models/internal_handlers_CheckAlertsResponse';
-import type { nats_monitoring_internal_dto_SuccessResponse } from '../models/nats_monitoring_internal_dto_SuccessResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -80,13 +80,13 @@ export class AlertsService {
      * Acknowledges one or more triggers for the given alert ID
      * @param id Alert ID
      * @param requestBody Acknowledging user
-     * @returns nats_monitoring_internal_dto_SuccessResponse OK
+     * @returns github_com_amir_nats_monitor_internal_dto_SuccessResponse OK
      * @throws ApiError
      */
     public static postAlertsTriggersAck(
         id: string,
         requestBody?: Record<string, any>,
-    ): CancelablePromise<nats_monitoring_internal_dto_SuccessResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_SuccessResponse> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/alerts/triggers/{id}/ack',
@@ -101,12 +101,12 @@ export class AlertsService {
      * Delete an alert
      * Deletes an alert configuration by ID
      * @param id Alert ID
-     * @returns nats_monitoring_internal_dto_SuccessResponse OK
+     * @returns github_com_amir_nats_monitor_internal_dto_SuccessResponse OK
      * @throws ApiError
      */
     public static deleteAlerts(
         id: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_SuccessResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_SuccessResponse> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/alerts/{id}',

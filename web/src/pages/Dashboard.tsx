@@ -11,7 +11,7 @@ import {
 } from "../components/dashboard";
 import EmptyState from "../components/ui/EmptyState";
 import { ConsumersService, HealthService } from "../types";
-import type { nats_monitoring_internal_dto_DashboardStatsResponse as DashboardStatsResponse } from "../types";
+import type { github_com_amir_nats_monitor_internal_dto_DashboardStatsResponse as DashboardStatsResponse } from "../types";
 import { Database, AlertCircle, Loader2 } from "lucide-react";
 
 export default function Dashboard() {

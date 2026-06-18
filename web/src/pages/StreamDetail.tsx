@@ -531,7 +531,7 @@ export default function StreamDetail() {
                 <div className="flex justify-between">
                   <span className="text-dark-muted">Max Age</span>
                   <span className="font-medium">
-                    {streamData.config?.max_age ? "Infinite" : "None"}
+                    {streamData.config?.max_age ? streamData.config.max_age : "None"}
                   </span>
                 </div>
                 <div className="flex justify-between">

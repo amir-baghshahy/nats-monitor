@@ -1,6 +1,1099 @@
 {
   "components": {
     "schemas": {
+      "github_com_amir_nats-monitor_internal_dto.AckMessageRequest": {
+        "properties": {
+          "sequence": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sequence"
+        ],
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.AckMessageResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.AckTermMessageRequest": {
+        "properties": {
+          "sequence": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sequence"
+        ],
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ActiveSubscription": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "subject": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterConnectedServer": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterHealthResponse": {
+        "properties": {
+          "connected": {
+            "type": "boolean"
+          },
+          "connected_server": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterConnectedServer"
+          },
+          "jetstream": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterJetStreamHealth"
+          },
+          "server_status": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterInfoPeerResponse": {
+        "properties": {
+          "active": {
+            "type": "integer"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "lag": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "offline": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterInfoResponse": {
+        "properties": {
+          "cluster_name": {
+            "type": "string"
+          },
+          "cluster_url": {
+            "type": "string"
+          },
+          "is_clustered": {
+            "type": "boolean"
+          },
+          "jetstream": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterJetStreamInfo"
+          },
+          "server_name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterJetStreamHealth": {
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "tiers": {}
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterJetStreamInfo": {
+        "properties": {
+          "api_level": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "tier": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterNodeResponse": {
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "healthy": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lag": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterNodesResponse": {
+        "properties": {
+          "cluster_name": {
+            "type": "string"
+          },
+          "clustered": {
+            "type": "boolean"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterNodeResponse"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterPlacementResponse": {
+        "properties": {
+          "cluster": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterStreamClusterResponse": {
+        "properties": {
+          "leader": {
+            "type": "string"
+          },
+          "leader_since": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "raft_group": {
+            "type": "string"
+          },
+          "replicas": {
+            "items": {
+              "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterInfoPeerResponse"
+            },
+            "type": "array"
+          },
+          "system_account": {
+            "type": "boolean"
+          },
+          "traffic_account": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterStreamReplicaResponse": {
+        "properties": {
+          "cluster": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterStreamClusterResponse"
+          },
+          "is_clustered": {
+            "type": "boolean"
+          },
+          "mirror": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterStreamSource"
+          },
+          "placement": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterPlacementResponse"
+          },
+          "replicas": {
+            "type": "integer"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterStreamSource"
+            },
+            "type": "array"
+          },
+          "stream": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ClusterStreamSource": {
+        "properties": {
+          "domain": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ConnectionInfo": {
+        "properties": {
+          "cid": {
+            "type": "integer"
+          },
+          "connected_at": {
+            "type": "string"
+          },
+          "in_bytes": {
+            "type": "integer"
+          },
+          "in_msgs": {
+            "type": "integer"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "last_activity": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "out_bytes": {
+            "type": "integer"
+          },
+          "out_msgs": {
+            "type": "integer"
+          },
+          "pending_bytes": {
+            "type": "integer"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "rtt": {
+            "type": "string"
+          },
+          "server": {
+            "type": "string"
+          },
+          "server_id": {
+            "type": "string"
+          },
+          "subs_count": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "user": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ConnectionsResponse": {
+        "properties": {
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConnectionInfo"
+            },
+            "type": "array"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ConsumerConfigResponse": {
+        "properties": {
+          "ack_policy": {
+            "type": "string"
+          },
+          "deliver_policy": {
+            "type": "string"
+          },
+          "durable": {
+            "type": "string"
+          },
+          "max_deliver": {
+            "type": "integer"
+          },
+          "replay_policy": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ConsumerResponse": {
+        "properties": {
+          "ack_rate": {
+            "type": "string"
+          },
+          "config": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConsumerConfigResponse"
+          },
+          "lag": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "num_pending": {
+            "type": "integer"
+          },
+          "paused": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "stream": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.CreateConsumerRequest": {
+        "properties": {
+          "ack_policy": {
+            "enum": [
+              "none",
+              "all",
+              "explicit"
+            ],
+            "type": "string"
+          },
+          "deliver_policy": {
+            "enum": [
+              "all",
+              "last",
+              "new"
+            ],
+            "type": "string"
+          },
+          "durable": {
+            "type": "string"
+          },
+          "filter_subject": {
+            "type": "string"
+          },
+          "max_deliver": {
+            "minimum": -1,
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "replay_policy": {
+            "enum": [
+              "instant",
+              "original"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.CreateStreamRequest": {
+        "properties": {
+          "max_age": {
+            "type": "string"
+          },
+          "max_bytes": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "replicas": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "retention": {
+            "enum": [
+              "limits",
+              "interest",
+              "workqueue"
+            ],
+            "type": "string"
+          },
+          "storage": {
+            "enum": [
+              "file",
+              "memory"
+            ],
+            "type": "string"
+          },
+          "subjects": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "storage",
+          "subjects"
+        ],
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.DashboardStatsResponse": {
+        "properties": {
+          "bytes": {
+            "type": "integer"
+          },
+          "connections": {
+            "type": "integer"
+          },
+          "consumers": {
+            "type": "integer"
+          },
+          "messages": {
+            "type": "integer"
+          },
+          "server_status": {
+            "type": "string"
+          },
+          "streams": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ErrorResponse": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.HealthResponse": {
+        "properties": {
+          "nats": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVBucketCreateResponse": {
+        "properties": {
+          "history": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "values": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVBucketDeleteResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVBucketInfo": {
+        "properties": {
+          "bucket_name": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "values": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVKeyDeleteResponse": {
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVKeyEntry": {
+        "properties": {
+          "created": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVKeyHistoryEntry": {
+        "properties": {
+          "created": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVKeyPutResponse": {
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.KVPurgeResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.MessageResponse": {
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "headers": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object"
+          },
+          "sequence": {
+            "type": "integer"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.NackMessageRequest": {
+        "properties": {
+          "delay": {
+            "description": "Redelivery delay in seconds",
+            "type": "integer"
+          },
+          "sequence": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sequence"
+        ],
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.PendingMessage": {
+        "properties": {
+          "consumer": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          },
+          "num_delivered": {
+            "type": "integer"
+          },
+          "num_pending": {
+            "type": "integer"
+          },
+          "sequence": {
+            "type": "integer"
+          },
+          "stream": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.PendingMessagesResponse": {
+        "properties": {
+          "consumer": {
+            "type": "string"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.PendingMessage"
+            },
+            "type": "array"
+          },
+          "num_ack_pending": {
+            "type": "integer"
+          },
+          "num_pending": {
+            "type": "integer"
+          },
+          "stream": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.PublishMessageRequest": {
+        "properties": {
+          "headers": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object"
+          },
+          "payload": {
+            "type": "string"
+          },
+          "reply_to": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject"
+        ],
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.PublishMessageResponse": {
+        "properties": {
+          "size": {
+            "type": "integer"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "timestamp": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.PurgeStreamRequest": {
+        "properties": {
+          "sequence": {
+            "type": "integer"
+          },
+          "subject": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.PurgeStreamResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "remaining": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ReplayRequest": {
+        "properties": {
+          "end_seq": {
+            "type": "integer"
+          },
+          "filter_subject": {
+            "type": "string"
+          },
+          "start_seq": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ReplayResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "replay_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.RequestMessageRequest": {
+        "properties": {
+          "headers": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object"
+          },
+          "payload": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "timeout": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "subject"
+        ],
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ResetLagRequest": {
+        "properties": {
+          "sequence": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ResetLagResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "new_sequence": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.ServiceDiscoveryResponse": {
+        "properties": {
+          "auth_required": {
+            "type": "boolean"
+          },
+          "connected": {
+            "type": "boolean"
+          },
+          "host": {
+            "type": "string"
+          },
+          "max_payload": {
+            "type": "integer"
+          },
+          "port": {
+            "type": "integer"
+          },
+          "server_count": {
+            "type": "integer"
+          },
+          "server_name": {
+            "type": "string"
+          },
+          "server_url": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "tls_required": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.StreamConfigResponse": {
+        "properties": {
+          "max_age": {
+            "type": "string"
+          },
+          "max_bytes": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "replicas": {
+            "type": "integer"
+          },
+          "retention": {
+            "type": "string"
+          },
+          "storage": {
+            "type": "string"
+          },
+          "subjects": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.StreamResponse": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.StreamConfigResponse"
+          },
+          "state": {
+            "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.StreamStateResponse"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.StreamStateResponse": {
+        "properties": {
+          "bytes": {
+            "type": "integer"
+          },
+          "consumers": {
+            "type": "integer"
+          },
+          "delete_marks": {
+            "type": "integer"
+          },
+          "first_seq": {
+            "type": "integer"
+          },
+          "first_ts": {
+            "type": "string"
+          },
+          "last_seq": {
+            "type": "integer"
+          },
+          "last_ts": {
+            "type": "string"
+          },
+          "messages": {
+            "type": "integer"
+          },
+          "num_pending": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.SubjectInfo": {
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "last_seen": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.SubjectsResponse": {
+        "properties": {
+          "subjects": {
+            "items": {
+              "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SubjectInfo"
+            },
+            "type": "array"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.SubscriptionsResponse": {
+        "properties": {
+          "connected": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "server": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "subscriptions": {
+            "items": {
+              "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ActiveSubscription"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.SuccessResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.UpdateConsumerRequest": {
+        "properties": {
+          "ack_policy": {
+            "enum": [
+              "none",
+              "all",
+              "explicit"
+            ],
+            "type": "string"
+          },
+          "deliver_policy": {
+            "enum": [
+              "all",
+              "last",
+              "new"
+            ],
+            "type": "string"
+          },
+          "max_deliver": {
+            "minimum": -1,
+            "type": "integer"
+          },
+          "replay_policy": {
+            "enum": [
+              "instant",
+              "original"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "github_com_amir_nats-monitor_internal_dto.UpdateStreamRequest": {
+        "properties": {
+          "max_age": {
+            "type": "string"
+          },
+          "max_bytes": {
+            "type": "integer"
+          },
+          "replicas": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "subjects": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "internal_handlers.Alert": {
         "properties": {
           "channels": {
@@ -260,1099 +1353,6 @@
         },
         "type": "object"
       },
-      "nats-monitoring_internal_dto.AckMessageRequest": {
-        "properties": {
-          "sequence": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "sequence"
-        ],
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.AckMessageResponse": {
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "sequence": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.AckTermMessageRequest": {
-        "properties": {
-          "sequence": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "sequence"
-        ],
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ActiveSubscription": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "subject": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterConnectedServer": {
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterHealthResponse": {
-        "properties": {
-          "connected": {
-            "type": "boolean"
-          },
-          "connected_server": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterConnectedServer"
-          },
-          "jetstream": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterJetStreamHealth"
-          },
-          "server_status": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterInfoPeerResponse": {
-        "properties": {
-          "active": {
-            "type": "integer"
-          },
-          "current": {
-            "type": "boolean"
-          },
-          "lag": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "offline": {
-            "type": "boolean"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterInfoResponse": {
-        "properties": {
-          "cluster_name": {
-            "type": "string"
-          },
-          "cluster_url": {
-            "type": "string"
-          },
-          "is_clustered": {
-            "type": "boolean"
-          },
-          "jetstream": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterJetStreamInfo"
-          },
-          "server_name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterJetStreamHealth": {
-        "properties": {
-          "domain": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "tiers": {}
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterJetStreamInfo": {
-        "properties": {
-          "api_level": {
-            "type": "string"
-          },
-          "domain": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "tier": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterNodeResponse": {
-        "properties": {
-          "active": {
-            "type": "boolean"
-          },
-          "current": {
-            "type": "boolean"
-          },
-          "healthy": {
-            "type": "boolean"
-          },
-          "id": {
-            "type": "string"
-          },
-          "lag": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterNodesResponse": {
-        "properties": {
-          "cluster_name": {
-            "type": "string"
-          },
-          "clustered": {
-            "type": "boolean"
-          },
-          "nodes": {
-            "items": {
-              "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterNodeResponse"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterPlacementResponse": {
-        "properties": {
-          "cluster": {
-            "type": "string"
-          },
-          "tags": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterStreamClusterResponse": {
-        "properties": {
-          "leader": {
-            "type": "string"
-          },
-          "leader_since": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "raft_group": {
-            "type": "string"
-          },
-          "replicas": {
-            "items": {
-              "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterInfoPeerResponse"
-            },
-            "type": "array"
-          },
-          "system_account": {
-            "type": "boolean"
-          },
-          "traffic_account": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterStreamReplicaResponse": {
-        "properties": {
-          "cluster": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterStreamClusterResponse"
-          },
-          "is_clustered": {
-            "type": "boolean"
-          },
-          "mirror": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterStreamSource"
-          },
-          "placement": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterPlacementResponse"
-          },
-          "replicas": {
-            "type": "integer"
-          },
-          "sources": {
-            "items": {
-              "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterStreamSource"
-            },
-            "type": "array"
-          },
-          "stream": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ClusterStreamSource": {
-        "properties": {
-          "domain": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ConnectionInfo": {
-        "properties": {
-          "cid": {
-            "type": "integer"
-          },
-          "connected_at": {
-            "type": "string"
-          },
-          "in_bytes": {
-            "type": "integer"
-          },
-          "in_msgs": {
-            "type": "integer"
-          },
-          "ip": {
-            "type": "string"
-          },
-          "last_activity": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "out_bytes": {
-            "type": "integer"
-          },
-          "out_msgs": {
-            "type": "integer"
-          },
-          "pending_bytes": {
-            "type": "integer"
-          },
-          "port": {
-            "type": "integer"
-          },
-          "rtt": {
-            "type": "string"
-          },
-          "server": {
-            "type": "string"
-          },
-          "server_id": {
-            "type": "string"
-          },
-          "subs_count": {
-            "type": "integer"
-          },
-          "type": {
-            "type": "string"
-          },
-          "user": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ConnectionsResponse": {
-        "properties": {
-          "connections": {
-            "items": {
-              "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConnectionInfo"
-            },
-            "type": "array"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ConsumerConfigResponse": {
-        "properties": {
-          "ack_policy": {
-            "type": "string"
-          },
-          "deliver_policy": {
-            "type": "string"
-          },
-          "durable": {
-            "type": "string"
-          },
-          "max_deliver": {
-            "type": "integer"
-          },
-          "replay_policy": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ConsumerResponse": {
-        "properties": {
-          "ack_rate": {
-            "type": "string"
-          },
-          "config": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConsumerConfigResponse"
-          },
-          "lag": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "num_pending": {
-            "type": "integer"
-          },
-          "paused": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string"
-          },
-          "stream": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.CreateConsumerRequest": {
-        "properties": {
-          "ack_policy": {
-            "enum": [
-              "none",
-              "all",
-              "explicit"
-            ],
-            "type": "string"
-          },
-          "deliver_policy": {
-            "enum": [
-              "all",
-              "last",
-              "new"
-            ],
-            "type": "string"
-          },
-          "durable": {
-            "type": "string"
-          },
-          "filter_subject": {
-            "type": "string"
-          },
-          "max_deliver": {
-            "minimum": -1,
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "replay_policy": {
-            "enum": [
-              "instant",
-              "original"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "name"
-        ],
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.CreateStreamRequest": {
-        "properties": {
-          "max_age": {
-            "type": "string"
-          },
-          "max_bytes": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "replicas": {
-            "maximum": 5,
-            "minimum": 1,
-            "type": "integer"
-          },
-          "retention": {
-            "enum": [
-              "limits",
-              "interest",
-              "workqueue"
-            ],
-            "type": "string"
-          },
-          "storage": {
-            "enum": [
-              "file",
-              "memory"
-            ],
-            "type": "string"
-          },
-          "subjects": {
-            "items": {
-              "type": "string"
-            },
-            "minItems": 1,
-            "type": "array"
-          }
-        },
-        "required": [
-          "name",
-          "storage",
-          "subjects"
-        ],
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.DashboardStatsResponse": {
-        "properties": {
-          "bytes": {
-            "type": "integer"
-          },
-          "connections": {
-            "type": "integer"
-          },
-          "consumers": {
-            "type": "integer"
-          },
-          "messages": {
-            "type": "integer"
-          },
-          "server_status": {
-            "type": "string"
-          },
-          "streams": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ErrorResponse": {
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "details": {
-            "type": "string"
-          },
-          "error": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.HealthResponse": {
-        "properties": {
-          "nats": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVBucketCreateResponse": {
-        "properties": {
-          "history": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "values": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVBucketDeleteResponse": {
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVBucketInfo": {
-        "properties": {
-          "bucket_name": {
-            "type": "string"
-          },
-          "bytes": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "values": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVKeyDeleteResponse": {
-        "properties": {
-          "key": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVKeyEntry": {
-        "properties": {
-          "created": {
-            "type": "string"
-          },
-          "key": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer"
-          },
-          "value": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVKeyHistoryEntry": {
-        "properties": {
-          "created": {
-            "type": "string"
-          },
-          "key": {
-            "type": "string"
-          },
-          "operation": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer"
-          },
-          "value": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVKeyPutResponse": {
-        "properties": {
-          "key": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.KVPurgeResponse": {
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.MessageResponse": {
-        "properties": {
-          "data": {
-            "type": "string"
-          },
-          "headers": {
-            "additionalProperties": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "type": "object"
-          },
-          "sequence": {
-            "type": "integer"
-          },
-          "subject": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.NackMessageRequest": {
-        "properties": {
-          "delay": {
-            "description": "Redelivery delay in seconds",
-            "type": "integer"
-          },
-          "sequence": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "sequence"
-        ],
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.PendingMessage": {
-        "properties": {
-          "consumer": {
-            "type": "string"
-          },
-          "data": {
-            "type": "string"
-          },
-          "num_delivered": {
-            "type": "integer"
-          },
-          "num_pending": {
-            "type": "integer"
-          },
-          "sequence": {
-            "type": "integer"
-          },
-          "stream": {
-            "type": "string"
-          },
-          "subject": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.PendingMessagesResponse": {
-        "properties": {
-          "consumer": {
-            "type": "string"
-          },
-          "messages": {
-            "items": {
-              "$ref": "#/components/schemas/nats-monitoring_internal_dto.PendingMessage"
-            },
-            "type": "array"
-          },
-          "num_ack_pending": {
-            "type": "integer"
-          },
-          "num_pending": {
-            "type": "integer"
-          },
-          "stream": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.PublishMessageRequest": {
-        "properties": {
-          "headers": {
-            "additionalProperties": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "type": "object"
-          },
-          "payload": {
-            "type": "string"
-          },
-          "reply_to": {
-            "type": "string"
-          },
-          "subject": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "subject"
-        ],
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.PublishMessageResponse": {
-        "properties": {
-          "size": {
-            "type": "integer"
-          },
-          "subject": {
-            "type": "string"
-          },
-          "success": {
-            "type": "boolean"
-          },
-          "timestamp": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.PurgeStreamRequest": {
-        "properties": {
-          "sequence": {
-            "type": "integer"
-          },
-          "subject": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.PurgeStreamResponse": {
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "remaining": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ReplayRequest": {
-        "properties": {
-          "end_seq": {
-            "type": "integer"
-          },
-          "filter_subject": {
-            "type": "string"
-          },
-          "start_seq": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ReplayResponse": {
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "replay_id": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.RequestMessageRequest": {
-        "properties": {
-          "headers": {
-            "additionalProperties": {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            "type": "object"
-          },
-          "payload": {
-            "type": "string"
-          },
-          "subject": {
-            "type": "string"
-          },
-          "timeout": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "subject"
-        ],
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ResetLagRequest": {
-        "properties": {
-          "sequence": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ResetLagResponse": {
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "new_sequence": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.ServiceDiscoveryResponse": {
-        "properties": {
-          "auth_required": {
-            "type": "boolean"
-          },
-          "connected": {
-            "type": "boolean"
-          },
-          "host": {
-            "type": "string"
-          },
-          "max_payload": {
-            "type": "integer"
-          },
-          "port": {
-            "type": "integer"
-          },
-          "server_count": {
-            "type": "integer"
-          },
-          "server_name": {
-            "type": "string"
-          },
-          "server_url": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "tls_required": {
-            "type": "boolean"
-          },
-          "version": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.StreamConfigResponse": {
-        "properties": {
-          "max_age": {
-            "type": "string"
-          },
-          "max_bytes": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "replicas": {
-            "type": "integer"
-          },
-          "retention": {
-            "type": "string"
-          },
-          "storage": {
-            "type": "string"
-          },
-          "subjects": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.StreamResponse": {
-        "properties": {
-          "config": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.StreamConfigResponse"
-          },
-          "state": {
-            "$ref": "#/components/schemas/nats-monitoring_internal_dto.StreamStateResponse"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.StreamStateResponse": {
-        "properties": {
-          "bytes": {
-            "type": "integer"
-          },
-          "consumers": {
-            "type": "integer"
-          },
-          "delete_marks": {
-            "type": "integer"
-          },
-          "first_seq": {
-            "type": "integer"
-          },
-          "first_ts": {
-            "type": "string"
-          },
-          "last_seq": {
-            "type": "integer"
-          },
-          "last_ts": {
-            "type": "string"
-          },
-          "messages": {
-            "type": "integer"
-          },
-          "num_pending": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.SubjectInfo": {
-        "properties": {
-          "count": {
-            "type": "integer"
-          },
-          "last_seen": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.SubjectsResponse": {
-        "properties": {
-          "subjects": {
-            "items": {
-              "$ref": "#/components/schemas/nats-monitoring_internal_dto.SubjectInfo"
-            },
-            "type": "array"
-          },
-          "total": {
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.SubscriptionsResponse": {
-        "properties": {
-          "connected": {
-            "type": "boolean"
-          },
-          "count": {
-            "type": "integer"
-          },
-          "server": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "subscriptions": {
-            "items": {
-              "$ref": "#/components/schemas/nats-monitoring_internal_dto.ActiveSubscription"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.SuccessResponse": {
-        "properties": {
-          "message": {
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.UpdateConsumerRequest": {
-        "properties": {
-          "ack_policy": {
-            "enum": [
-              "none",
-              "all",
-              "explicit"
-            ],
-            "type": "string"
-          },
-          "deliver_policy": {
-            "enum": [
-              "all",
-              "last",
-              "new"
-            ],
-            "type": "string"
-          },
-          "max_deliver": {
-            "minimum": -1,
-            "type": "integer"
-          },
-          "replay_policy": {
-            "enum": [
-              "instant",
-              "original"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "nats-monitoring_internal_dto.UpdateStreamRequest": {
-        "properties": {
-          "max_age": {
-            "type": "string"
-          },
-          "max_bytes": {
-            "type": "integer"
-          },
-          "replicas": {
-            "maximum": 5,
-            "minimum": 1,
-            "type": "integer"
-          },
-          "subjects": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
       "time.Duration": {
         "enum": [
           -9223372036854776000,
@@ -1413,7 +1413,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1478,7 +1478,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1584,7 +1584,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -1616,7 +1616,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -1626,7 +1626,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1666,7 +1666,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1718,7 +1718,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1728,7 +1728,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1749,7 +1749,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterHealthResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterHealthResponse"
                 }
               }
             },
@@ -1759,7 +1759,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterHealthResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterHealthResponse"
                 }
               }
             },
@@ -1780,7 +1780,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterInfoResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterInfoResponse"
                 }
               }
             },
@@ -1790,7 +1790,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1811,7 +1811,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterNodesResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterNodesResponse"
                 }
               }
             },
@@ -1843,7 +1843,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ClusterStreamReplicaResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ClusterStreamReplicaResponse"
                 }
               }
             },
@@ -1853,7 +1853,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1873,7 +1873,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConnectionsResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConnectionsResponse"
                 }
               }
             },
@@ -1883,7 +1883,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1914,7 +1914,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -1924,7 +1924,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1945,7 +1945,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConsumerResponse"
+                    "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                   },
                   "type": "array"
                 }
@@ -1957,7 +1957,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -1988,7 +1988,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConsumerResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                 }
               }
             },
@@ -1998,7 +1998,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2008,7 +2008,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2053,7 +2053,7 @@
             "content": {
               "text/event-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2063,7 +2063,7 @@
             "content": {
               "text/event-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2083,7 +2083,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.PublishMessageRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.PublishMessageRequest"
               }
             }
           },
@@ -2096,7 +2096,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.PublishMessageResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.PublishMessageResponse"
                 }
               }
             },
@@ -2106,7 +2106,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2116,7 +2116,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2136,7 +2136,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.RequestMessageRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.RequestMessageRequest"
               }
             }
           },
@@ -2149,7 +2149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.MessageResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.MessageResponse"
                 }
               }
             },
@@ -2159,7 +2159,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2169,7 +2169,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2179,7 +2179,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2189,7 +2189,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2210,7 +2210,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ServiceDiscoveryResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ServiceDiscoveryResponse"
                 }
               }
             },
@@ -2252,7 +2252,7 @@
             "content": {
               "text/event-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2262,7 +2262,7 @@
             "content": {
               "text/event-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2283,7 +2283,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SubscriptionsResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SubscriptionsResponse"
                 }
               }
             },
@@ -2303,7 +2303,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.DashboardStatsResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.DashboardStatsResponse"
                 }
               }
             },
@@ -2313,7 +2313,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.DashboardStatsResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.DashboardStatsResponse"
                 }
               }
             },
@@ -2355,7 +2355,7 @@
             "content": {
               "text/event-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2387,7 +2387,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2447,7 +2447,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2457,7 +2457,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2518,7 +2518,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2528,7 +2528,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2590,7 +2590,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2600,7 +2600,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2620,7 +2620,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.HealthResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.HealthResponse"
                 }
               }
             },
@@ -2630,7 +2630,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.HealthResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.HealthResponse"
                 }
               }
             },
@@ -2784,7 +2784,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVBucketInfo"
+                    "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVBucketInfo"
                   },
                   "type": "array"
                 }
@@ -2796,7 +2796,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2827,7 +2827,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVBucketCreateResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVBucketCreateResponse"
                 }
               }
             },
@@ -2837,7 +2837,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2847,7 +2847,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2879,7 +2879,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVBucketDeleteResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVBucketDeleteResponse"
                 }
               }
             },
@@ -2889,7 +2889,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2919,7 +2919,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVBucketInfo"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVBucketInfo"
                 }
               }
             },
@@ -2929,7 +2929,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2939,7 +2939,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -2981,7 +2981,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVKeyHistoryEntry"
+                    "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVKeyHistoryEntry"
                   },
                   "type": "array"
                 }
@@ -2993,7 +2993,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3003,7 +3003,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3013,7 +3013,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3054,7 +3054,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVKeyDeleteResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVKeyDeleteResponse"
                 }
               }
             },
@@ -3064,7 +3064,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3074,7 +3074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3084,7 +3084,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3123,7 +3123,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVKeyEntry"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVKeyEntry"
                 }
               }
             },
@@ -3133,7 +3133,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3143,7 +3143,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3185,7 +3185,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVKeyPutResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVKeyPutResponse"
                 }
               }
             },
@@ -3195,7 +3195,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3205,7 +3205,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3215,7 +3215,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3248,7 +3248,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVKeyEntry"
+                    "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVKeyEntry"
                   },
                   "type": "array"
                 }
@@ -3260,7 +3260,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3270,7 +3270,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3302,7 +3302,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.KVPurgeResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.KVPurgeResponse"
                 }
               }
             },
@@ -3312,7 +3312,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3322,7 +3322,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3354,7 +3354,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3364,7 +3364,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3414,7 +3414,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3424,7 +3424,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3513,7 +3513,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3596,7 +3596,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3626,7 +3626,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3726,7 +3726,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3767,7 +3767,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3799,7 +3799,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -3809,7 +3809,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3861,7 +3861,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3902,7 +3902,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/nats-monitoring_internal_dto.StreamResponse"
+                    "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                   },
                   "type": "array"
                 }
@@ -3914,7 +3914,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3931,7 +3931,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.CreateStreamRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.CreateStreamRequest"
               }
             }
           },
@@ -3944,7 +3944,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.StreamResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                 }
               }
             },
@@ -3954,7 +3954,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3964,7 +3964,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -3995,7 +3995,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4005,7 +4005,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4034,7 +4034,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.StreamResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                 }
               }
             },
@@ -4044,7 +4044,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4054,7 +4054,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4082,7 +4082,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.UpdateStreamRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.UpdateStreamRequest"
               }
             }
           },
@@ -4095,7 +4095,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.StreamResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                 }
               }
             },
@@ -4105,7 +4105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4115,7 +4115,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4145,7 +4145,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.CreateConsumerRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.CreateConsumerRequest"
               }
             }
           },
@@ -4158,7 +4158,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConsumerResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                 }
               }
             },
@@ -4168,7 +4168,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4178,7 +4178,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4218,7 +4218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4228,7 +4228,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4266,7 +4266,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConsumerResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                 }
               }
             },
@@ -4276,7 +4276,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4286,7 +4286,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4323,7 +4323,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.UpdateConsumerRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.UpdateConsumerRequest"
               }
             }
           },
@@ -4336,7 +4336,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ConsumerResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                 }
               }
             },
@@ -4346,7 +4346,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4356,7 +4356,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4395,7 +4395,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.AckMessageRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.AckMessageRequest"
               }
             }
           },
@@ -4408,7 +4408,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.AckMessageResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.AckMessageResponse"
                 }
               }
             },
@@ -4418,7 +4418,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4428,7 +4428,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4467,7 +4467,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.ResetLagRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ResetLagRequest"
               }
             }
           },
@@ -4479,7 +4479,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ResetLagResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ResetLagResponse"
                 }
               }
             },
@@ -4489,7 +4489,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4528,7 +4528,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.NackMessageRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.NackMessageRequest"
               }
             }
           },
@@ -4541,7 +4541,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4551,7 +4551,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4561,7 +4561,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4601,7 +4601,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4611,7 +4611,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4660,7 +4660,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.PendingMessagesResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.PendingMessagesResponse"
                 }
               }
             },
@@ -4670,7 +4670,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4709,7 +4709,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.ReplayRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ReplayRequest"
               }
             }
           },
@@ -4721,7 +4721,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ReplayResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ReplayResponse"
                 }
               }
             },
@@ -4731,7 +4731,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4771,7 +4771,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4781,7 +4781,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4820,7 +4820,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.AckTermMessageRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.AckTermMessageRequest"
               }
             }
           },
@@ -4833,7 +4833,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4843,7 +4843,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4853,7 +4853,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4883,7 +4883,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.PublishMessageRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.PublishMessageRequest"
               }
             }
           },
@@ -4896,7 +4896,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4906,7 +4906,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4916,7 +4916,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4956,7 +4956,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -4966,7 +4966,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -4976,7 +4976,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5006,7 +5006,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/nats-monitoring_internal_dto.PurgeStreamRequest"
+                "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.PurgeStreamRequest"
               }
             }
           },
@@ -5018,7 +5018,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.PurgeStreamResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.PurgeStreamResponse"
                 }
               }
             },
@@ -5028,7 +5028,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5048,7 +5048,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SubjectsResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SubjectsResponse"
                 }
               }
             },
@@ -5058,7 +5058,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5120,7 +5120,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5163,7 +5163,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5195,7 +5195,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.SuccessResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                 }
               }
             },
@@ -5205,7 +5205,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5215,7 +5215,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5255,7 +5255,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5307,7 +5307,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5317,7 +5317,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },
@@ -5359,7 +5359,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/nats-monitoring_internal_dto.ErrorResponse"
+                  "$ref": "#/components/schemas/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                 }
               }
             },

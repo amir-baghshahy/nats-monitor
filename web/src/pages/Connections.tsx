@@ -13,14 +13,14 @@ import {
 import { useToast } from "../components/Toast";
 import ConnectionFilters from "../components/connections/ConnectionFilters";
 import { HealthService } from "../types";
-import type { nats_monitoring_internal_dto_ConnectionInfo as ConnectionInfo } from "../types";
+import type { github_com_amir_nats_monitor_internal_dto_ConnectionInfo as ConnectionInfo } from "../types";
 
 export default function Connections() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterServer, setFilterServer] = useState<string>("all");
   const [expandedConnections, setExpandedConnections] = useState<Set<number>>(
-    new Set(),
+    new Set<number>(),
   );
 
   const {
@@ -82,12 +82,12 @@ export default function Connections() {
       ).length,
     }));
 
-  const toggleExpand = (index: number) => {
+  const toggleExpand = (cid: number) => {
     const newExpanded = new Set(expandedConnections);
-    if (newExpanded.has(index)) {
-      newExpanded.delete(index);
+    if (newExpanded.has(cid)) {
+      newExpanded.delete(cid);
     } else {
-      newExpanded.add(index);
+      newExpanded.add(cid);
     }
     setExpandedConnections(newExpanded);
   };
@@ -239,12 +239,13 @@ export default function Connections() {
           </div>
         ) : (
           <div className="divide-y divide-dark-border">
-            {filteredConnections.map((conn: ConnectionInfo, index: number) => {
-              const isExpanded = expandedConnections.has(index);
+            {filteredConnections.map((conn: ConnectionInfo) => {
+              const cid = conn.cid ?? 0;
+              const isExpanded = expandedConnections.has(cid);
 
               return (
                 <div
-                  key={index}
+                  key={cid}
                   className="border-l-2 border-l-transparent hover:border-l-primary-500 transition-colors"
                 >
                   <div className="p-4 hover:bg-dark-bg/50 transition-colors">
@@ -252,7 +253,7 @@ export default function Connections() {
                       <div className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
 
                       <button
-                        onClick={() => toggleExpand(index)}
+                        onClick={() => toggleExpand(cid)}
                         className="p-1 hover:bg-dark-bg rounded transition-colors"
                       >
                         {isExpanded ? (

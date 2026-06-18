@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { HistoryService, StreamsService } from "../types";
-import type { nats_monitoring_internal_dto_StreamResponse as Stream } from "../types";
+import type { github_com_amir_nats_monitor_internal_dto_StreamResponse as Stream } from "../types";
 import { BarChart3, History as HistoryIcon, RefreshCw } from "lucide-react";
 import EmptyState from "../components/ui/EmptyState";
 

@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { github_com_amir_nats_monitor_internal_dto_SuccessResponse } from '../models/github_com_amir_nats_monitor_internal_dto_SuccessResponse';
 import type { internal_handlers_ConnectionConfig } from '../models/internal_handlers_ConnectionConfig';
-import type { nats_monitoring_internal_dto_SuccessResponse } from '../models/nats_monitoring_internal_dto_SuccessResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -64,12 +64,12 @@ export class TenancyService {
      * Delete a tenancy connection
      * Deletes a multi-tenancy NATS connection configuration (the default connection cannot be deleted)
      * @param id Connection ID
-     * @returns nats_monitoring_internal_dto_SuccessResponse OK
+     * @returns github_com_amir_nats_monitor_internal_dto_SuccessResponse OK
      * @throws ApiError
      */
     public static deleteTenancyConnections(
         id: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_SuccessResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_SuccessResponse> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/tenancy/connections/{id}',

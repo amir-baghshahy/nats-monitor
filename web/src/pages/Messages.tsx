@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MessagesService, StreamsService } from "../types";
-import type { nats_monitoring_internal_dto_StreamResponse as Stream } from "../types";
+import type { github_com_amir_nats_monitor_internal_dto_StreamResponse as Stream } from "../types";
 import {
   Search,
   Send,

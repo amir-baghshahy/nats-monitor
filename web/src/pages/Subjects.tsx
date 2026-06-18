@@ -11,7 +11,7 @@ import {
   FolderOpen,
 } from "lucide-react";
 import { HealthService } from "../types";
-import type { nats_monitoring_internal_dto_SubjectInfo as SubjectInfo } from "../types";
+import type { github_com_amir_nats_monitor_internal_dto_SubjectInfo as SubjectInfo } from "../types";
 
 export default function Subjects() {
   const [searchQuery, setSearchQuery] = useState("");

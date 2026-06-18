@@ -28,8 +28,8 @@ import { SearchBar, Pagination, BulkActions } from "../components/common";
 import { StatusBadge, EmptyState } from "../components/ui";
 import { StreamsService, ExportService } from "../types";
 import { useToast } from "../components/Toast";
-import type { nats_monitoring_internal_dto_StreamResponse as Stream } from "../types";
-import type { nats_monitoring_internal_dto_CreateStreamRequest } from "../types";
+import type { github_com_amir_nats_monitor_internal_dto_StreamResponse as Stream } from "../types";
+import type { github_com_amir_nats_monitor_internal_dto_CreateStreamRequest } from "../types";
 import { formatBytes } from "../utils/formatters";
 
 interface StreamFilters {
@@ -222,7 +222,7 @@ export default function Streams() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: nats_monitoring_internal_dto_CreateStreamRequest) =>
+    mutationFn: (data: github_com_amir_nats_monitor_internal_dto_CreateStreamRequest) =>
       StreamsService.postStreams(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["streams"] });
@@ -722,7 +722,7 @@ function CreateStreamModal({
   isPending,
 }: {
   onClose: () => void;
-  onSubmit: (data: nats_monitoring_internal_dto_CreateStreamRequest) => void;
+  onSubmit: (data: github_com_amir_nats_monitor_internal_dto_CreateStreamRequest) => void;
   isPending: boolean;
 }) {
   const [name, setName] = useState("");
@@ -735,7 +735,7 @@ function CreateStreamModal({
     onSubmit({
       name,
       subjects: subjects.split(",").map((s) => s.trim()).filter(Boolean),
-      storage: storage as unknown as nats_monitoring_internal_dto_CreateStreamRequest.storage,
+      storage: storage as unknown as github_com_amir_nats_monitor_internal_dto_CreateStreamRequest.storage,
       replicas,
     });
   };

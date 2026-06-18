@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { nats_monitoring_internal_dto_KVBucketCreateResponse } from '../models/nats_monitoring_internal_dto_KVBucketCreateResponse';
-import type { nats_monitoring_internal_dto_KVBucketDeleteResponse } from '../models/nats_monitoring_internal_dto_KVBucketDeleteResponse';
-import type { nats_monitoring_internal_dto_KVBucketInfo } from '../models/nats_monitoring_internal_dto_KVBucketInfo';
-import type { nats_monitoring_internal_dto_KVKeyDeleteResponse } from '../models/nats_monitoring_internal_dto_KVKeyDeleteResponse';
-import type { nats_monitoring_internal_dto_KVKeyEntry } from '../models/nats_monitoring_internal_dto_KVKeyEntry';
-import type { nats_monitoring_internal_dto_KVKeyHistoryEntry } from '../models/nats_monitoring_internal_dto_KVKeyHistoryEntry';
-import type { nats_monitoring_internal_dto_KVKeyPutResponse } from '../models/nats_monitoring_internal_dto_KVKeyPutResponse';
-import type { nats_monitoring_internal_dto_KVPurgeResponse } from '../models/nats_monitoring_internal_dto_KVPurgeResponse';
+import type { github_com_amir_nats_monitor_internal_dto_KVBucketCreateResponse } from '../models/github_com_amir_nats_monitor_internal_dto_KVBucketCreateResponse';
+import type { github_com_amir_nats_monitor_internal_dto_KVBucketDeleteResponse } from '../models/github_com_amir_nats_monitor_internal_dto_KVBucketDeleteResponse';
+import type { github_com_amir_nats_monitor_internal_dto_KVBucketInfo } from '../models/github_com_amir_nats_monitor_internal_dto_KVBucketInfo';
+import type { github_com_amir_nats_monitor_internal_dto_KVKeyDeleteResponse } from '../models/github_com_amir_nats_monitor_internal_dto_KVKeyDeleteResponse';
+import type { github_com_amir_nats_monitor_internal_dto_KVKeyEntry } from '../models/github_com_amir_nats_monitor_internal_dto_KVKeyEntry';
+import type { github_com_amir_nats_monitor_internal_dto_KVKeyHistoryEntry } from '../models/github_com_amir_nats_monitor_internal_dto_KVKeyHistoryEntry';
+import type { github_com_amir_nats_monitor_internal_dto_KVKeyPutResponse } from '../models/github_com_amir_nats_monitor_internal_dto_KVKeyPutResponse';
+import type { github_com_amir_nats_monitor_internal_dto_KVPurgeResponse } from '../models/github_com_amir_nats_monitor_internal_dto_KVPurgeResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -17,10 +17,10 @@ export class KvService {
     /**
      * List KV buckets
      * Returns all JetStream Key-Value store buckets
-     * @returns nats_monitoring_internal_dto_KVBucketInfo OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVBucketInfo OK
      * @throws ApiError
      */
-    public static getKvBuckets(): CancelablePromise<Array<nats_monitoring_internal_dto_KVBucketInfo>> {
+    public static getKvBuckets(): CancelablePromise<Array<github_com_amir_nats_monitor_internal_dto_KVBucketInfo>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/kv/buckets',
@@ -33,12 +33,12 @@ export class KvService {
      * Create a KV bucket
      * Creates a new JetStream Key-Value store bucket
      * @param requestBody Bucket configuration
-     * @returns nats_monitoring_internal_dto_KVBucketCreateResponse Created
+     * @returns github_com_amir_nats_monitor_internal_dto_KVBucketCreateResponse Created
      * @throws ApiError
      */
     public static postKvBuckets(
         requestBody: Record<string, any>,
-    ): CancelablePromise<nats_monitoring_internal_dto_KVBucketCreateResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_KVBucketCreateResponse> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/kv/buckets',
@@ -54,12 +54,12 @@ export class KvService {
      * Delete a KV bucket
      * Deletes a JetStream Key-Value store bucket
      * @param name Bucket name
-     * @returns nats_monitoring_internal_dto_KVBucketDeleteResponse OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVBucketDeleteResponse OK
      * @throws ApiError
      */
     public static deleteKvBuckets(
         name: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_KVBucketDeleteResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_KVBucketDeleteResponse> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/kv/buckets/{name}',
@@ -75,12 +75,12 @@ export class KvService {
      * Get a KV bucket
      * Returns detailed information about a single KV bucket
      * @param name Bucket name
-     * @returns nats_monitoring_internal_dto_KVBucketInfo OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVBucketInfo OK
      * @throws ApiError
      */
     public static getKvBuckets1(
         name: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_KVBucketInfo> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_KVBucketInfo> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/kv/buckets/{name}',
@@ -98,13 +98,13 @@ export class KvService {
      * Returns the revision history of a single key in a KV bucket
      * @param name Bucket name
      * @param key Key name
-     * @returns nats_monitoring_internal_dto_KVKeyHistoryEntry OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVKeyHistoryEntry OK
      * @throws ApiError
      */
     public static getKvBucketsHistory(
         name: string,
         key: string,
-    ): CancelablePromise<Array<nats_monitoring_internal_dto_KVKeyHistoryEntry>> {
+    ): CancelablePromise<Array<github_com_amir_nats_monitor_internal_dto_KVKeyHistoryEntry>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/kv/buckets/{name}/history',
@@ -126,13 +126,13 @@ export class KvService {
      * Deletes a key from a KV bucket
      * @param name Bucket name
      * @param key Key name
-     * @returns nats_monitoring_internal_dto_KVKeyDeleteResponse OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVKeyDeleteResponse OK
      * @throws ApiError
      */
     public static deleteKvBucketsKey(
         name: string,
         key: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_KVKeyDeleteResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_KVKeyDeleteResponse> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/kv/buckets/{name}/key',
@@ -154,13 +154,13 @@ export class KvService {
      * Returns the value and revision of a single key in a KV bucket
      * @param name Bucket name
      * @param key Key name
-     * @returns nats_monitoring_internal_dto_KVKeyEntry OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVKeyEntry OK
      * @throws ApiError
      */
     public static getKvBucketsKey(
         name: string,
         key: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_KVKeyEntry> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_KVKeyEntry> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/kv/buckets/{name}/key',
@@ -181,13 +181,13 @@ export class KvService {
      * Creates or updates a key in a KV bucket
      * @param name Bucket name
      * @param requestBody Key/value to write
-     * @returns nats_monitoring_internal_dto_KVKeyPutResponse OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVKeyPutResponse OK
      * @throws ApiError
      */
     public static putKvBucketsKey(
         name: string,
         requestBody: Record<string, any>,
-    ): CancelablePromise<nats_monitoring_internal_dto_KVKeyPutResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_KVKeyPutResponse> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/kv/buckets/{name}/key',
@@ -207,12 +207,12 @@ export class KvService {
      * List keys in a KV bucket
      * Returns all keys (with values and revisions) in a KV bucket
      * @param name Bucket name
-     * @returns nats_monitoring_internal_dto_KVKeyEntry OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVKeyEntry OK
      * @throws ApiError
      */
     public static getKvBucketsKeys(
         name: string,
-    ): CancelablePromise<Array<nats_monitoring_internal_dto_KVKeyEntry>> {
+    ): CancelablePromise<Array<github_com_amir_nats_monitor_internal_dto_KVKeyEntry>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/kv/buckets/{name}/keys',
@@ -229,12 +229,12 @@ export class KvService {
      * Purge a KV bucket
      * Removes all deleted-key tombstones from a KV bucket
      * @param name Bucket name
-     * @returns nats_monitoring_internal_dto_KVPurgeResponse OK
+     * @returns github_com_amir_nats_monitor_internal_dto_KVPurgeResponse OK
      * @throws ApiError
      */
     public static postKvBucketsPurge(
         name: string,
-    ): CancelablePromise<nats_monitoring_internal_dto_KVPurgeResponse> {
+    ): CancelablePromise<github_com_amir_nats_monitor_internal_dto_KVPurgeResponse> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/kv/buckets/{name}/purge',

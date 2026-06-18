@@ -1,6 +1,6 @@
 import { Database, Users, MessageSquare, Activity } from "lucide-react";
 import StatCard from "../ui/StatCard";
-import type { nats_monitoring_internal_dto_DashboardStatsResponse as DashboardStatsResponse } from "../../types";
+import type { github_com_amir_nats_monitor_internal_dto_DashboardStatsResponse as DashboardStatsResponse } from "../../types";
 
 interface StatsGridProps {
   stats: DashboardStatsResponse;

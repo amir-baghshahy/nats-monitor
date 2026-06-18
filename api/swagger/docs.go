@@ -45,7 +45,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -106,7 +106,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -203,7 +203,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     }
                 }
@@ -238,7 +238,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -283,13 +283,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -316,13 +316,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -342,13 +342,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterHealthResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterHealthResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterHealthResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterHealthResponse"
                         }
                     }
                 }
@@ -368,13 +368,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterInfoResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterInfoResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -394,7 +394,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterNodesResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterNodesResponse"
                         }
                     }
                 }
@@ -423,13 +423,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamReplicaResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterStreamReplicaResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -451,13 +451,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ConnectionsResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConnectionsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -488,13 +488,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -518,14 +518,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/nats-monitoring_internal_dto.ConsumerResponse"
+                                "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -556,19 +556,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -607,13 +607,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -639,7 +639,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.PublishMessageRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.PublishMessageRequest"
                         }
                     }
                 ],
@@ -647,19 +647,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.PublishMessageResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.PublishMessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -685,7 +685,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.RequestMessageRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.RequestMessageRequest"
                         }
                     }
                 ],
@@ -693,31 +693,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.MessageResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "408": {
                         "description": "Request Timeout",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -737,7 +737,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ServiceDiscoveryResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ServiceDiscoveryResponse"
                         }
                     }
                 }
@@ -772,13 +772,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -798,7 +798,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SubscriptionsResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SubscriptionsResponse"
                         }
                     }
                 }
@@ -820,13 +820,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.DashboardStatsResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.DashboardStatsResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.DashboardStatsResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.DashboardStatsResponse"
                         }
                     }
                 }
@@ -861,7 +861,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -887,7 +887,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -935,13 +935,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -990,13 +990,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1048,13 +1048,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1076,13 +1076,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.HealthResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.HealthResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.HealthResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.HealthResponse"
                         }
                     }
                 }
@@ -1219,14 +1219,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketInfo"
+                                "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVBucketInfo"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1258,19 +1258,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketCreateResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVBucketCreateResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1299,19 +1299,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketInfo"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVBucketInfo"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1338,13 +1338,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVBucketDeleteResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVBucketDeleteResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1382,26 +1382,26 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyHistoryEntry"
+                                "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVKeyHistoryEntry"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1437,19 +1437,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyEntry"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVKeyEntry"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1488,25 +1488,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyPutResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVKeyPutResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1540,25 +1540,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyDeleteResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVKeyDeleteResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1589,20 +1589,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/nats-monitoring_internal_dto.KVKeyEntry"
+                                "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVKeyEntry"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1631,19 +1631,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.KVPurgeResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.KVPurgeResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1672,13 +1672,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1721,13 +1721,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1805,7 +1805,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1876,7 +1876,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1904,7 +1904,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1996,7 +1996,7 @@ const docTemplate = `{
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2034,7 +2034,7 @@ const docTemplate = `{
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2081,7 +2081,7 @@ const docTemplate = `{
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2108,13 +2108,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2160,14 +2160,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/nats-monitoring_internal_dto.StreamResponse"
+                                "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2190,7 +2190,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.CreateStreamRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.CreateStreamRequest"
                         }
                     }
                 ],
@@ -2198,19 +2198,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.StreamResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2241,19 +2241,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.StreamResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2283,7 +2283,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.UpdateStreamRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.UpdateStreamRequest"
                         }
                     }
                 ],
@@ -2291,19 +2291,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.StreamResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.StreamResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2332,13 +2332,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2370,7 +2370,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.CreateConsumerRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.CreateConsumerRequest"
                         }
                     }
                 ],
@@ -2378,19 +2378,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2428,19 +2428,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2477,7 +2477,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.UpdateConsumerRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.UpdateConsumerRequest"
                         }
                     }
                 ],
@@ -2485,19 +2485,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConsumerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2533,13 +2533,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2578,7 +2578,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.AckMessageRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.AckMessageRequest"
                         }
                     }
                 ],
@@ -2586,19 +2586,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.AckMessageResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.AckMessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2636,7 +2636,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ResetLagRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ResetLagRequest"
                         }
                     }
                 ],
@@ -2644,13 +2644,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ResetLagResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ResetLagResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2689,7 +2689,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.NackMessageRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.NackMessageRequest"
                         }
                     }
                 ],
@@ -2697,19 +2697,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2747,13 +2747,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2798,13 +2798,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.PendingMessagesResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.PendingMessagesResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2842,7 +2842,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ReplayRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ReplayRequest"
                         }
                     }
                 ],
@@ -2850,13 +2850,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ReplayResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ReplayResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2894,13 +2894,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2939,7 +2939,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.AckTermMessageRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.AckTermMessageRequest"
                         }
                     }
                 ],
@@ -2947,19 +2947,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2991,7 +2991,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.PublishMessageRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.PublishMessageRequest"
                         }
                     }
                 ],
@@ -2999,19 +2999,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3049,19 +3049,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3092,7 +3092,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.PurgeStreamRequest"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.PurgeStreamRequest"
                         }
                     }
                 ],
@@ -3100,13 +3100,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.PurgeStreamResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.PurgeStreamResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3128,13 +3128,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SubjectsResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SubjectsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3192,7 +3192,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3232,7 +3232,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3267,7 +3267,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3312,13 +3312,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3345,19 +3345,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3392,7 +3392,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/nats-monitoring_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3420,6 +3420,1099 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_amir_nats-monitor_internal_dto.AckMessageRequest": {
+            "type": "object",
+            "required": [
+                "sequence"
+            ],
+            "properties": {
+                "sequence": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.AckMessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.AckTermMessageRequest": {
+            "type": "object",
+            "required": [
+                "sequence"
+            ],
+            "properties": {
+                "sequence": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ActiveSubscription": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterConnectedServer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterHealthResponse": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "connected_server": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterConnectedServer"
+                },
+                "jetstream": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterJetStreamHealth"
+                },
+                "server_status": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterInfoPeerResponse": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "integer"
+                },
+                "current": {
+                    "type": "boolean"
+                },
+                "lag": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "offline": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterInfoResponse": {
+            "type": "object",
+            "properties": {
+                "cluster_name": {
+                    "type": "string"
+                },
+                "cluster_url": {
+                    "type": "string"
+                },
+                "is_clustered": {
+                    "type": "boolean"
+                },
+                "jetstream": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterJetStreamInfo"
+                },
+                "server_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterJetStreamHealth": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tiers": {}
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterJetStreamInfo": {
+            "type": "object",
+            "properties": {
+                "api_level": {
+                    "type": "string"
+                },
+                "domain": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "tier": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterNodeResponse": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "current": {
+                    "type": "boolean"
+                },
+                "healthy": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lag": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterNodesResponse": {
+            "type": "object",
+            "properties": {
+                "cluster_name": {
+                    "type": "string"
+                },
+                "clustered": {
+                    "type": "boolean"
+                },
+                "nodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterNodeResponse"
+                    }
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterPlacementResponse": {
+            "type": "object",
+            "properties": {
+                "cluster": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterStreamClusterResponse": {
+            "type": "object",
+            "properties": {
+                "leader": {
+                    "type": "string"
+                },
+                "leader_since": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "raft_group": {
+                    "type": "string"
+                },
+                "replicas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterInfoPeerResponse"
+                    }
+                },
+                "system_account": {
+                    "type": "boolean"
+                },
+                "traffic_account": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterStreamReplicaResponse": {
+            "type": "object",
+            "properties": {
+                "cluster": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterStreamClusterResponse"
+                },
+                "is_clustered": {
+                    "type": "boolean"
+                },
+                "mirror": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterStreamSource"
+                },
+                "placement": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterPlacementResponse"
+                },
+                "replicas": {
+                    "type": "integer"
+                },
+                "sources": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ClusterStreamSource"
+                    }
+                },
+                "stream": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ClusterStreamSource": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ConnectionInfo": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": "integer"
+                },
+                "connected_at": {
+                    "type": "string"
+                },
+                "in_bytes": {
+                    "type": "integer"
+                },
+                "in_msgs": {
+                    "type": "integer"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "last_activity": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "out_bytes": {
+                    "type": "integer"
+                },
+                "out_msgs": {
+                    "type": "integer"
+                },
+                "pending_bytes": {
+                    "type": "integer"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "rtt": {
+                    "type": "string"
+                },
+                "server": {
+                    "type": "string"
+                },
+                "server_id": {
+                    "type": "string"
+                },
+                "subs_count": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ConnectionsResponse": {
+            "type": "object",
+            "properties": {
+                "connections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConnectionInfo"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ConsumerConfigResponse": {
+            "type": "object",
+            "properties": {
+                "ack_policy": {
+                    "type": "string"
+                },
+                "deliver_policy": {
+                    "type": "string"
+                },
+                "durable": {
+                    "type": "string"
+                },
+                "max_deliver": {
+                    "type": "integer"
+                },
+                "replay_policy": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ConsumerResponse": {
+            "type": "object",
+            "properties": {
+                "ack_rate": {
+                    "type": "string"
+                },
+                "config": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ConsumerConfigResponse"
+                },
+                "lag": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "num_pending": {
+                    "type": "integer"
+                },
+                "paused": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "stream": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.CreateConsumerRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "ack_policy": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "all",
+                        "explicit"
+                    ]
+                },
+                "deliver_policy": {
+                    "type": "string",
+                    "enum": [
+                        "all",
+                        "last",
+                        "new"
+                    ]
+                },
+                "durable": {
+                    "type": "string"
+                },
+                "filter_subject": {
+                    "type": "string"
+                },
+                "max_deliver": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "name": {
+                    "type": "string"
+                },
+                "replay_policy": {
+                    "type": "string",
+                    "enum": [
+                        "instant",
+                        "original"
+                    ]
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.CreateStreamRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "storage",
+                "subjects"
+            ],
+            "properties": {
+                "max_age": {
+                    "type": "string"
+                },
+                "max_bytes": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "replicas": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "retention": {
+                    "type": "string",
+                    "enum": [
+                        "limits",
+                        "interest",
+                        "workqueue"
+                    ]
+                },
+                "storage": {
+                    "type": "string",
+                    "enum": [
+                        "file",
+                        "memory"
+                    ]
+                },
+                "subjects": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.DashboardStatsResponse": {
+            "type": "object",
+            "properties": {
+                "bytes": {
+                    "type": "integer"
+                },
+                "connections": {
+                    "type": "integer"
+                },
+                "consumers": {
+                    "type": "integer"
+                },
+                "messages": {
+                    "type": "integer"
+                },
+                "server_status": {
+                    "type": "string"
+                },
+                "streams": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.HealthResponse": {
+            "type": "object",
+            "properties": {
+                "nats": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVBucketCreateResponse": {
+            "type": "object",
+            "properties": {
+                "history": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVBucketDeleteResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVBucketInfo": {
+            "type": "object",
+            "properties": {
+                "bucket_name": {
+                    "type": "string"
+                },
+                "bytes": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "values": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVKeyDeleteResponse": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVKeyEntry": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVKeyHistoryEntry": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "operation": {
+                    "type": "string"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVKeyPutResponse": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.KVPurgeResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.NackMessageRequest": {
+            "type": "object",
+            "required": [
+                "sequence"
+            ],
+            "properties": {
+                "delay": {
+                    "description": "Redelivery delay in seconds",
+                    "type": "integer"
+                },
+                "sequence": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.PendingMessage": {
+            "type": "object",
+            "properties": {
+                "consumer": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "num_delivered": {
+                    "type": "integer"
+                },
+                "num_pending": {
+                    "type": "integer"
+                },
+                "sequence": {
+                    "type": "integer"
+                },
+                "stream": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.PendingMessagesResponse": {
+            "type": "object",
+            "properties": {
+                "consumer": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.PendingMessage"
+                    }
+                },
+                "num_ack_pending": {
+                    "type": "integer"
+                },
+                "num_pending": {
+                    "type": "integer"
+                },
+                "stream": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.PublishMessageRequest": {
+            "type": "object",
+            "required": [
+                "subject"
+            ],
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "reply_to": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.PublishMessageResponse": {
+            "type": "object",
+            "properties": {
+                "size": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.PurgeStreamRequest": {
+            "type": "object",
+            "properties": {
+                "sequence": {
+                    "type": "integer"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.PurgeStreamResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "remaining": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ReplayRequest": {
+            "type": "object",
+            "properties": {
+                "end_seq": {
+                    "type": "integer"
+                },
+                "filter_subject": {
+                    "type": "string"
+                },
+                "start_seq": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ReplayResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "replay_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.RequestMessageRequest": {
+            "type": "object",
+            "required": [
+                "subject"
+            ],
+            "properties": {
+                "headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "subject": {
+                    "type": "string"
+                },
+                "timeout": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ResetLagRequest": {
+            "type": "object",
+            "properties": {
+                "sequence": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ResetLagResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "new_sequence": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.ServiceDiscoveryResponse": {
+            "type": "object",
+            "properties": {
+                "auth_required": {
+                    "type": "boolean"
+                },
+                "connected": {
+                    "type": "boolean"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "max_payload": {
+                    "type": "integer"
+                },
+                "port": {
+                    "type": "integer"
+                },
+                "server_count": {
+                    "type": "integer"
+                },
+                "server_name": {
+                    "type": "string"
+                },
+                "server_url": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tls_required": {
+                    "type": "boolean"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.StreamConfigResponse": {
+            "type": "object",
+            "properties": {
+                "max_age": {
+                    "type": "string"
+                },
+                "max_bytes": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "replicas": {
+                    "type": "integer"
+                },
+                "retention": {
+                    "type": "string"
+                },
+                "storage": {
+                    "type": "string"
+                },
+                "subjects": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.StreamResponse": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.StreamConfigResponse"
+                },
+                "state": {
+                    "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.StreamStateResponse"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.StreamStateResponse": {
+            "type": "object",
+            "properties": {
+                "bytes": {
+                    "type": "integer"
+                },
+                "consumers": {
+                    "type": "integer"
+                },
+                "delete_marks": {
+                    "type": "integer"
+                },
+                "first_seq": {
+                    "type": "integer"
+                },
+                "first_ts": {
+                    "type": "string"
+                },
+                "last_seq": {
+                    "type": "integer"
+                },
+                "last_ts": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "integer"
+                },
+                "num_pending": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.SubjectInfo": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "last_seen": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.SubjectsResponse": {
+            "type": "object",
+            "properties": {
+                "subjects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.SubjectInfo"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.SubscriptionsResponse": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "server": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "subscriptions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_amir_nats-monitor_internal_dto.ActiveSubscription"
+                    }
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.UpdateConsumerRequest": {
+            "type": "object",
+            "properties": {
+                "ack_policy": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "all",
+                        "explicit"
+                    ]
+                },
+                "deliver_policy": {
+                    "type": "string",
+                    "enum": [
+                        "all",
+                        "last",
+                        "new"
+                    ]
+                },
+                "max_deliver": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "replay_policy": {
+                    "type": "string",
+                    "enum": [
+                        "instant",
+                        "original"
+                    ]
+                }
+            }
+        },
+        "github_com_amir_nats-monitor_internal_dto.UpdateStreamRequest": {
+            "type": "object",
+            "properties": {
+                "max_age": {
+                    "type": "string"
+                },
+                "max_bytes": {
+                    "type": "integer"
+                },
+                "replicas": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "subjects": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "internal_handlers.Alert": {
             "type": "object",
             "properties": {
@@ -3674,1099 +4767,6 @@ const docTemplate = `{
                 "subscribe": {
                     "type": "object",
                     "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.AckMessageRequest": {
-            "type": "object",
-            "required": [
-                "sequence"
-            ],
-            "properties": {
-                "sequence": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.AckMessageResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "sequence": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.AckTermMessageRequest": {
-            "type": "object",
-            "required": [
-                "sequence"
-            ],
-            "properties": {
-                "sequence": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ActiveSubscription": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterConnectedServer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterHealthResponse": {
-            "type": "object",
-            "properties": {
-                "connected": {
-                    "type": "boolean"
-                },
-                "connected_server": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterConnectedServer"
-                },
-                "jetstream": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterJetStreamHealth"
-                },
-                "server_status": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterInfoPeerResponse": {
-            "type": "object",
-            "properties": {
-                "active": {
-                    "type": "integer"
-                },
-                "current": {
-                    "type": "boolean"
-                },
-                "lag": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "offline": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterInfoResponse": {
-            "type": "object",
-            "properties": {
-                "cluster_name": {
-                    "type": "string"
-                },
-                "cluster_url": {
-                    "type": "string"
-                },
-                "is_clustered": {
-                    "type": "boolean"
-                },
-                "jetstream": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterJetStreamInfo"
-                },
-                "server_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterJetStreamHealth": {
-            "type": "object",
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "tiers": {}
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterJetStreamInfo": {
-            "type": "object",
-            "properties": {
-                "api_level": {
-                    "type": "string"
-                },
-                "domain": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "type": "boolean"
-                },
-                "tier": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterNodeResponse": {
-            "type": "object",
-            "properties": {
-                "active": {
-                    "type": "boolean"
-                },
-                "current": {
-                    "type": "boolean"
-                },
-                "healthy": {
-                    "type": "boolean"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "lag": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterNodesResponse": {
-            "type": "object",
-            "properties": {
-                "cluster_name": {
-                    "type": "string"
-                },
-                "clustered": {
-                    "type": "boolean"
-                },
-                "nodes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterNodeResponse"
-                    }
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterPlacementResponse": {
-            "type": "object",
-            "properties": {
-                "cluster": {
-                    "type": "string"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterStreamClusterResponse": {
-            "type": "object",
-            "properties": {
-                "leader": {
-                    "type": "string"
-                },
-                "leader_since": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "raft_group": {
-                    "type": "string"
-                },
-                "replicas": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterInfoPeerResponse"
-                    }
-                },
-                "system_account": {
-                    "type": "boolean"
-                },
-                "traffic_account": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterStreamReplicaResponse": {
-            "type": "object",
-            "properties": {
-                "cluster": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamClusterResponse"
-                },
-                "is_clustered": {
-                    "type": "boolean"
-                },
-                "mirror": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamSource"
-                },
-                "placement": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterPlacementResponse"
-                },
-                "replicas": {
-                    "type": "integer"
-                },
-                "sources": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/nats-monitoring_internal_dto.ClusterStreamSource"
-                    }
-                },
-                "stream": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ClusterStreamSource": {
-            "type": "object",
-            "properties": {
-                "domain": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ConnectionInfo": {
-            "type": "object",
-            "properties": {
-                "cid": {
-                    "type": "integer"
-                },
-                "connected_at": {
-                    "type": "string"
-                },
-                "in_bytes": {
-                    "type": "integer"
-                },
-                "in_msgs": {
-                    "type": "integer"
-                },
-                "ip": {
-                    "type": "string"
-                },
-                "last_activity": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "out_bytes": {
-                    "type": "integer"
-                },
-                "out_msgs": {
-                    "type": "integer"
-                },
-                "pending_bytes": {
-                    "type": "integer"
-                },
-                "port": {
-                    "type": "integer"
-                },
-                "rtt": {
-                    "type": "string"
-                },
-                "server": {
-                    "type": "string"
-                },
-                "server_id": {
-                    "type": "string"
-                },
-                "subs_count": {
-                    "type": "integer"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "user": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ConnectionsResponse": {
-            "type": "object",
-            "properties": {
-                "connections": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/nats-monitoring_internal_dto.ConnectionInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ConsumerConfigResponse": {
-            "type": "object",
-            "properties": {
-                "ack_policy": {
-                    "type": "string"
-                },
-                "deliver_policy": {
-                    "type": "string"
-                },
-                "durable": {
-                    "type": "string"
-                },
-                "max_deliver": {
-                    "type": "integer"
-                },
-                "replay_policy": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ConsumerResponse": {
-            "type": "object",
-            "properties": {
-                "ack_rate": {
-                    "type": "string"
-                },
-                "config": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.ConsumerConfigResponse"
-                },
-                "lag": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "num_pending": {
-                    "type": "integer"
-                },
-                "paused": {
-                    "type": "boolean"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "stream": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.CreateConsumerRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "ack_policy": {
-                    "type": "string",
-                    "enum": [
-                        "none",
-                        "all",
-                        "explicit"
-                    ]
-                },
-                "deliver_policy": {
-                    "type": "string",
-                    "enum": [
-                        "all",
-                        "last",
-                        "new"
-                    ]
-                },
-                "durable": {
-                    "type": "string"
-                },
-                "filter_subject": {
-                    "type": "string"
-                },
-                "max_deliver": {
-                    "type": "integer",
-                    "minimum": -1
-                },
-                "name": {
-                    "type": "string"
-                },
-                "replay_policy": {
-                    "type": "string",
-                    "enum": [
-                        "instant",
-                        "original"
-                    ]
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.CreateStreamRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "storage",
-                "subjects"
-            ],
-            "properties": {
-                "max_age": {
-                    "type": "string"
-                },
-                "max_bytes": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "replicas": {
-                    "type": "integer",
-                    "maximum": 5,
-                    "minimum": 1
-                },
-                "retention": {
-                    "type": "string",
-                    "enum": [
-                        "limits",
-                        "interest",
-                        "workqueue"
-                    ]
-                },
-                "storage": {
-                    "type": "string",
-                    "enum": [
-                        "file",
-                        "memory"
-                    ]
-                },
-                "subjects": {
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.DashboardStatsResponse": {
-            "type": "object",
-            "properties": {
-                "bytes": {
-                    "type": "integer"
-                },
-                "connections": {
-                    "type": "integer"
-                },
-                "consumers": {
-                    "type": "integer"
-                },
-                "messages": {
-                    "type": "integer"
-                },
-                "server_status": {
-                    "type": "string"
-                },
-                "streams": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "details": {
-                    "type": "string"
-                },
-                "error": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.HealthResponse": {
-            "type": "object",
-            "properties": {
-                "nats": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVBucketCreateResponse": {
-            "type": "object",
-            "properties": {
-                "history": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "values": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVBucketDeleteResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVBucketInfo": {
-            "type": "object",
-            "properties": {
-                "bucket_name": {
-                    "type": "string"
-                },
-                "bytes": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "values": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVKeyDeleteResponse": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVKeyEntry": {
-            "type": "object",
-            "properties": {
-                "created": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "revision": {
-                    "type": "integer"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVKeyHistoryEntry": {
-            "type": "object",
-            "properties": {
-                "created": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "operation": {
-                    "type": "string"
-                },
-                "revision": {
-                    "type": "integer"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVKeyPutResponse": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.KVPurgeResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.MessageResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "string"
-                },
-                "headers": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "sequence": {
-                    "type": "integer"
-                },
-                "subject": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.NackMessageRequest": {
-            "type": "object",
-            "required": [
-                "sequence"
-            ],
-            "properties": {
-                "delay": {
-                    "description": "Redelivery delay in seconds",
-                    "type": "integer"
-                },
-                "sequence": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.PendingMessage": {
-            "type": "object",
-            "properties": {
-                "consumer": {
-                    "type": "string"
-                },
-                "data": {
-                    "type": "string"
-                },
-                "num_delivered": {
-                    "type": "integer"
-                },
-                "num_pending": {
-                    "type": "integer"
-                },
-                "sequence": {
-                    "type": "integer"
-                },
-                "stream": {
-                    "type": "string"
-                },
-                "subject": {
-                    "type": "string"
-                },
-                "timestamp": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.PendingMessagesResponse": {
-            "type": "object",
-            "properties": {
-                "consumer": {
-                    "type": "string"
-                },
-                "messages": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/nats-monitoring_internal_dto.PendingMessage"
-                    }
-                },
-                "num_ack_pending": {
-                    "type": "integer"
-                },
-                "num_pending": {
-                    "type": "integer"
-                },
-                "stream": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.PublishMessageRequest": {
-            "type": "object",
-            "required": [
-                "subject"
-            ],
-            "properties": {
-                "headers": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "payload": {
-                    "type": "string"
-                },
-                "reply_to": {
-                    "type": "string"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.PublishMessageResponse": {
-            "type": "object",
-            "properties": {
-                "size": {
-                    "type": "integer"
-                },
-                "subject": {
-                    "type": "string"
-                },
-                "success": {
-                    "type": "boolean"
-                },
-                "timestamp": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.PurgeStreamRequest": {
-            "type": "object",
-            "properties": {
-                "sequence": {
-                    "type": "integer"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.PurgeStreamResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "remaining": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ReplayRequest": {
-            "type": "object",
-            "properties": {
-                "end_seq": {
-                    "type": "integer"
-                },
-                "filter_subject": {
-                    "type": "string"
-                },
-                "start_seq": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ReplayResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "replay_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.RequestMessageRequest": {
-            "type": "object",
-            "required": [
-                "subject"
-            ],
-            "properties": {
-                "headers": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "payload": {
-                    "type": "string"
-                },
-                "subject": {
-                    "type": "string"
-                },
-                "timeout": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ResetLagRequest": {
-            "type": "object",
-            "properties": {
-                "sequence": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ResetLagResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "new_sequence": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.ServiceDiscoveryResponse": {
-            "type": "object",
-            "properties": {
-                "auth_required": {
-                    "type": "boolean"
-                },
-                "connected": {
-                    "type": "boolean"
-                },
-                "host": {
-                    "type": "string"
-                },
-                "max_payload": {
-                    "type": "integer"
-                },
-                "port": {
-                    "type": "integer"
-                },
-                "server_count": {
-                    "type": "integer"
-                },
-                "server_name": {
-                    "type": "string"
-                },
-                "server_url": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "tls_required": {
-                    "type": "boolean"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.StreamConfigResponse": {
-            "type": "object",
-            "properties": {
-                "max_age": {
-                    "type": "string"
-                },
-                "max_bytes": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "replicas": {
-                    "type": "integer"
-                },
-                "retention": {
-                    "type": "string"
-                },
-                "storage": {
-                    "type": "string"
-                },
-                "subjects": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.StreamResponse": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.StreamConfigResponse"
-                },
-                "state": {
-                    "$ref": "#/definitions/nats-monitoring_internal_dto.StreamStateResponse"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.StreamStateResponse": {
-            "type": "object",
-            "properties": {
-                "bytes": {
-                    "type": "integer"
-                },
-                "consumers": {
-                    "type": "integer"
-                },
-                "delete_marks": {
-                    "type": "integer"
-                },
-                "first_seq": {
-                    "type": "integer"
-                },
-                "first_ts": {
-                    "type": "string"
-                },
-                "last_seq": {
-                    "type": "integer"
-                },
-                "last_ts": {
-                    "type": "string"
-                },
-                "messages": {
-                    "type": "integer"
-                },
-                "num_pending": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.SubjectInfo": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "last_seen": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.SubjectsResponse": {
-            "type": "object",
-            "properties": {
-                "subjects": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/nats-monitoring_internal_dto.SubjectInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.SubscriptionsResponse": {
-            "type": "object",
-            "properties": {
-                "connected": {
-                    "type": "boolean"
-                },
-                "count": {
-                    "type": "integer"
-                },
-                "server": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "subscriptions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/nats-monitoring_internal_dto.ActiveSubscription"
-                    }
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.UpdateConsumerRequest": {
-            "type": "object",
-            "properties": {
-                "ack_policy": {
-                    "type": "string",
-                    "enum": [
-                        "none",
-                        "all",
-                        "explicit"
-                    ]
-                },
-                "deliver_policy": {
-                    "type": "string",
-                    "enum": [
-                        "all",
-                        "last",
-                        "new"
-                    ]
-                },
-                "max_deliver": {
-                    "type": "integer",
-                    "minimum": -1
-                },
-                "replay_policy": {
-                    "type": "string",
-                    "enum": [
-                        "instant",
-                        "original"
-                    ]
-                }
-            }
-        },
-        "nats-monitoring_internal_dto.UpdateStreamRequest": {
-            "type": "object",
-            "properties": {
-                "max_age": {
-                    "type": "string"
-                },
-                "max_bytes": {
-                    "type": "integer"
-                },
-                "replicas": {
-                    "type": "integer",
-                    "maximum": 5,
-                    "minimum": 1
-                },
-                "subjects": {
-                    "type": "array",
-                    "items": {
                         "type": "string"
                     }
                 }

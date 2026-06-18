@@ -6,11 +6,11 @@ import {
   ApiError,
 } from "../types";
 import type {
-  nats_monitoring_internal_dto_PublishMessageRequest,
-  nats_monitoring_internal_dto_PurgeStreamRequest,
-  nats_monitoring_internal_dto_ReplayRequest,
-  nats_monitoring_internal_dto_ResetLagRequest,
-  nats_monitoring_internal_dto_UpdateStreamRequest,
+  github_com_amir_nats_monitor_internal_dto_PublishMessageRequest,
+  github_com_amir_nats_monitor_internal_dto_PurgeStreamRequest,
+  github_com_amir_nats_monitor_internal_dto_ReplayRequest,
+  github_com_amir_nats_monitor_internal_dto_ResetLagRequest,
+  github_com_amir_nats_monitor_internal_dto_UpdateStreamRequest,
 } from "../types";
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -31,7 +31,7 @@ export async function resetConsumerLag(
   targetSequence?: number,
 ): Promise<{ success: boolean; message: string; newSequence?: number }> {
   try {
-    const payload: nats_monitoring_internal_dto_ResetLagRequest | undefined =
+    const payload: github_com_amir_nats_monitor_internal_dto_ResetLagRequest | undefined =
       targetSequence !== undefined ? { sequence: targetSequence } : undefined;
 
     const response = await ConsumersService.postStreamsConsumersLagReset(
@@ -65,7 +65,7 @@ export async function replayMessages(
   } = {},
 ): Promise<{ success: boolean; message: string; replayId?: string }> {
   try {
-    const payload: nats_monitoring_internal_dto_ReplayRequest = {};
+    const payload: github_com_amir_nats_monitor_internal_dto_ReplayRequest = {};
 
     if (options.startSequence) payload.start_seq = options.startSequence;
     if (options.endSequence) payload.end_seq = options.endSequence;
@@ -96,7 +96,7 @@ export async function replayMessages(
 
 export async function publishMessage(
   streamName: string,
-  request: nats_monitoring_internal_dto_PublishMessageRequest,
+  request: github_com_amir_nats_monitor_internal_dto_PublishMessageRequest,
 ): Promise<{ success: boolean; message: string }> {
   try {
     await MessagesService.postStreamsMessagesPublish(streamName, request);
@@ -138,7 +138,7 @@ export async function purgeStream(
   },
 ): Promise<{ success: boolean; message: string; purgedCount?: number }> {
   try {
-    const payload: nats_monitoring_internal_dto_PurgeStreamRequest | undefined =
+    const payload: github_com_amir_nats_monitor_internal_dto_PurgeStreamRequest | undefined =
       filter && (filter.subject || filter.sequence !== undefined)
         ? filter
         : undefined;
@@ -253,7 +253,7 @@ export async function updateStreamConfig(
   },
 ): Promise<{ success: boolean; message: string }> {
   try {
-    const payload: nats_monitoring_internal_dto_UpdateStreamRequest = {
+    const payload: github_com_amir_nats_monitor_internal_dto_UpdateStreamRequest = {
       subjects: config.subjects,
       max_age:
         config.max_age !== undefined ? String(config.max_age) : undefined,

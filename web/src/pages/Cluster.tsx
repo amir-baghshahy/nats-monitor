@@ -355,18 +355,18 @@ export default function Cluster() {
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {streams?.map((stream: any) => (
                   <div
-                    key={stream.name}
-                    onClick={() => setSelectedStream(stream.name)}
+                    key={stream.config?.name}
+                    onClick={() => setSelectedStream(stream.config?.name)}
                     className={`p-3 rounded-lg cursor-pointer transition-colors ${
-                      selectedStream === stream.name
+                      selectedStream === stream.config?.name
                         ? 'bg-primary-500/20 border border-primary-500/50'
                         : 'bg-dark-bg hover:bg-dark-bg/80'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm">{stream.name}</span>
+                      <span className="font-mono text-sm">{stream.config?.name}</span>
                       <span className="text-xs text-dark-muted">
-                        {stream.config.replicas}x replica
+                        {stream.config?.replicas}x replica
                       </span>
                     </div>
                   </div>

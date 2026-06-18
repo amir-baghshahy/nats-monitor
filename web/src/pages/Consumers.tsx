@@ -2,8 +2,8 @@ import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ConsumersService, StreamsService } from "../types";
 import type {
-  nats_monitoring_internal_dto_ConsumerResponse as Consumer,
-  nats_monitoring_internal_dto_StreamResponse as Stream,
+  github_com_amir_nats_monitor_internal_dto_ConsumerResponse as Consumer,
+  github_com_amir_nats_monitor_internal_dto_StreamResponse as Stream,
 } from "../types";
 import {
   Search,
@@ -383,7 +383,9 @@ export default function Consumers() {
             </div>
             <div>
               <p className="text-2xl font-bold">
-                {(stats.totalLag / 1000).toFixed(1)}K
+                {stats.totalLag >= 1000
+                  ? `${(stats.totalLag / 1000).toFixed(1)}K`
+                  : stats.totalLag.toLocaleString()}
               </p>
               <p className="text-xs text-dark-muted">Total Lag</p>
             </div>
