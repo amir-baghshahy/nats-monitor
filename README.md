@@ -396,9 +396,7 @@ AUTO_PORT=false PORT=3000
 - [x] History & usage analysis
 - [x] Cluster topology
 - [ ] Consumer-based message inspection deep-dive
-- [ ] Drag & drop dashboard widgets
-- [ ] Plugin system
-- [ ] Kubernetes Helm chart
+- [x] Kubernetes Helm chart
 - [ ] Object Store browser
 
 ---
