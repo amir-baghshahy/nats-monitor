@@ -8,6 +8,7 @@
 [![Go Version](https://img.shields.io/badge/Go-1.25-blue.svg)](https://go.dev)
 [![Vite](https://img.shields.io/badge/Vite-5.0-646CFF.svg)](https://vitejs.dev)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](Dockerfile)
+[![Helm](https://img.shields.io/badge/Helm-Chart-0F1688?logo=helm)](helm/nats-monitor)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-green.svg)]()
 
 A modern, open-source observability and administration platform for NATS and JetStream.
@@ -15,7 +16,7 @@ Built for teams that need real-time visibility, powerful management tools, and a
 
 ---
 
-| [🚀 Quick Start](#--quick-start) | [📊 Features](#--features) | [🖼️ Screenshots](#--screenshots) | [⚖️ Compare](#-vs-others) | [🏗️ Architecture](#-architecture) |
+| [🚀 Quick Start](#--quick-start) | [📦 Installation](#-installation) | [📊 Features](#--features) | [🖼️ Screenshots](#--screenshots) | [⚖️ Compare](#-vs-others) | [🏗️ Architecture](#-architecture) |
 
 </div>
 
@@ -49,7 +50,7 @@ So we built **nats-monitoring** — the full-featured option that fits in a sing
 
 ## 🚀 Quick Start
 
-Three ways to run — pick whichever fits your workflow.
+Four ways to run — pick whichever fits your workflow.
 
 ### Option 1: Docker Compose ⭐ (Recommended)
 
@@ -87,7 +88,27 @@ Then run:
 nats-monitoring --nats-url nats://your-server:4222
 ```
 
-### Option 3: Local Development
+### Option 3: Kubernetes (Helm)
+
+Deploy to your Kubernetes cluster:
+
+```bash
+# Build and push image
+docker build -t your-registry/nats-monitoring:latest .
+docker push your-registry/nats-monitoring:latest
+
+# Install with Helm
+helm install nats-monitoring ./helm/nats-monitor \
+  --set image.repository=your-registry/nats-monitoring \
+  --set app.natsUrl="nats://nats:4222"
+
+# Check status
+helm status nats-monitoring
+```
+
+Full documentation in [`helm/README.md`](helm/README.md).
+
+### Option 4: Local Development
 
 ```bash
 git clone https://github.com/amir/nats-monitoring.git
@@ -107,6 +128,7 @@ Backend on `:3000`, frontend on `:5173`.
 | Method | Time | When to use |
 |---|---|---|
 | `docker compose up` | 30s | Production, staging, quick demo |
+| `helm install` | 1 min | Kubernetes clusters |
 | Binary download | 15s | No Docker, want native performance |
 | `make dev` | 2 min | Contributing, local changes |
 
@@ -124,6 +146,71 @@ Or via Docker Compose (recommended):
 ```bash
 docker compose up
 ```
+
+### Kubernetes (Helm)
+
+Deploy to any Kubernetes cluster using the included Helm chart:
+
+```bash
+# Build and push your image
+docker build -t your-registry/nats-monitoring:latest .
+docker push your-registry/nats-monitoring:latest
+
+# Install the chart
+helm install nats-monitoring ./helm/nats-monitor \
+  --set image.repository=your-registry/nats-monitoring \
+  --set app.natsUrl="nats://nats.production.svc.cluster.local:4222"
+
+# With custom values
+helm install nats-monitoring ./helm/nats-monitor -f custom-values.yaml
+
+# Upgrade
+helm upgrade nats-monitoring ./helm/nats-monitor
+
+# Uninstall
+helm uninstall nats-monitoring
+```
+
+**Production configuration example:**
+
+```yaml
+# custom-values.yaml
+replicaCount: 3
+image:
+  repository: your-registry/nats-monitoring
+  tag: "v1.0.0"
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: nats-monitor.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: nats-monitor-tls
+      hosts:
+        - nats-monitor.example.com
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+app:
+  natsUrl: "nats://nats.production.svc.cluster.local:4222"
+  corsAllowedOrigins: "https://nats-monitor.example.com"
+```
+
+See [`helm/README.md`](helm/README.md) for full Helm chart documentation.
 
 ### Configuration
 

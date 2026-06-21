@@ -95,7 +95,15 @@ export interface UseStreamsPageReturn {
   getStreamName: (stream: Stream) => string;
 }
 
-function downloadBlob(blob: Blob, filename: string) {
+function downloadBlob(data: Blob | string | object, filename: string) {
+  let blob: Blob;
+  if (typeof data === 'string') {
+    blob = new Blob([data], { type: 'application/octet-stream' });
+  } else if (data instanceof Blob) {
+    blob = data;
+  } else {
+    blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  }
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
@@ -249,7 +257,7 @@ export function useStreamsPage(): UseStreamsPageReturn {
       includeMessages?: boolean;
     }) => ExportService.getExportStreams1(name, format, includeMessages),
     onSuccess: (blob, variables) => {
-      downloadBlob(blob, `${variables.name}-${variables.format}`);
+      downloadBlob(blob, `${variables.name}.${variables.format}`);
       toast("success", "Stream export downloaded");
     },
     onError: (error: any) => {

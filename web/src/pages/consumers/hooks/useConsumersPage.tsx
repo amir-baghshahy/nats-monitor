@@ -209,7 +209,7 @@ export function useConsumersPage(): UseConsumersPageReturn {
     if (ok) {
       filteredConsumers.forEach((consumer) => {
         if (!consumer.name || !consumer.stream) return;
-        if (selectedConsumers.has(consumer.name) && consumer.status !== "active") {
+        if (selectedConsumers.has(consumer.name) && consumer.paused) {
           pauseResumeMutation.mutate({
             stream: consumer.stream,
             name: consumer.name,
@@ -230,7 +230,7 @@ export function useConsumersPage(): UseConsumersPageReturn {
     if (ok) {
       filteredConsumers.forEach((consumer) => {
         if (!consumer.name || !consumer.stream) return;
-        if (selectedConsumers.has(consumer.name) && consumer.status === "active") {
+        if (selectedConsumers.has(consumer.name) && !consumer.paused) {
           pauseResumeMutation.mutate({
             stream: consumer.stream,
             name: consumer.name,
@@ -260,7 +260,7 @@ export function useConsumersPage(): UseConsumersPageReturn {
 
   const handleTogglePauseResume = (consumer: Consumer) => {
     if (!consumer.name || !consumer.stream) return;
-    const isPaused = consumer.status !== "active";
+    const isPaused = consumer.paused;
     pauseResumeMutation.mutate({
       stream: consumer.stream,
       name: consumer.name,

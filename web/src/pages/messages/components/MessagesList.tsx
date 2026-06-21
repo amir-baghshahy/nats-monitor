@@ -101,9 +101,9 @@ export default function MessagesList({
   }
 
   return (
-    <div className="card overflow-hidden p-0">
+    <div className="card overflow-hidden flex flex-col max-h-[600px]">
       {/* Header */}
-      <div className="bg-dark-bg border-b border-dark-border p-4">
+      <div className="bg-dark-bg border-b border-dark-border p-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <input
@@ -144,7 +144,7 @@ export default function MessagesList({
       </div>
 
       {/* Messages */}
-      <div className="divide-y divide-dark-border">
+      <div className="overflow-y-auto scrollbar-thin flex-1 divide-y divide-dark-border">
         {messages.map((message, index) => {
           const sequence = message.sequence;
           const isExpanded = expanded.has(sequence);
@@ -327,6 +327,9 @@ export default function MessagesList({
             </div>
           );
         })}
+      </div>
+      <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+        {messages.length} message{messages.length !== 1 ? 's' : ''}
       </div>
     </div>
   );

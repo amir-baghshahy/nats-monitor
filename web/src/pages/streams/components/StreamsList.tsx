@@ -102,8 +102,9 @@ export default function StreamsList({
         actions={actions}
       />
 
-      <div className="card divide-y divide-dark-border animate-fade-in">
-        {streams.map((stream, index) => {
+      <div className="card overflow-hidden flex flex-col max-h-[600px]">
+        <div className="overflow-y-auto scrollbar-thin flex-1 divide-y divide-dark-border animate-fade-in">
+          {streams.map((stream, index) => {
           const streamName = getStreamName(stream);
           const healthStatus = getStreamHealthStatus(stream);
           const isItemSelected = isSelected(streamName);
@@ -132,6 +133,10 @@ export default function StreamsList({
             </div>
           );
         })}
+        </div>
+        <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+          {streams.length} stream{streams.length !== 1 ? 's' : ''}
+        </div>
       </div>
 
       <div className="mt-6">

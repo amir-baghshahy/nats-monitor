@@ -37,8 +37,8 @@ export default function ConsumersList({
   getLagColor,
 }: ConsumersListProps) {
   return (
-    <div className="card overflow-hidden p-0 animate-fade-in">
-      <div className="bg-dark-bg border-b border-dark-border p-4">
+    <div className="card overflow-hidden flex flex-col max-h-[600px] animate-fade-in">
+      <div className="bg-dark-bg border-b border-dark-border p-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <input
@@ -65,7 +65,7 @@ export default function ConsumersList({
           No consumers found matching your filters
         </div>
       ) : (
-        <div className="divide-y divide-dark-border">
+        <div className="overflow-y-auto scrollbar-thin flex-1 divide-y divide-dark-border">
           {consumers.map((consumer, index) => {
             const consumerName = consumer.name || "";
             if (!consumerName) return null;
@@ -96,6 +96,9 @@ export default function ConsumersList({
           })}
         </div>
       )}
+      <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+        {consumers.length} consumer{consumers.length !== 1 ? 's' : ''}
+      </div>
     </div>
   );
 }

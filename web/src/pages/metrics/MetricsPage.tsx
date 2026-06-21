@@ -245,13 +245,15 @@ export default function MetricsPage({
           </div>
         </div>
 
-        <div className="card">
-          <div className="mb-4 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary-400" />
-            <h2 className="text-lg font-semibold">Rate by Stream</h2>
+        <div className="card overflow-hidden flex flex-col max-h-[400px]">
+          <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary-400" />
+              <h2 className="text-lg font-semibold">Rate by Stream</h2>
+            </div>
           </div>
           {rateStreams.length > 0 ? (
-            <div className="space-y-3">
+            <div className="overflow-y-auto scrollbar-thin flex-1 p-4 space-y-3">
               {rateStreams.map((stream: any) => (
                 <div
                   key={stream.name}
@@ -268,30 +270,38 @@ export default function MetricsPage({
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-dark-border bg-dark-bg/30 p-8 text-center text-dark-muted">
-              No rate data available for this window.
+            <div className="flex-1 flex items-center justify-center">
+              <div className="rounded-xl border border-dashed border-dark-border bg-dark-bg/30 p-8 text-center text-dark-muted">
+                No rate data available for this window.
+              </div>
             </div>
           )}
+          <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+            {rateStreams.length} stream{rateStreams.length !== 1 ? 's' : ''}
+          </div>
         </div>
       </div>
 
       <div className="mb-6 mt-8">
-        <select
-          value={selectedStream || 'all'}
-          onChange={(e) => setSelectedStream(e.target.value === 'all' ? null : e.target.value)}
-          className="input"
-        >
-          <option value="all">All Streams</option>
-          {streamNames.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div className="card overflow-hidden flex flex-col max-h-[800px]">
+          <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
+            <select
+              value={selectedStream || 'all'}
+              onChange={(e) => setSelectedStream(e.target.value === 'all' ? null : e.target.value)}
+              className="input w-full"
+            >
+              <option value="all">All Streams</option>
+              {streamNames.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {streamNames.map((streamName) => {
+          <div className="overflow-y-auto scrollbar-thin flex-1 p-4">
+            <div className="grid gap-6 lg:grid-cols-2">
+              {streamNames.map((streamName) => {
           const messageSeries = getSeries(metrics, streamName, 'messages')
           const bytesSeries = getSeries(metrics, streamName, 'bytes')
           const messages = getLatestValue(messageSeries)
@@ -345,6 +355,12 @@ export default function MetricsPage({
             </div>
           )
         })}
+            </div>
+          </div>
+          <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+            {streamNames.length} stream{streamNames.length !== 1 ? 's' : ''}
+          </div>
+        </div>
       </div>
 
       {streamNames.length === 0 && (

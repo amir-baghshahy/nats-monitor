@@ -113,7 +113,7 @@ export default function ConsumerRow({
                   : "Resume consumer"
               }
             >
-              {consumer.status === "active" ? (
+              {!consumer.paused ? (
                 <Pause className="w-4 h-4 text-dark-muted" />
               ) : (
                 <Play className="w-4 h-4 text-dark-muted" />

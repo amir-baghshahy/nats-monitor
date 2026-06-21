@@ -142,38 +142,48 @@ export default function SubjectsPage({
       {subjects.length > 0 && (
         <>
           {viewMode === 'tree' ? (
-            <div className="card p-4">
-              <div className="space-y-1">
-                {subjectTree.map((node) => renderNode(node))}
+            <div className="card overflow-hidden flex flex-col max-h-[600px]">
+              <div className="overflow-y-auto scrollbar-thin flex-1 p-4">
+                <div className="space-y-1">
+                  {subjectTree.map((node) => renderNode(node))}
+                </div>
+              </div>
+              <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+                {filteredSubjects.length} subject{filteredSubjects.length !== 1 ? 's' : ''}
               </div>
             </div>
           ) : (
-            <div className="card overflow-hidden">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Subject</th>
-                    <th>Messages</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredSubjects.map((s: SubjectInfo, i: number) => (
-                    <tr key={i}>
-                      <td>
-                        <div className="flex items-center gap-2">
-                          {(s.name || '').includes('>') ? (
-                            <Globe className="w-4 h-4 text-primary-400" />
-                          ) : (
-                            <Activity className="w-4 h-4 text-dark-muted" />
-                          )}
-                          <span className="font-mono">{s.name}</span>
-                        </div>
-                      </td>
-                      <td>{(s.count || 0).toLocaleString()}</td>
+            <div className="card overflow-hidden flex flex-col max-h-[600px]">
+              <div className="overflow-x-auto overflow-y-auto scrollbar-thin flex-1">
+                <table className="table">
+                  <thead className="sticky top-0 bg-dark-bg z-10">
+                    <tr>
+                      <th>Subject</th>
+                      <th>Messages</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredSubjects.map((s: SubjectInfo, i: number) => (
+                      <tr key={i}>
+                        <td>
+                          <div className="flex items-center gap-2">
+                            {(s.name || '').includes('>') ? (
+                              <Globe className="w-4 h-4 text-primary-400" />
+                            ) : (
+                              <Activity className="w-4 h-4 text-dark-muted" />
+                            )}
+                            <span className="font-mono">{s.name}</span>
+                          </div>
+                        </td>
+                        <td>{(s.count || 0).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+                {filteredSubjects.length} subject{filteredSubjects.length !== 1 ? 's' : ''}
+              </div>
             </div>
           )}
         </>

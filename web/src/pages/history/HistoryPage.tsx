@@ -1,8 +1,8 @@
-import { UseHistoryReturn } from './hooks/useHistory'
-import { BarChart3, History as HistoryIcon, RefreshCw } from 'lucide-react'
-import EmptyState from '../../components/ui/EmptyState'
+import { UseHistoryReturn } from "./hooks/useHistory";
+import { BarChart3, History as HistoryIcon, RefreshCw } from "lucide-react";
+import EmptyState from "../../components/ui/EmptyState";
 
-const durations = ['1h', '6h', '24h', '7d']
+const durations = ["1h", "6h", "24h", "7d"];
 
 export default function HistoryPage({
   duration,
@@ -49,8 +49,8 @@ export default function HistoryPage({
           className="input"
         >
           <option value="all">All Streams</option>
-          {streamOptions.map((name: any) => (
-            <option key={name} value={name}>
+          {streamOptions.map((name: any, index: number) => (
+            <option key={name || `stream-${index}`} value={name}>
               {name}
             </option>
           ))}
@@ -58,82 +58,102 @@ export default function HistoryPage({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="card">
-          <div className="mb-4 flex items-center gap-2">
-            <HistoryIcon className="h-5 w-5 text-primary-400" />
-            <h2 className="text-lg font-semibold">Stream Summary</h2>
+        <div key="stream-summary" className="card overflow-hidden flex flex-col max-h-[500px]">
+          <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <HistoryIcon className="h-5 w-5 text-primary-400" />
+              <h2 className="text-lg font-semibold">Stream Summary</h2>
+            </div>
           </div>
           {historyStreams.length > 0 ? (
-            <div className="space-y-3">
-              {historyStreams.map((stream: any) => (
-                <div
-                  key={stream.name}
-                  className="rounded-xl bg-dark-bg/50 p-4"
-                >
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="font-medium">{stream.name}</p>
-                    <p className="text-sm text-dark-muted">
-                      {stream.messages?.toLocaleString?.() || 0} msgs
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-dark-muted">Bytes</p>
-                      <p className="font-mono">
-                        {(stream.bytes || 0).toLocaleString()}
+            <>
+              <div key="streams-list" className="overflow-y-auto scrollbar-thin flex-1 p-4 space-y-3">
+                {historyStreams.map((stream: any, index: number) => (
+                  <div
+                    key={stream.name || stream.config?.name || `stream-${index}`}
+                    className="rounded-xl bg-dark-bg/50 p-4"
+                  >
+                    <div className="mb-3 flex items-center justify-between">
+                      <p className="font-medium">{stream.name}</p>
+                      <p className="text-sm text-dark-muted">
+                        {stream.messages?.toLocaleString?.() || 0} msgs
                       </p>
                     </div>
-                    <div>
-                      <p className="text-dark-muted">Trend</p>
-                      <p className="font-mono">{stream.trend || 'N/A'}</p>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <p className="text-dark-muted">Bytes</p>
+                        <p className="font-mono">
+                          {(stream.bytes || 0).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-dark-muted">Trend</p>
+                        <p className="font-mono">{stream.trend || "N/A"}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+                {historyStreams.length} stream
+                {historyStreams.length !== 1 ? "s" : ""}
+              </div>
+            </>
           ) : (
-            <EmptyState
-              icon={BarChart3}
-              title="No History Data"
-              description="Metrics history will appear after the collector has sampled stream data."
-            />
+            <div className="flex-1 flex items-center justify-center">
+              <EmptyState
+                icon={BarChart3}
+                title="No History Data"
+                description="Metrics history will appear after the collector has sampled stream data."
+              />
+            </div>
           )}
         </div>
 
-        <div className="card">
-          <div className="mb-4 flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary-400" />
-            <h2 className="text-lg font-semibold">Messages Trend</h2>
+        <div key="messages-trend" className="card overflow-hidden flex flex-col max-h-[500px]">
+          <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary-400" />
+              <h2 className="text-lg font-semibold">Messages Trend</h2>
+            </div>
           </div>
           {streamHistoryPoints.length > 0 ? (
-            <div className="space-y-3">
-              {streamHistoryPoints.map((point: any, index: number) => (
-                <div
-                  key={`${point.timestamp}-${index}`}
-                  className="rounded-xl bg-dark-bg/50 p-3"
-                >
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-dark-muted">
-                      {point.timestamp
-                        ? new Date(point.timestamp * 1000).toLocaleString()
-                        : 'N/A'}
-                    </span>
-                    <span className="font-mono">
-                      {(point.value || 0).toLocaleString()}
-                    </span>
+            <>
+              <div key="trend-list" className="overflow-y-auto scrollbar-thin flex-1 p-4 space-y-3">
+                {streamHistoryPoints.map((point: any, index: number) => (
+                  <div
+                    key={point?.timestamp ? `${point.timestamp}-${index}` : `point-${index}`}
+                    className="rounded-xl bg-dark-bg/50 p-3"
+                  >
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-dark-muted">
+                        {point.timestamp
+                          ? new Date(point.timestamp * 1000).toLocaleString()
+                          : "N/A"}
+                      </span>
+                      <span className="font-mono">
+                        {(point.value || 0).toLocaleString()}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+                {streamHistoryPoints.length} point
+                {streamHistoryPoints.length !== 1 ? "s" : ""}
+              </div>
+            </>
           ) : (
-            <EmptyState
-              icon={BarChart3}
-              title="No Stream Trend"
-              description="Select a stream to view historical message points."
-            />
+            <div className="flex-1 flex items-center justify-center">
+              <EmptyState
+                icon={BarChart3}
+                title="No Stream Trend"
+                description="Select a stream to view historical message points."
+              />
+            </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

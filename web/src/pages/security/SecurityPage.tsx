@@ -189,12 +189,14 @@ export default function SecurityPage({
       )}
 
       {activeTab === 'users' && (
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Users className="w-5 h-5" />
-            Users ({users?.length || 0})
-          </h3>
-          <div className="space-y-4">
+        <div className="card overflow-hidden flex flex-col max-h-[600px]">
+          <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Users ({users?.length || 0})
+            </h3>
+          </div>
+          <div className="overflow-y-auto scrollbar-thin flex-1 p-4 space-y-4">
             {users?.map((user) => (
               <div key={user.name} className="p-4 bg-dark-bg/50 rounded-lg">
                 <div className="flex items-start justify-between">
@@ -267,17 +269,22 @@ export default function SecurityPage({
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+            <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+              {users?.length || 0} user{(users?.length || 0) !== 1 ? 's' : ''}
+            </div>
         </div>
       )}
 
       {activeTab === 'audit' && (
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Audit Log
-          </h3>
-          <div className="space-y-3">
+        <div className="card overflow-hidden flex flex-col max-h-[600px]">
+          <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Audit Log
+            </h3>
+          </div>
+          <div className="overflow-y-auto scrollbar-thin flex-1 p-4 space-y-3">
             {auditLogs?.map((log: any, index: number) => (
               <div key={index} className="p-4 bg-dark-bg/50 rounded-lg">
                 <div className="flex items-start gap-4">
@@ -296,7 +303,10 @@ export default function SecurityPage({
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+            <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+              {auditLogs?.length || 0} entries
+            </div>
         </div>
       )}
 

@@ -53,8 +53,9 @@ export default function AlertsList({
   }
 
   return (
-    <div className="space-y-4">
-      {alerts.map((alert: Alert, index: number) => {
+    <div className="card overflow-hidden flex flex-col max-h-[600px]">
+      <div className="overflow-y-auto scrollbar-thin flex-1 p-4 space-y-4">
+        {alerts.map((alert: Alert, index: number) => {
         const delayClass = index === 0 ? "" : `animate-delay-${Math.min(index * 50, 500)}`;
         return (
           <div
@@ -138,6 +139,10 @@ export default function AlertsList({
         </div>
         );
       })}
+      </div>
+      <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
+        {alerts.length} alert{alerts.length !== 1 ? 's' : ''}
+      </div>
     </div>
   );
 }

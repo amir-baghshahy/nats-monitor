@@ -11,6 +11,14 @@ import (
 	"github.com/amir/nats-monitor/internal/dto"
 )
 
+// normalizeBucketName removes the KV_ prefix if present
+func normalizeBucketName(name string) string {
+	if len(name) > 3 && name[:3] == "KV_" {
+		return name[3:]
+	}
+	return name
+}
+
 // KVHandler handles KV store operations
 type KVHandler struct {
 	nc *nats.Conn
@@ -131,7 +139,7 @@ func (h *KVHandler) ListBuckets(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name} [get]
 func (h *KVHandler) GetBucket(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
@@ -260,7 +268,7 @@ func (h *KVHandler) CreateBucket(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name} [delete]
 func (h *KVHandler) DeleteBucket(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 
 	err := h.js.DeleteKeyValue(bucketName)
 	if err != nil {
@@ -282,7 +290,7 @@ func (h *KVHandler) DeleteBucket(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name}/keys [get]
 func (h *KVHandler) ListKeys(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
@@ -327,7 +335,7 @@ func (h *KVHandler) ListKeys(c *gin.Context) {
 // @Failure 404 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name}/key [get]
 func (h *KVHandler) GetKey(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 	key := c.Query("key")
 	if key == "" {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "key parameter required"})
@@ -367,7 +375,7 @@ func (h *KVHandler) GetKey(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name}/history [get]
 func (h *KVHandler) GetKeyHistory(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 	key := c.Query("key")
 	if key == "" {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "key parameter required"})
@@ -420,7 +428,7 @@ func (h *KVHandler) GetKeyHistory(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name}/key [put]
 func (h *KVHandler) PutKey(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 
 	var req struct {
 		Key   string `json:"key" binding:"required"`
@@ -460,7 +468,7 @@ func (h *KVHandler) PutKey(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name}/key [delete]
 func (h *KVHandler) DeleteKey(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 	key := c.Query("key")
 	if key == "" {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "key parameter required"})
@@ -493,7 +501,7 @@ func (h *KVHandler) DeleteKey(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /kv/buckets/{name}/purge [post]
 func (h *KVHandler) PurgeBucket(c *gin.Context) {
-	bucketName := c.Param("name")
+	bucketName := normalizeBucketName(c.Param("name"))
 
 	kv, err := h.js.KeyValue(bucketName)
 	if err != nil {
