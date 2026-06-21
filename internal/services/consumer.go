@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amir/nats-monitor/internal/models"
+	"github.com/amir-baghshahy/nats-monitor/internal/models"
 )
 
 // ConsumerUseCase handles consumer business logic

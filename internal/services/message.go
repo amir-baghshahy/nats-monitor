@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amir/nats-monitor/internal/models"
+	"github.com/amir-baghshahy/nats-monitor/internal/models"
 )
 
 // MessageUseCase handles message business logic
@@ -30,15 +30,15 @@ func (uc *MessageUseCase) PublishMessage(ctx context.Context, subject string, da
 	return uc.messageRepo.Publish(ctx, subject, data)
 }
 
-// PublishToStream publishes a message to a stream
-func (uc *MessageUseCase) PublishToStream(ctx context.Context, streamName string, data []byte) error {
-	if streamName == "" {
-		return fmt.Errorf("stream name is required")
+// PublishToStream publishes a message to a JetStream subject
+func (uc *MessageUseCase) PublishToStream(ctx context.Context, subject string, data []byte) error {
+	if subject == "" {
+		return fmt.Errorf("subject is required")
 	}
 	if len(data) == 0 {
 		return fmt.Errorf("message data is required")
 	}
-	return uc.messageRepo.PublishToStream(ctx, streamName, data)
+	return uc.messageRepo.PublishToStream(ctx, subject, data)
 }
 
 // DeleteMessage deletes a message from a stream

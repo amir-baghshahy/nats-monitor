@@ -25,7 +25,7 @@ type CreateConsumerRequest struct {
 	AckPolicy     string `json:"ack_policy" binding:"omitempty,oneof=none all explicit"`
 	DeliverPolicy string `json:"deliver_policy" binding:"omitempty,oneof=all last new"`
 	ReplayPolicy  string `json:"replay_policy" binding:"omitempty,oneof=instant original"`
-	MaxDeliver    int    `json:"max_deliver" binding:"omitempty,min=-1"`
+	MaxDeliver    int    `json:"max_deliver" binding:"omitempty,min=-2"`
 	FilterSubject string `json:"filter_subject,omitempty"`
 }
 
@@ -33,7 +33,7 @@ type UpdateConsumerRequest struct {
 	AckPolicy     string `json:"ack_policy" binding:"omitempty,oneof=none all explicit"`
 	DeliverPolicy string `json:"deliver_policy" binding:"omitempty,oneof=all last new"`
 	ReplayPolicy  string `json:"replay_policy" binding:"omitempty,oneof=instant original"`
-	MaxDeliver    int    `json:"max_deliver" binding:"omitempty,min=-1"`
+	MaxDeliver    int    `json:"max_deliver" binding:"omitempty,min=-2"`
 }
 
 type ResetLagRequest struct {

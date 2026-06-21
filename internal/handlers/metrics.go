@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/amir/nats-monitor/internal/constants"
-	"github.com/amir/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-monitor/internal/constants"
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"

@@ -3,15 +3,16 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/dto"
 )
 
 // validateNATSURL rejects schemes other than nats:// and tls:// to prevent SSRF.
@@ -77,8 +78,10 @@ func NewTenancyHandler(natsURL string, nc *nats.Conn) *TenancyHandler {
 			var serverResp struct {
 				Name string `json:"server_name"`
 			}
-			if json.Unmarshal(msg.Data, &serverResp) == nil && serverResp.Name != "" {
+			if err := json.Unmarshal(msg.Data, &serverResp); err == nil && serverResp.Name != "" {
 				serverName = serverResp.Name
+			} else if err != nil {
+				log.Printf("Failed to unmarshal server name: %v", err)
 			}
 		}
 	}

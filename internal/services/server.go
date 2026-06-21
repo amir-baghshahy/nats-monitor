@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math"
 	"strconv"
 	"time"
 
-	"github.com/amir/nats-monitor/internal/constants"
-	"github.com/amir/nats-monitor/internal/models"
+	"github.com/amir-baghshahy/nats-monitor/internal/constants"
+	"github.com/amir-baghshahy/nats-monitor/internal/models"
 
 	"github.com/nats-io/nats.go"
 )
@@ -71,7 +72,7 @@ func (uc *ServerUseCase) GetDashboardStats(ctx context.Context) (*DashboardStats
 	stats := &DashboardStats{
 		Streams:     len(response.Streams),
 		Status:      "connected",
-		Connections: 1,
+		Connections: 0,
 	}
 
 	for _, stream := range response.Streams {
@@ -136,6 +137,35 @@ type Connections struct {
 	Connected bool
 }
 
+// GetServerInfo returns NATS server information
+func (uc *ServerUseCase) GetServerInfo(ctx context.Context) (map[string]interface{}, error) {
+	connected := uc.nc != nil && uc.nc.IsConnected()
+	serverURL := "N/A"
+	serverName := "N/A"
+	if connected {
+		serverURL = uc.nc.ConnectedUrl()
+		if msg, err := uc.nc.Request("$SYS.REQ.SERVER.PING", []byte("{}"), constants.DefaultRequestTimeout); err == nil && msg != nil {
+			var resp struct {
+				Data struct {
+					Server struct {
+						Name string `json:"name"`
+						ID   string `json:"id"`
+					} `json:"server"`
+				} `json:"data"`
+			}
+			if err := json.Unmarshal(msg.Data, &resp); err == nil {
+				serverName = resp.Data.Server.Name
+			}
+		}
+	}
+	return map[string]interface{}{
+		"server_id":  serverName,
+		"version":    "0.0.0",
+		"connected":  connected,
+		"server_url": serverURL,
+	}, nil
+}
+
 // GetConnections returns connection information
 func (uc *ServerUseCase) GetConnections(ctx context.Context) (*Connections, error) {
 	connections := []*models.Connection{}
@@ -160,7 +190,9 @@ func (uc *ServerUseCase) GetConnections(ctx context.Context) (*Connections, erro
 				ID   string `json:"id"`
 			} `json:"server"`
 		}
-		if json.Unmarshal(msg.Data, &response) == nil {
+		if err := json.Unmarshal(msg.Data, &response); err != nil {
+			log.Printf("Failed to unmarshal server ping response: %v", err)
+		} else {
 			if response.Server.Name != "" {
 				serverName = response.Server.Name
 			}

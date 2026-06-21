@@ -3,16 +3,17 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/amir/nats-monitor/internal/constants"
-	"github.com/amir/nats-monitor/internal/dto"
-	"github.com/amir/nats-monitor/internal/models"
-	usecase "github.com/amir/nats-monitor/internal/services"
-	"github.com/amir/nats-monitor/internal/utils"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/constants"
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-monitor/internal/models"
+	usecase "github.com/amir-baghshahy/nats-monitor/internal/services"
+	"github.com/amir-baghshahy/nats-monitor/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )
@@ -399,7 +400,7 @@ func (h *ConsumerHandler) ListAll(c *gin.Context) {
 	streamNames, err := h.fetchStreamNames()
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err.Error()[:16] == "NATS unavailable" {
+		if strings.HasPrefix(err.Error(), "NATS unavailable") {
 			status = http.StatusServiceUnavailable
 		}
 		c.JSON(status, dto.ErrorResponse{Error: err.Error()})
@@ -499,7 +500,7 @@ func (h *ConsumerHandler) GetConsumerByName(c *gin.Context) {
 	streamNames, err := h.fetchStreamNames()
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err.Error()[:16] == "NATS unavailable" {
+		if strings.HasPrefix(err.Error(), "NATS unavailable") {
 			status = http.StatusServiceUnavailable
 		}
 		c.JSON(status, dto.ErrorResponse{Error: err.Error()})

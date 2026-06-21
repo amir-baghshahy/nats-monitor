@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-monitor/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/dto"
-	"github.com/amir/nats-monitor/internal/utils"
 )
 
 func storageTypeToString(storage int) string {

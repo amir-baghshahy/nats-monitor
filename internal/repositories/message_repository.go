@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/models"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/models"
 )
 
 // NATSMessageRepository implements MessageRepository using NATS JetStream
@@ -25,9 +25,9 @@ func (r *NATSMessageRepository) Publish(ctx context.Context, subject string, dat
 	return r.nc.Publish(subject, data)
 }
 
-// PublishToStream publishes a message to a stream
-func (r *NATSMessageRepository) PublishToStream(ctx context.Context, streamName string, data []byte) error {
-	_, err := r.js.Publish(streamName, data)
+// PublishToStream publishes a message to a NATS JetStream subject
+func (r *NATSMessageRepository) PublishToStream(ctx context.Context, subject string, data []byte) error {
+	_, err := r.js.Publish(subject, data)
 	return err
 }
 

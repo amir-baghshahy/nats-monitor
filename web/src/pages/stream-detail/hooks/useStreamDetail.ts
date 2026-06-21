@@ -35,6 +35,7 @@ export interface UseStreamDetailReturn {
   handleEditConfig: () => void;
   handleUpdateStream: () => void;
   handleCloneStream: () => void;
+  navigate: (path: string) => void;
 }
 
 export function useStreamDetail(): UseStreamDetailReturn {
@@ -184,5 +185,6 @@ export function useStreamDetail(): UseStreamDetailReturn {
     handleEditConfig,
     handleUpdateStream,
     handleCloneStream,
+    navigate,
   };
 }

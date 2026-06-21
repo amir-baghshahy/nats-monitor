@@ -1,4 +1,4 @@
-module github.com/amir/nats-monitor
+module github.com/amir-baghshahy/nats-monitor
 
 go 1.25.0
 

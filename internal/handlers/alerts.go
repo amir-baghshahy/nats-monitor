@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/dto"
 )
 
 // AlertSeverity represents the severity level of an alert

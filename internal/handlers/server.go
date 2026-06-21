@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/amir/nats-monitor/internal/constants"
-	"github.com/amir/nats-monitor/internal/dto"
-	"github.com/amir/nats-monitor/internal/models"
-	"github.com/amir/nats-monitor/internal/services"
+	"github.com/amir-baghshahy/nats-monitor/internal/constants"
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-monitor/internal/models"
+	"github.com/amir-baghshahy/nats-monitor/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -435,15 +435,20 @@ func HealthCheck(useCase *services.ServerUseCase) gin.HandlerFunc {
 // @Produce json
 // @Success 200 {object} object "Server information"
 // @Router /server/info [get]
-func GetServerInfo(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"server_id": "nats-monitoring",
-		"version":   "1.0.0",
-		"connected": true,
-	})
+func (h *ServerHandler) GetServerInfo(c *gin.Context) {
+	info, err := h.useCase.GetServerInfo(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Error:   "Failed to get server info",
+			Details: err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, info)
 }
 
 // formatTime converts time.Time to ISO string format
+
 func formatTime(t time.Time) string {
 	if t.IsZero() {
 		return ""

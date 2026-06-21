@@ -3,12 +3,13 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/dto"
 )
 
 // ClusterHandler handles cluster monitoring operations
@@ -65,7 +66,9 @@ func (h *ClusterHandler) GetClusterInfo(c *gin.Context) {
 			Cluster    string `json:"cluster"`
 			ClusterURL string `json:"cluster_url"`
 		}
-		if json.Unmarshal(msg.Data, &serverInfo) == nil {
+		if err := json.Unmarshal(msg.Data, &serverInfo); err != nil {
+			log.Printf("Failed to unmarshal cluster info: %v", err)
+		} else {
 			serverName = serverInfo.Name
 			clusterName = serverInfo.Cluster
 			clusterURL = serverInfo.ClusterURL

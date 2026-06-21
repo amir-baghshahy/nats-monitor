@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/amir/nats-monitor/internal/constants"
-	"github.com/amir/nats-monitor/internal/dto"
-	"github.com/amir/nats-monitor/internal/models"
+	"github.com/amir-baghshahy/nats-monitor/internal/constants"
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-monitor/internal/models"
 )
 
 // StreamToResponse converts a domain Stream to StreamResponse DTO

@@ -49,7 +49,7 @@ type MessageRepository interface {
 	Get(ctx context.Context, streamName string, sequence uint64) (*Message, error)
 	Delete(ctx context.Context, streamName string, sequence uint64) error
 	Publish(ctx context.Context, subject string, data []byte) error
-	PublishToStream(ctx context.Context, streamName string, data []byte) error
+	PublishToStream(ctx context.Context, subject string, data []byte) error
 }
 
 // ServerRepository defines operations for server information

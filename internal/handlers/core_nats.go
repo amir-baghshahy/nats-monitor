@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/constants"
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/constants"
-	"github.com/amir/nats-monitor/internal/dto"
 )
 
 // CoreNATShandler handles Core NATS (non-JetStream) operations
@@ -367,7 +367,9 @@ func (h *CoreNATShandler) GetServiceDiscovery(c *gin.Context) {
 
 	serverInfo, err := h.nc.Request("$SYS.REQ.SERVER.PING", []byte("{}"), constants.DefaultRequestTimeout)
 	if err == nil && serverInfo != nil {
-		_ = json.Unmarshal(serverInfo.Data, &serverResp)
+		if err := json.Unmarshal(serverInfo.Data, &serverResp); err != nil {
+			log.Printf("Failed to unmarshal server info: %v", err)
+		}
 	}
 
 	connectedUrl := h.nc.ConnectedUrl()

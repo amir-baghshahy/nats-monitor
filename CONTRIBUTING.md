@@ -48,7 +48,7 @@ Open an issue with:
 ## Development Setup
 
 ```bash
-git clone https://github.com/amir/nats-monitoring.git
+git clone https://github.com/amir-baghshahy/nats-monitor.git
 cd nats-monitoring
 make install
 make dev

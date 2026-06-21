@@ -13,9 +13,9 @@ import (
 
 type Config struct {
 	// Server
-	ServerPort     string
-	ResolvedPort   int
-	GinMode        string
+	ServerPort   string
+	ResolvedPort int
+	GinMode      string
 
 	// NATS
 	NATSURL string

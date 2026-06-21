@@ -52,6 +52,7 @@ export default function StreamDetailPage() {
     handleEditConfig,
     handleUpdateStream,
     handleCloneStream,
+    navigate,
   } = useStreamDetail();
 
   if (!name) return <div>Stream not found</div>;
@@ -231,7 +232,7 @@ export default function StreamDetailPage() {
                 <input type="text" placeholder="Search messages..." className="input pl-10" />
               </div>
               <button
-                onClick={() => {}}
+                onClick={() => navigate(`/messages`)}
                 className="btn-secondary flex items-center gap-2"
               >
                 <Filter className="w-4 h-4" />
@@ -241,7 +242,7 @@ export default function StreamDetailPage() {
             <div className="flex items-center gap-2">
               <span className="text-sm text-dark-muted">{(streamData.state?.messages || 0).toLocaleString()} messages</span>
               <button
-                onClick={() => {}}
+                onClick={() => navigate(`/messages`)}
                 className="btn-secondary text-sm py-1 px-3"
               >
                 View All

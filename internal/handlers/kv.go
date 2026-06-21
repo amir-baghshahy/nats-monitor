@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/dto"
 )
 
 // normalizeBucketName removes the KV_ prefix if present

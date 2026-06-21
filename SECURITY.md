@@ -84,7 +84,7 @@ nats-monitoring --nats-url "tls://user:password@localhost:4222"
 
 Please **do not** open a public GitHub issue for security vulnerabilities.
 
-Instead, report them privately via [GitHub private vulnerability reporting](https://github.com/amir/nats-monitor/security/advisories/new) or email `baghshahyamyr@gmail.com`.
+Instead, report them privately via [GitHub private vulnerability reporting](https://github.com/amir-baghshahy/nats-monitor/security/advisories/new) or email `baghshahyamyr@gmail.com`.
 
 Include:
 - A description of the vulnerability

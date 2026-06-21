@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
-	"github.com/amir/nats-monitor/internal/dto"
 )
 
 // SecurityHandler handles security-related operations
@@ -92,7 +93,9 @@ func (h *SecurityHandler) GetSecurityInfo(c *gin.Context) {
 				Payload   int `json:"payload"`
 			} `json:"limits"`
 		}
-		if json.Unmarshal(accountMsg.Data, &accountResp) == nil {
+		if err := json.Unmarshal(accountMsg.Data, &accountResp); err != nil {
+			log.Printf("Failed to unmarshal account info: %v", err)
+		} else {
 			accountName = accountResp.Account.Name
 			importsCount = accountResp.Account.Imports.Count
 			exportsCount = accountResp.Account.Exports.Count
@@ -111,7 +114,9 @@ func (h *SecurityHandler) GetSecurityInfo(c *gin.Context) {
 	}
 	serverMsg, err := h.nc.Request("$SYS.REQ.SERVER.PING", []byte("{}"), 2*time.Second)
 	if err == nil && serverMsg != nil {
-		_ = json.Unmarshal(serverMsg.Data, &serverResp)
+		if err := json.Unmarshal(serverMsg.Data, &serverResp); err != nil {
+			log.Printf("Failed to unmarshal server info: %v", err)
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -256,7 +261,9 @@ func (h *SecurityHandler) GetConnectionStatus(c *gin.Context) {
 			TLSVerify    bool   `json:"tls_verify"`
 			Version      string `json:"version"`
 		}
-		if json.Unmarshal(serverMsg.Data, &serverResp) == nil {
+		if err := json.Unmarshal(serverMsg.Data, &serverResp); err != nil {
+			log.Printf("Failed to unmarshal connection status: %v", err)
+		} else {
 			serverName = serverResp.Name
 			serverHost = serverResp.Host
 			serverPort = serverResp.Port

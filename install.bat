@@ -1,11 +1,11 @@
 @echo off
 REM install.bat — one-liner installer for nats-monitoring (Windows)
-REM Usage: curl -fsSL https://raw.githubusercontent.com/amir/nats-monitoring/main/install.bat -o install.bat && install.bat
+REM Usage: curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.bat -o install.bat && install.bat
 REM Or directly set NATS_MONITORING_VERSION=vX.Y.Z
 
 setlocal EnableDelayedExpansion
 
-set REPO=amir/nats-monitoring
+set REPO=amir-baghshahy/nats-monitor
 set VERSION=%NATS_MONITORING_VERSION%
 if "%VERSION%"=="" set VERSION=latest
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # install.sh — one-liner installer for nats-monitoring
-# Usage: curl -fsSL https://raw.githubusercontent.com/amir/nats-monitoring/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.sh | bash
 # Or:    chmod +x install.sh && ./install.sh
 
 set -euo pipefail
 
-REPO="amir/nats-monitoring"
+REPO="amir-baghshahy/nats-monitor"
 VERSION="${NATS_MONITORING_VERSION:-latest}"
 INSTALL_DIR="${NATS_MONITORING_INSTALL_DIR:-/usr/local/bin}"
 BINARY_NAME="nats-monitoring"

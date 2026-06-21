@@ -57,7 +57,7 @@ Four ways to run — pick whichever fits your workflow.
 Zero local dependencies. Starts nats-monitoring **and** a JetStream-enabled NATS server automatically.
 
 ```bash
-git clone https://github.com/amir/nats-monitoring.git
+git clone https://github.com/amir-baghshahy/nats-monitor.git
 cd nats-monitoring
 docker compose up
 ```
@@ -76,10 +76,10 @@ Download a pre-built binary for your platform — no Docker required.
 
 ```bash
 # Mac / Linux (one-liner)
-curl -fsSL https://raw.githubusercontent.com/amir/nats-monitoring/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.sh | bash
 
 # Windows (PowerShell)
-iwr https://raw.githubusercontent.com/amir/nats-monitoring/main/install.bat -OutFile install.bat; .\install.bat
+iwr https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.bat -OutFile install.bat; .\install.bat
 ```
 
 Then run:
@@ -111,7 +111,7 @@ Full documentation in [`helm/README.md`](helm/README.md).
 ### Option 4: Local Development
 
 ```bash
-git clone https://github.com/amir/nats-monitoring.git
+git clone https://github.com/amir-baghshahy/nats-monitor.git
 cd nats-monitoring
 make install
 make dev
@@ -409,7 +409,7 @@ We chose **SSE over WebSocket** because:
 ### Docker Compose (Recommended)
 
 ```bash
-git clone https://github.com/amir/nats-monitoring.git
+git clone https://github.com/amir-baghshahy/nats-monitor.git
 cd nats-monitoring
 docker compose up
 ```
@@ -417,14 +417,14 @@ docker compose up
 ### Binary (Mac / Linux / Windows)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/amir/nats-monitoring/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.sh | bash
 nats-monitoring --nats-url nats://your-server:4222
 ```
 
 ### Source
 
 ```bash
-git clone https://github.com/amir/nats-monitoring.git
+git clone https://github.com/amir-baghshahy/nats-monitor.git
 cd nats-monitoring
 make install
 make dev
@@ -527,7 +527,7 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ```bash
-git clone https://github.com/amir/nats-monitoring.git
+git clone https://github.com/amir-baghshahy/nats-monitor.git
 cd nats-monitoring
 make install
 make dev

@@ -12,11 +12,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/amir/nats-monitor/internal/config"
-	"github.com/amir/nats-monitor/internal/handlers"
-	"github.com/amir/nats-monitor/internal/middleware"
-	"github.com/amir/nats-monitor/internal/repositories"
-	"github.com/amir/nats-monitor/internal/services"
+	"github.com/amir-baghshahy/nats-monitor/internal/config"
+	"github.com/amir-baghshahy/nats-monitor/internal/handlers"
+	"github.com/amir-baghshahy/nats-monitor/internal/middleware"
+	"github.com/amir-baghshahy/nats-monitor/internal/repositories"
+	"github.com/amir-baghshahy/nats-monitor/internal/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
@@ -187,7 +187,7 @@ func main() {
 	apiGroup := r.Group("/api")
 	{
 		apiGroup.GET("/health", handlers.HealthCheck(serverUseCase))
-		apiGroup.GET("/server/info", handlers.GetServerInfo)
+		apiGroup.GET("/server/info", serverHandler.GetServerInfo)
 		apiGroup.GET("/account/info", serverHandler.GetAccountInfo)
 		apiGroup.GET("/dashboard/stats", serverHandler.GetDashboardStats)
 		apiGroup.GET("/events", sseHub.HandleSSE)

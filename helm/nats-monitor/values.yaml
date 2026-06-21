@@ -73,7 +73,7 @@ affinity: {}
 # Application configuration
 app:
   port: 3000
-  corsAllowedOrigins: "*"
+  corsAllowedOrigins: "" # Comma-separated allowed origins; empty means deny all
   natsUrl: "nats://nats:4222"
 
 # External NATS configuration (if not using embedded NATS)

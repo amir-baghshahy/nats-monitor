@@ -3,10 +3,10 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-monitor/internal/services"
+	"github.com/amir-baghshahy/nats-monitor/internal/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/amir/nats-monitor/internal/dto"
-	"github.com/amir/nats-monitor/internal/services"
-	"github.com/amir/nats-monitor/internal/utils"
 )
 
 // StreamHandler handles HTTP requests for streams
