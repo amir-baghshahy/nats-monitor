@@ -12,7 +12,4 @@ services:
       - NATS_URL=nats://nats:4222
       - CORS_ALLOWED_ORIGINS=*
       - PORT=3000
-    depends_on:
-      nats:
-        condition: service_healthy
     restart: unless-stopped
