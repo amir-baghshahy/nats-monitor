@@ -468,7 +468,39 @@ AUTO_PORT=false PORT=3000
 
 ---
 
+## 🔌 NATS Compatibility
 
+### Supported NATS Versions
+
+| NATS Server Version | Supported | Notes |
+|---------------------|-----------|-------|
+| 2.10.x | ✅ Yes | Fully tested and compatible |
+| 2.9.x | ✅ Yes | Compatible (JetStream features required) |
+| 2.8.x | ⚠️ Partial | Basic monitoring works, some JetStream features may be limited |
+| < 2.8 | ❌ No | Not supported, missing critical JetStream APIs |
+
+**Minimum Required:** NATS Server 2.8.0 with JetStream enabled  
+**Recommended:** NATS Server 2.10.x or later
+
+### Client Libraries
+
+- **nats.go**: v1.52.0
+- **Go**: 1.25.0
+
+### Tested Configurations
+
+| Configuration | Status |
+|----------------|--------|
+| Single-node NATS with JetStream | ✅ |
+| NATS Cluster (3-node) with JetStream | ✅ |
+| TLS-enabled connections | ✅ |
+| Username/Password authentication | ✅ |
+| NKEYS authentication | ✅ |
+| JWT-based authentication | ✅ |
+
+For detailed security information, see [SECURITY.md](SECURITY.md).
+
+---
 
 ## 🚧 Roadmap
 

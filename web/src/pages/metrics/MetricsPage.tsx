@@ -27,7 +27,7 @@ function Sparkline({
   width?: number
   height?: number
 }) {
-  if (!data || data.length < 2) {
+  if (!data || data.length === 0) {
     return (
       <div
         style={{ width, height }}
@@ -50,6 +50,16 @@ function Sparkline({
       return `${x},${y}`
     })
     .join(' ')
+
+  if (data.length === 1) {
+    const x = width / 2
+    const y = height - ((values[0] - min) / range) * height
+    return (
+      <svg width={width} height={height} className="overflow-visible">
+        <circle cx={x} cy={y} r="3" fill={color} />
+      </svg>
+    )
+  }
 
   return (
     <svg width={width} height={height} className="overflow-visible">

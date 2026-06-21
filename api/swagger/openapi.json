@@ -1386,8 +1386,8 @@
     },
     "description": "Comprehensive API for monitoring and managing NATS JetStream instances.",
     "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
+      "name": "Apache-2.0",
+      "url": "https://opensource.org/licenses/Apache-2.0"
     },
     "termsOfService": "http://swagger.io/terms/",
     "title": "NATS Monitoring API",
