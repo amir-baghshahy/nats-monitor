@@ -1,5 +1,6 @@
 # Binaries
 nats-ui
+server
 *.exe
 *.dll
 *.so
@@ -19,6 +20,11 @@ web/dist/
 web/.env
 web/.env.local
 web/.env.*.local
+
+# Wails
+build/bin/
+web/wailsjs/
+*.md5
 
 # Air hot-reload
 tmp/

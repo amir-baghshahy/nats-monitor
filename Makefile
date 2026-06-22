@@ -1,4 +1,4 @@
-.PHONY: dev dev-backend dev-frontend build clean test test-e2e test-e2e-nats fmt deps openapi docker-build docker-run install-binary generate-api
+.PHONY: dev dev-backend dev-frontend build clean test test-e2e test-e2e-nats fmt deps openapi docker-build docker-run install-binary generate-api desktop-dev desktop-build
 
 # ── Development ─────────────────────────────────────────────────────────────
 
@@ -101,3 +101,21 @@ docker-logs:
 install-binary:
 	@echo "Downloading latest nats-horizon binary..."
 	@bash install.sh
+
+# ── Desktop (Wails) ────────────────────────────────────────────────────────
+
+desktop-dev:
+	@echo "Starting desktop app in dev mode..."
+	@wails dev
+
+desktop-build:
+	@echo "Building desktop app..."
+	@wails build
+
+desktop-build-linux-amd64:
+	@echo "Building desktop app for Linux amd64..."
+	@wails build -platform linux/amd64
+
+desktop-build-linux-arm64:
+	@echo "Building desktop app for Linux arm64..."
+	@wails build -platform linux/arm64
