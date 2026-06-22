@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-horizon/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )

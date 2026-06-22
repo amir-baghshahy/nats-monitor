@@ -9,11 +9,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/constants"
-	"github.com/amir-baghshahy/nats-monitor/internal/dto"
-	"github.com/amir-baghshahy/nats-monitor/internal/models"
-	usecase "github.com/amir-baghshahy/nats-monitor/internal/services"
-	"github.com/amir-baghshahy/nats-monitor/internal/utils"
+	"github.com/amir-baghshahy/nats-horizon/internal/constants"
+	"github.com/amir-baghshahy/nats-horizon/internal/dto"
+	"github.com/amir-baghshahy/nats-horizon/internal/models"
+	usecase "github.com/amir-baghshahy/nats-horizon/internal/services"
+	"github.com/amir-baghshahy/nats-horizon/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )

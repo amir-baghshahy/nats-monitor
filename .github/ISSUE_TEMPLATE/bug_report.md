@@ -33,7 +33,7 @@ If applicable, add screenshots to help explain your problem.
 
 - **OS**: [e.g. Ubuntu 22.04, macOS 13, Windows 11]
 - **NATS Server Version**: [e.g. 2.10.1]
-- **nats-monitoring Version**: [e.g. v1.0.0 or commit hash]
+- **nats-horizon Version**: [e.g. v1.0.0 or commit hash]
 - **Installation Method**: [Docker / Binary / Kubernetes / Source]
 - **Browser** (if UI issue): [e.g. Chrome 120, Firefox 121]
 

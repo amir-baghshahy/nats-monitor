@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/dto"
-	"github.com/amir-baghshahy/nats-monitor/internal/services"
-	"github.com/amir-baghshahy/nats-monitor/internal/utils"
+	"github.com/amir-baghshahy/nats-horizon/internal/dto"
+	"github.com/amir-baghshahy/nats-horizon/internal/services"
+	"github.com/amir-baghshahy/nats-horizon/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 

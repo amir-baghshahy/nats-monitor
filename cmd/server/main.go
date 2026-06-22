@@ -12,23 +12,23 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/config"
-	"github.com/amir-baghshahy/nats-monitor/internal/handlers"
-	"github.com/amir-baghshahy/nats-monitor/internal/middleware"
-	"github.com/amir-baghshahy/nats-monitor/internal/repositories"
-	"github.com/amir-baghshahy/nats-monitor/internal/services"
+	"github.com/amir-baghshahy/nats-horizon/internal/config"
+	"github.com/amir-baghshahy/nats-horizon/internal/handlers"
+	"github.com/amir-baghshahy/nats-horizon/internal/middleware"
+	"github.com/amir-baghshahy/nats-horizon/internal/repositories"
+	"github.com/amir-baghshahy/nats-horizon/internal/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )
 
-// @title NATS Monitoring API
+// @title NATS Horizon API
 // @version 1.0
 // @description Comprehensive API for monitoring and managing NATS JetStream instances.
 // @termsOfService http://swagger.io/terms/
 
-// @contact.name NATS Monitoring Project
-// @contact.url http://github.com/nats-monitoring
+// @contact.name NATS Horizon Project
+// @contact.url http://github.com/nats-horizon
 
 // @license.name Apache-2.0
 // @license.url https://opensource.org/licenses/Apache-2.0

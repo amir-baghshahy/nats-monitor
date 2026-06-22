@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/models"
+	"github.com/amir-baghshahy/nats-horizon/internal/models"
 	"github.com/nats-io/nats.go"
 )
 

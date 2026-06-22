@@ -1,11 +1,11 @@
 version: "3.9"
 
 services:
-  nats-monitoring:
+  nats-horizon:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nats-monitoring
+    container_name: nats-horizon
     ports:
       - "3000:3000"
     environment:

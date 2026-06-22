@@ -1,16 +1,16 @@
 @echo off
-REM install.bat — one-liner installer for nats-monitoring (Windows)
-REM Usage: curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.bat -o install.bat && install.bat
-REM Or directly set NATS_MONITORING_VERSION=vX.Y.Z
+REM install.bat — one-liner installer for nats-horizon (Windows)
+REM Usage: curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-horizon/main/install.bat -o install.bat && install.bat
+REM Or directly set NATS_HORIZON_VERSION=vX.Y.Z
 
 setlocal EnableDelayedExpansion
 
-set REPO=amir-baghshahy/nats-monitor
-set VERSION=%NATS_MONITORING_VERSION%
+set REPO=amir-baghshahy/nats-horizon
+set VERSION=%NATS_HORIZON_VERSION%
 if "%VERSION%"=="" set VERSION=latest
 
 set INSTALL_DIR=%USERPROFILE%\.local\bin
-set BINARY_NAME=nats-monitoring.exe
+set BINARY_NAME=nats-horizon.exe
 
 if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
 
@@ -31,7 +31,7 @@ if "%VERSION%"=="latest" (
 )
 echo Version: %VERSION%
 
-set ARCHIVE=nats-monitoring-%VERSION%-%PLATFORM%.tar.gz
+set ARCHIVE=nats-horizon-%VERSION%-%PLATFORM%.tar.gz
 set URL=https://github.com/%REPO%/releases/download/%VERSION%/%ARCHIVE%
 
 echo Downloading %ARCHIVE%...
@@ -46,18 +46,18 @@ cd /d "%TEMP%"
 tar -xzf "%ARCHIVE%"
 
 echo Installing to %INSTALL_DIR%\%BINARY_NAME%...
-copy /Y "nats-monitoring-%PLATFORM%\%BINARY_NAME%" "%INSTALL_DIR%\%BINARY_NAME%"
+copy /Y "nats-horizon-%PLATFORM%\%BINARY_NAME%" "%INSTALL_DIR%\%BINARY_NAME%"
 
 echo.
 echo ========================================
-echo ✅ Installed nats-monitoring %VERSION% to %INSTALL_DIR%\%BINARY_NAME%
+echo ✅ Installed nats-horizon %VERSION% to %INSTALL_DIR%\%BINARY_NAME%
 echo ========================================
 echo.
 echo Make sure %INSTALL_DIR% is in your PATH:
 echo   setx PATH "%%PATH%%;%INSTALL_DIR%"
 echo.
 echo Quick start:
-echo   nats-monitoring.exe
+echo   nats-horizon.exe
 echo.
 
 endlocal

@@ -11,8 +11,8 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "NATS Monitoring Project",
-            "url": "http://github.com/nats-monitoring"
+            "name": "NATS Horizon Project",
+            "url": "http://github.com/nats-horizon"
         },
         "license": {
             "name": "Apache-2.0",
@@ -45,7 +45,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -106,7 +106,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -203,7 +203,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     }
                 }
@@ -238,7 +238,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -283,13 +283,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -316,13 +316,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -342,13 +342,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterHealthResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterHealthResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterHealthResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterHealthResponse"
                         }
                     }
                 }
@@ -368,13 +368,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterInfoResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterInfoResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -394,7 +394,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterNodesResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterNodesResponse"
                         }
                     }
                 }
@@ -423,13 +423,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterStreamReplicaResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterStreamReplicaResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -451,13 +451,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConnectionsResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConnectionsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -488,13 +488,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -518,14 +518,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerResponse"
+                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerResponse"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -556,19 +556,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -607,13 +607,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -639,7 +639,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PublishMessageRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PublishMessageRequest"
                         }
                     }
                 ],
@@ -647,19 +647,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PublishMessageResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PublishMessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -685,7 +685,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.RequestMessageRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.RequestMessageRequest"
                         }
                     }
                 ],
@@ -693,31 +693,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.MessageResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.MessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "408": {
                         "description": "Request Timeout",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -737,7 +737,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ServiceDiscoveryResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ServiceDiscoveryResponse"
                         }
                     }
                 }
@@ -772,13 +772,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -798,7 +798,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SubscriptionsResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SubscriptionsResponse"
                         }
                     }
                 }
@@ -820,13 +820,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.DashboardStatsResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.DashboardStatsResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.DashboardStatsResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.DashboardStatsResponse"
                         }
                     }
                 }
@@ -861,7 +861,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -887,7 +887,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -935,13 +935,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -990,13 +990,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1048,13 +1048,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1076,13 +1076,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.HealthResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.HealthResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.HealthResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.HealthResponse"
                         }
                     }
                 }
@@ -1219,14 +1219,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVBucketInfo"
+                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVBucketInfo"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1258,19 +1258,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVBucketCreateResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVBucketCreateResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1299,19 +1299,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVBucketInfo"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVBucketInfo"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1338,13 +1338,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVBucketDeleteResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVBucketDeleteResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1382,26 +1382,26 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyHistoryEntry"
+                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyHistoryEntry"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1437,19 +1437,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyEntry"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyEntry"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1488,25 +1488,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyPutResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyPutResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1540,25 +1540,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyDeleteResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyDeleteResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1589,20 +1589,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyEntry"
+                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyEntry"
                             }
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1631,19 +1631,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.KVPurgeResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.KVPurgeResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1679,19 +1679,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamMessagesResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamMessagesResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1734,25 +1734,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PaginatedMessagesResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PaginatedMessagesResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1830,7 +1830,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1901,7 +1901,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -1929,7 +1929,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2021,7 +2021,7 @@ const docTemplate = `{
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2059,7 +2059,7 @@ const docTemplate = `{
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2106,7 +2106,7 @@ const docTemplate = `{
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2133,13 +2133,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "501": {
                         "description": "Not Implemented",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2185,14 +2185,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamResponse"
+                                "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamResponse"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2215,7 +2215,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.CreateStreamRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.CreateStreamRequest"
                         }
                     }
                 ],
@@ -2223,19 +2223,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2266,19 +2266,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2308,7 +2308,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.UpdateStreamRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.UpdateStreamRequest"
                         }
                     }
                 ],
@@ -2316,19 +2316,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2357,13 +2357,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2395,7 +2395,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.CreateConsumerRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.CreateConsumerRequest"
                         }
                     }
                 ],
@@ -2403,19 +2403,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2453,19 +2453,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2502,7 +2502,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.UpdateConsumerRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.UpdateConsumerRequest"
                         }
                     }
                 ],
@@ -2510,19 +2510,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2558,13 +2558,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2603,7 +2603,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.AckMessageRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.AckMessageRequest"
                         }
                     }
                 ],
@@ -2611,19 +2611,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.AckMessageResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.AckMessageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2661,7 +2661,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ResetLagRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ResetLagRequest"
                         }
                     }
                 ],
@@ -2669,13 +2669,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ResetLagResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ResetLagResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2714,7 +2714,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.NackMessageRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.NackMessageRequest"
                         }
                     }
                 ],
@@ -2722,19 +2722,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2772,13 +2772,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2823,13 +2823,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PendingMessagesResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PendingMessagesResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2867,7 +2867,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ReplayRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ReplayRequest"
                         }
                     }
                 ],
@@ -2875,13 +2875,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ReplayResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ReplayResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2919,13 +2919,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -2964,7 +2964,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.AckTermMessageRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.AckTermMessageRequest"
                         }
                     }
                 ],
@@ -2972,19 +2972,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3016,7 +3016,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PublishMessageRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PublishMessageRequest"
                         }
                     }
                 ],
@@ -3024,19 +3024,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3074,19 +3074,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3117,7 +3117,7 @@ const docTemplate = `{
                         "name": "request",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PurgeStreamRequest"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PurgeStreamRequest"
                         }
                     }
                 ],
@@ -3125,13 +3125,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PurgeStreamResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PurgeStreamResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3153,13 +3153,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SubjectsResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SubjectsResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3217,7 +3217,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3257,7 +3257,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3292,7 +3292,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3337,13 +3337,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3370,19 +3370,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3417,7 +3417,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse"
+                            "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse"
                         }
                     }
                 }
@@ -3445,7 +3445,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.AckMessageRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.AckMessageRequest": {
             "type": "object",
             "required": [
                 "sequence"
@@ -3456,7 +3456,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.AckMessageResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.AckMessageResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -3467,7 +3467,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.AckTermMessageRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.AckTermMessageRequest": {
             "type": "object",
             "required": [
                 "sequence"
@@ -3478,7 +3478,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ActiveSubscription": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ActiveSubscription": {
             "type": "object",
             "properties": {
                 "count": {
@@ -3489,7 +3489,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterConnectedServer": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterConnectedServer": {
             "type": "object",
             "properties": {
                 "id": {
@@ -3500,17 +3500,17 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterHealthResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterHealthResponse": {
             "type": "object",
             "properties": {
                 "connected": {
                     "type": "boolean"
                 },
                 "connected_server": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterConnectedServer"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterConnectedServer"
                 },
                 "jetstream": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterJetStreamHealth"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterJetStreamHealth"
                 },
                 "server_status": {
                     "type": "string"
@@ -3520,7 +3520,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterInfoPeerResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterInfoPeerResponse": {
             "type": "object",
             "properties": {
                 "active": {
@@ -3540,7 +3540,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterInfoResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterInfoResponse": {
             "type": "object",
             "properties": {
                 "cluster_name": {
@@ -3553,14 +3553,14 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "jetstream": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterJetStreamInfo"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterJetStreamInfo"
                 },
                 "server_name": {
                     "type": "string"
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterJetStreamHealth": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterJetStreamHealth": {
             "type": "object",
             "properties": {
                 "domain": {
@@ -3575,7 +3575,7 @@ const docTemplate = `{
                 "tiers": {}
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterJetStreamInfo": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterJetStreamInfo": {
             "type": "object",
             "properties": {
                 "api_level": {
@@ -3592,7 +3592,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterNodeResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterNodeResponse": {
             "type": "object",
             "properties": {
                 "active": {
@@ -3615,7 +3615,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterNodesResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterNodesResponse": {
             "type": "object",
             "properties": {
                 "cluster_name": {
@@ -3627,12 +3627,12 @@ const docTemplate = `{
                 "nodes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterNodeResponse"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterNodeResponse"
                     }
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterPlacementResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterPlacementResponse": {
             "type": "object",
             "properties": {
                 "cluster": {
@@ -3646,7 +3646,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterStreamClusterResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterStreamClusterResponse": {
             "type": "object",
             "properties": {
                 "leader": {
@@ -3664,7 +3664,7 @@ const docTemplate = `{
                 "replicas": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterInfoPeerResponse"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterInfoPeerResponse"
                     }
                 },
                 "system_account": {
@@ -3675,20 +3675,20 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterStreamReplicaResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterStreamReplicaResponse": {
             "type": "object",
             "properties": {
                 "cluster": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterStreamClusterResponse"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterStreamClusterResponse"
                 },
                 "is_clustered": {
                     "type": "boolean"
                 },
                 "mirror": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterStreamSource"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterStreamSource"
                 },
                 "placement": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterPlacementResponse"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterPlacementResponse"
                 },
                 "replicas": {
                     "type": "integer"
@@ -3696,7 +3696,7 @@ const docTemplate = `{
                 "sources": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterStreamSource"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterStreamSource"
                     }
                 },
                 "stream": {
@@ -3704,7 +3704,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ClusterStreamSource": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ClusterStreamSource": {
             "type": "object",
             "properties": {
                 "domain": {
@@ -3715,7 +3715,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ConnectionInfo": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ConnectionInfo": {
             "type": "object",
             "properties": {
                 "cid": {
@@ -3771,13 +3771,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ConnectionsResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ConnectionsResponse": {
             "type": "object",
             "properties": {
                 "connections": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConnectionInfo"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConnectionInfo"
                     }
                 },
                 "total": {
@@ -3785,7 +3785,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerConfigResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerConfigResponse": {
             "type": "object",
             "properties": {
                 "ack_policy": {
@@ -3805,14 +3805,14 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerResponse": {
             "type": "object",
             "properties": {
                 "ack_rate": {
                     "type": "string"
                 },
                 "config": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ConsumerConfigResponse"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ConsumerConfigResponse"
                 },
                 "lag": {
                     "type": "integer"
@@ -3834,7 +3834,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.CreateConsumerRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.CreateConsumerRequest": {
             "type": "object",
             "required": [
                 "name"
@@ -3878,7 +3878,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.CreateStreamRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.CreateStreamRequest": {
             "type": "object",
             "required": [
                 "name",
@@ -3924,7 +3924,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.DashboardStatsResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.DashboardStatsResponse": {
             "type": "object",
             "properties": {
                 "bytes": {
@@ -3947,7 +3947,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ErrorResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -3961,7 +3961,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.HealthResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.HealthResponse": {
             "type": "object",
             "properties": {
                 "nats": {
@@ -3975,7 +3975,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVBucketCreateResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVBucketCreateResponse": {
             "type": "object",
             "properties": {
                 "history": {
@@ -3989,7 +3989,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVBucketDeleteResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVBucketDeleteResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4000,7 +4000,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVBucketInfo": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVBucketInfo": {
             "type": "object",
             "properties": {
                 "bucket_name": {
@@ -4017,7 +4017,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyDeleteResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyDeleteResponse": {
             "type": "object",
             "properties": {
                 "key": {
@@ -4028,7 +4028,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyEntry": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyEntry": {
             "type": "object",
             "properties": {
                 "created": {
@@ -4045,7 +4045,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyHistoryEntry": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyHistoryEntry": {
             "type": "object",
             "properties": {
                 "created": {
@@ -4065,7 +4065,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVKeyPutResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVKeyPutResponse": {
             "type": "object",
             "properties": {
                 "key": {
@@ -4076,7 +4076,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.KVPurgeResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.KVPurgeResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4087,7 +4087,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.MessageResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.MessageResponse": {
             "type": "object",
             "properties": {
                 "data": {
@@ -4113,7 +4113,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.NackMessageRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.NackMessageRequest": {
             "type": "object",
             "required": [
                 "sequence"
@@ -4128,13 +4128,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.PaginatedMessagesResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.PaginatedMessagesResponse": {
             "type": "object",
             "properties": {
                 "messages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamMessage"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamMessage"
                     }
                 },
                 "page": {
@@ -4151,7 +4151,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.PendingMessage": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.PendingMessage": {
             "type": "object",
             "properties": {
                 "consumer": {
@@ -4180,7 +4180,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.PendingMessagesResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.PendingMessagesResponse": {
             "type": "object",
             "properties": {
                 "consumer": {
@@ -4189,7 +4189,7 @@ const docTemplate = `{
                 "messages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.PendingMessage"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.PendingMessage"
                     }
                 },
                 "num_ack_pending": {
@@ -4203,7 +4203,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.PublishMessageRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.PublishMessageRequest": {
             "type": "object",
             "required": [
                 "subject"
@@ -4229,7 +4229,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.PublishMessageResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.PublishMessageResponse": {
             "type": "object",
             "properties": {
                 "size": {
@@ -4246,7 +4246,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.PurgeStreamRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.PurgeStreamRequest": {
             "type": "object",
             "properties": {
                 "sequence": {
@@ -4257,7 +4257,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.PurgeStreamResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.PurgeStreamResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4268,7 +4268,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ReplayRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ReplayRequest": {
             "type": "object",
             "properties": {
                 "end_seq": {
@@ -4282,7 +4282,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ReplayResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ReplayResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4293,7 +4293,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.RequestMessageRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.RequestMessageRequest": {
             "type": "object",
             "required": [
                 "subject"
@@ -4319,7 +4319,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ResetLagRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ResetLagRequest": {
             "type": "object",
             "properties": {
                 "sequence": {
@@ -4327,7 +4327,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ResetLagResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ResetLagResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4338,7 +4338,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.ServiceDiscoveryResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.ServiceDiscoveryResponse": {
             "type": "object",
             "properties": {
                 "auth_required": {
@@ -4376,7 +4376,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.StreamConfigResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.StreamConfigResponse": {
             "type": "object",
             "properties": {
                 "max_age": {
@@ -4405,7 +4405,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.StreamMessage": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.StreamMessage": {
             "type": "object",
             "properties": {
                 "data": {
@@ -4437,13 +4437,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.StreamMessagesResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.StreamMessagesResponse": {
             "type": "object",
             "properties": {
                 "messages": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamMessage"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamMessage"
                     }
                 },
                 "stream": {
@@ -4454,18 +4454,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.StreamResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.StreamResponse": {
             "type": "object",
             "properties": {
                 "config": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamConfigResponse"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamConfigResponse"
                 },
                 "state": {
-                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.StreamStateResponse"
+                    "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.StreamStateResponse"
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.StreamStateResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.StreamStateResponse": {
             "type": "object",
             "properties": {
                 "bytes": {
@@ -4497,7 +4497,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.SubjectInfo": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.SubjectInfo": {
             "type": "object",
             "properties": {
                 "count": {
@@ -4511,13 +4511,13 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.SubjectsResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.SubjectsResponse": {
             "type": "object",
             "properties": {
                 "subjects": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.SubjectInfo"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.SubjectInfo"
                     }
                 },
                 "total": {
@@ -4525,7 +4525,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.SubscriptionsResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.SubscriptionsResponse": {
             "type": "object",
             "properties": {
                 "connected": {
@@ -4543,12 +4543,12 @@ const docTemplate = `{
                 "subscriptions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-monitor_internal_dto.ActiveSubscription"
+                        "$ref": "#/definitions/github_com_amir-baghshahy_nats-horizon_internal_dto.ActiveSubscription"
                     }
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.SuccessResponse": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.SuccessResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4556,7 +4556,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.UpdateConsumerRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.UpdateConsumerRequest": {
             "type": "object",
             "properties": {
                 "ack_policy": {
@@ -4588,7 +4588,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_amir-baghshahy_nats-monitor_internal_dto.UpdateStreamRequest": {
+        "github_com_amir-baghshahy_nats-horizon_internal_dto.UpdateStreamRequest": {
             "type": "object",
             "properties": {
                 "max_age": {
@@ -4902,7 +4902,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api",
 	Schemes:          []string{"http", "https"},
-	Title:            "NATS Monitoring API",
+	Title:            "NATS Horizon API",
 	Description:      "Comprehensive API for monitoring and managing NATS JetStream instances.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

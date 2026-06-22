@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/models"
+	"github.com/amir-baghshahy/nats-horizon/internal/models"
 )
 
 // MessageUseCase handles message business logic

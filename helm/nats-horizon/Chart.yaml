@@ -1,0 +1,24 @@
+apiVersion: v2
+name: nats-horizon
+description: A Helm chart for NATS Horizon - Real-time NATS JetStream observability dashboard
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - nats
+  - monitoring
+  - jetstream
+  - observability
+home: https://github.com/amir-baghshahy/nats-horizon
+sources:
+  - https://github.com/amir-baghshahy/nats-horizon
+maintainers:
+  - name: Amir
+    email: amir@example.com
+annotations:
+  artifacthub.io/category: monitoring-logging
+  artifacthub.io/links: |
+    - name: Source
+      url: https://github.com/amir-baghshahy/nats-horizon
+    - name: Docs
+      url: https://github.com/amir-baghshahy/nats-horizon/blob/main/README.md

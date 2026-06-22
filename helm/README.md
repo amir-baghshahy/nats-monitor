@@ -1,6 +1,6 @@
-# NATS Monitor Helm Chart
+# NATS Horizon Helm Chart
 
-This Helm chart deploys the NATS Monitoring application to Kubernetes.
+This Helm chart deploys the NATS Horizon application to Kubernetes.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ This Helm chart deploys the NATS Monitoring application to Kubernetes.
 ### Add Helm repository (if published)
 
 ```bash
-helm repo add nats-monitor https://charts.example.com
+helm repo add nats-horizon https://charts.example.com
 helm repo update
 ```
 
@@ -21,16 +21,16 @@ helm repo update
 
 ```bash
 # Build the Docker image first
-docker build -t nats-monitor:latest .
+docker build -t nats-horizon:latest .
 
 # Install the chart
-helm install nats-monitor ./helm/nats-monitor
+helm install nats-horizon ./helm/nats-horizon
 ```
 
 ### Install with custom values
 
 ```bash
-helm install nats-monitor ./helm/nats-monitor -f custom-values.yaml
+helm install nats-horizon ./helm/nats-horizon -f custom-values.yaml
 ```
 
 ## Configuration
@@ -40,7 +40,7 @@ The following table lists the configurable parameters:
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `replicaCount` | Number of replicas | `1` |
-| `image.repository` | Image repository | `nats-monitor` |
+| `image.repository` | Image repository | `nats-horizon` |
 | `image.tag` | Image tag | `latest` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `service.type` | Kubernetes service type | `ClusterIP` |
@@ -67,14 +67,14 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-    - host: nats-monitor.example.com
+    - host: nats-horizon.example.com
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: nats-monitor-tls
+    - secretName: nats-horizon-tls
       hosts:
-        - nats-monitor.example.com
+        - nats-horizon.example.com
 resources:
   limits:
     cpu: 1000m
@@ -100,13 +100,13 @@ app:
 ## Upgrading
 
 ```bash
-helm upgrade nats-monitor ./helm/nats-monitor
+helm upgrade nats-horizon ./helm/nats-horizon
 ```
 
 ## Uninstalling
 
 ```bash
-helm uninstall nats-monitor
+helm uninstall nats-horizon
 ```
 
 ## Troubleshooting
@@ -114,19 +114,19 @@ helm uninstall nats-monitor
 ### Check pod status
 
 ```bash
-kubectl get pods -l app.kubernetes.io/name=nats-monitor
+kubectl get pods -l app.kubernetes.io/name=nats-horizon
 ```
 
 ### View logs
 
 ```bash
-kubectl logs -l app.kubernetes.io/name=nats-monitor --tail=100 -f
+kubectl logs -l app.kubernetes.io/name=nats-horizon --tail=100 -f
 ```
 
 ### Port forward for local access
 
 ```bash
-kubectl port-forward svc/nats-monitor 8080:3000
+kubectl port-forward svc/nats-horizon 8080:3000
 # Open http://localhost:8080
 ```
 

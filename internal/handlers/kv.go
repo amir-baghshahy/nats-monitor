@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/dto"
+	"github.com/amir-baghshahy/nats-horizon/internal/dto"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )
@@ -244,7 +244,7 @@ func (h *KVHandler) CreateBucket(c *gin.Context) {
 	// Create the bucket with configuration
 	kv, err := h.js.CreateKeyValue(&nats.KeyValueConfig{
 		Bucket:       req.Name,
-		Description:  "Created via NATS Monitoring UI",
+		Description:  "Created via NATS Horizon UI",
 		MaxBytes:     int64(req.MaxBytes),
 		MaxValueSize: int32(req.MaxValueSize),
 		History:      history,

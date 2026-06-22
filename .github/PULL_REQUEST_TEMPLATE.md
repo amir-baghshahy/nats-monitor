@@ -1,8 +1,8 @@
 ## 📋 Pull Request Description
 
-<!-- 
-  Thank you for contributing to nats-monitoring! 🎉
-  
+<!--
+  Thank you for contributing to nats-horizon! 🎉
+
   Please fill out this template to help reviewers understand your changes.
 -->
 

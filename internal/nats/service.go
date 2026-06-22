@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/amir-baghshahy/nats-monitor/internal/constants"
+	"github.com/amir-baghshahy/nats-horizon/internal/constants"
 	"github.com/nats-io/nats.go"
 )
 

@@ -1,11 +1,10 @@
-module github.com/amir-baghshahy/nats-monitor
+module github.com/amir-baghshahy/nats-horizon
 
 go 1.25.0
 
 require (
 	github.com/getkin/kin-openapi v0.140.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-openapi/testify/v2 v2.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/nats-io/nats.go v1.52.0
 	github.com/stretchr/testify v1.9.0

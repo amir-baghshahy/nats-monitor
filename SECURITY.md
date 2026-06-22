@@ -2,7 +2,7 @@
 
 ## Supported NATS Versions
 
-The following table shows which versions of NATS Server are currently supported with nats-monitoring:
+The following table shows which versions of NATS Server are currently supported with nats-horizon:
 
 | NATS Server Version | Supported | Notes |
 |---------------------|-----------|-------|
@@ -16,7 +16,7 @@ The following table shows which versions of NATS Server are currently supported 
 
 ### Client Library Versions
 
-nats-monitoring uses the following Go NATS client:
+nats-horizon uses the following Go NATS client:
 - **nats.go**: v1.52.0
 
 This client version is tested against NATS Server 2.10.x and maintains backward compatibility with 2.8.x+.
@@ -42,7 +42,7 @@ The following NATS server configurations have been tested:
 
 ### Built-in Security
 
-nats-monitoring includes several security-focused features:
+nats-horizon includes several security-focused features:
 
 - **TLS/SSL Support**: Secure connections to NATS servers
 - **Authentication**: Supports username/password and token-based authentication
@@ -61,30 +61,30 @@ nats-monitoring includes several security-focused features:
 
 ### Connection Security
 
-By default, nats-monitoring connects to NATS using the security level of your NATS server configuration:
+By default, nats-horizon connects to NATS using the security level of your NATS server configuration:
 
 - Unencrypted connections if NATS allows it
 - TLS encrypted if NATS requires TLS
 - Respects NATS authentication requirements
 
-**Important**: We recommend enabling TLS and authentication on your NATS server and connecting nats-monitoring using secure connection strings:
+**Important**: We recommend enabling TLS and authentication on your NATS server and connecting nats-horizon using secure connection strings:
 
 ```bash
 # Example with TLS
-nats-monitoring --nats-url "tls://localhost:4222"
+nats-horizon --nats-url "tls://localhost:4222"
 
 # Example with authentication
-nats-monitoring --nats-url "nats://user:password@localhost:4222"
+nats-horizon --nats-url "nats://user:password@localhost:4222"
 
 # Example with TLS and authentication
-nats-monitoring --nats-url "tls://user:password@localhost:4222"
+nats-horizon --nats-url "tls://user:password@localhost:4222"
 ```
 
 ## Reporting a Vulnerability
 
 Please **do not** open a public GitHub issue for security vulnerabilities.
 
-Instead, report them privately via [GitHub private vulnerability reporting](https://github.com/amir-baghshahy/nats-monitor/security/advisories/new) or email `baghshahyamyr@gmail.com`.
+Instead, report them privately via [GitHub private vulnerability reporting](https://github.com/amir-baghshahy/nats-horizon/security/advisories/new) or email `baghshahyamyr@gmail.com`.
 
 Include:
 - A description of the vulnerability
@@ -134,7 +134,7 @@ You will receive a response within **72 hours** and a patch will be released as 
    - Use network policies in Kubernetes
 
 4. **Keep Updated**
-   - Regularly update nats-monitoring
+   - Regularly update nats-horizon
    - Update NATS server
    - Monitor security advisories
 

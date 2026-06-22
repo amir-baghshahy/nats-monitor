@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# install.sh — one-liner installer for nats-monitoring
-# Usage: curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.sh | bash
+# install.sh — one-liner installer for nats-horizon
+# Usage: curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-horizon/main/install.sh | bash
 # Or:    chmod +x install.sh && ./install.sh
 
 set -euo pipefail
 
-REPO="amir-baghshahy/nats-monitor"
-VERSION="${NATS_MONITORING_VERSION:-latest}"
-INSTALL_DIR="${NATS_MONITORING_INSTALL_DIR:-/usr/local/bin}"
-BINARY_NAME="nats-monitoring"
+REPO="amir-baghshahy/nats-horizon"
+VERSION="${NATS_HORIZON_VERSION:-latest}"
+INSTALL_DIR="${NATS_HORIZON_INSTALL_DIR:-/usr/local/bin}"
+BINARY_NAME="nats-horizon"
 
 # Colors
 RED='\033[0;31m'
@@ -56,7 +56,7 @@ resolve_version() {
         info "Fetching latest release..."
         VERSION=$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" \
             | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' \
-            || error "Could not fetch latest release. Use NATS_MONITORING_VERSION=vX.Y.Z")
+            || error "Could not fetch latest release. Use NATS_HORIZON_VERSION=vX.Y.Z")
         info "Latest version: ${VERSION}"
     fi
 }

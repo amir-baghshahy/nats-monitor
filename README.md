@@ -1,6 +1,6 @@
 <div align="center">
 
-# nats-monitoring
+# nats-horizon
 
 ### 🔵 The Command Center for NATS JetStream
 
@@ -8,7 +8,7 @@
 [![Go Version](https://img.shields.io/badge/Go-1.25-blue.svg)](https://go.dev)
 [![Vite](https://img.shields.io/badge/Vite-5.0-646CFF.svg)](https://vitejs.dev)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](Dockerfile)
-[![Helm](https://img.shields.io/badge/Helm-Chart-0F1688?logo=helm)](helm/nats-monitor)
+[![Helm](https://img.shields.io/badge/Helm-Chart-0F1688?logo=helm)](helm/nats-horizon)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-green.svg)]()
 
 A modern, open-source observability and administration platform for NATS and JetStream.
@@ -22,11 +22,11 @@ Built for teams that need real-time visibility, powerful management tools, and a
 
 ---
 
-## What is nats-monitoring?
+## What is nats-horizon?
 
 NATS is fast. NATS scales well. But managing a production NATS JetStream cluster shouldn't require memorizing CLI flags or running five infrastructure services just to see what's happening.
 
-**nats-monitoring** is a single-binary, zero-dependency web platform that gives you full observability and control over your NATS JetStream infrastructure:
+**nats-horizon** is a single-binary, zero-dependency web platform that gives you full observability and control over your NATS JetStream infrastructure:
 
 - **See everything** — Real-time dashboard with live metrics for streams, consumers, KV stores, and cluster health
 - **Control everything** — Create, edit, delete, replay, and pause consumers directly from the UI
@@ -42,7 +42,7 @@ We run NATS JetStream in production. We tried every existing tool and hit the sa
 - **nats-nui** — Fast and popular, but it's a *browser*, not a *command center*. No alerts, no audit, no history.
 - **nats-dashboard** — Beautiful, but read-only. You can watch, but you can't act.
 
-So we built **nats-monitoring** — the full-featured option that fits in a single binary.
+So we built **nats-horizon** — the full-featured option that fits in a single binary.
 
 ---
 
@@ -54,11 +54,11 @@ Four ways to run — pick whichever fits your workflow.
 
 ### Option 1: Docker Compose ⭐ (Recommended)
 
-Zero local dependencies. Starts nats-monitoring **and** a JetStream-enabled NATS server automatically.
+Zero local dependencies. Starts nats-horizon **and** a JetStream-enabled NATS server automatically.
 
 ```bash
-git clone https://github.com/amir-baghshahy/nats-monitor.git
-cd nats-monitoring
+git clone https://github.com/amir-baghshahy/nats-horizon.git
+cd nats-horizon
 docker compose up
 ```
 
@@ -76,16 +76,16 @@ Download a pre-built binary for your platform — no Docker required.
 
 ```bash
 # Mac / Linux (one-liner)
-curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-horizon/main/install.sh | bash
 
 # Windows (PowerShell)
-iwr https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.bat -OutFile install.bat; .\install.bat
+iwr https://raw.githubusercontent.com/amir-baghshahy/nats-horizon/main/install.bat -OutFile install.bat; .\install.bat
 ```
 
 Then run:
 
 ```bash
-nats-monitoring --nats-url nats://your-server:4222
+nats-horizon --nats-url nats://your-server:4222
 ```
 
 ### Option 3: Kubernetes (Helm)
@@ -94,16 +94,16 @@ Deploy to your Kubernetes cluster:
 
 ```bash
 # Build and push image
-docker build -t your-registry/nats-monitoring:latest .
-docker push your-registry/nats-monitoring:latest
+docker build -t your-registry/nats-horizon:latest .
+docker push your-registry/nats-horizon:latest
 
 # Install with Helm
-helm install nats-monitoring ./helm/nats-monitor \
-  --set image.repository=your-registry/nats-monitoring \
+helm install nats-horizon ./helm/nats-horizon \
+  --set image.repository=your-registry/nats-horizon \
   --set app.natsUrl="nats://nats:4222"
 
 # Check status
-helm status nats-monitoring
+helm status nats-horizon
 ```
 
 Full documentation in [`helm/README.md`](helm/README.md).
@@ -111,8 +111,8 @@ Full documentation in [`helm/README.md`](helm/README.md).
 ### Option 4: Local Development
 
 ```bash
-git clone https://github.com/amir-baghshahy/nats-monitor.git
-cd nats-monitoring
+git clone https://github.com/amir-baghshahy/nats-horizon.git
+cd nats-horizon
 make install
 make dev
 ```
@@ -135,10 +135,10 @@ Backend on `:3000`, frontend on `:5173`.
 ### Docker Image
 
 ```bash
-docker build -t nats-monitoring .
+docker build -t nats-horizon .
 docker run -p 3000:3000 \
   -e NATS_URL=nats://your-server:4222 \
-  --rm nats-monitoring
+  --rm nats-horizon
 ```
 
 Or via Docker Compose (recommended):
@@ -153,22 +153,22 @@ Deploy to any Kubernetes cluster using the included Helm chart:
 
 ```bash
 # Build and push your image
-docker build -t your-registry/nats-monitoring:latest .
-docker push your-registry/nats-monitoring:latest
+docker build -t your-registry/nats-horizon:latest .
+docker push your-registry/nats-horizon:latest
 
 # Install the chart
-helm install nats-monitoring ./helm/nats-monitor \
-  --set image.repository=your-registry/nats-monitoring \
+helm install nats-horizon ./helm/nats-horizon \
+  --set image.repository=your-registry/nats-horizon \
   --set app.natsUrl="nats://nats.production.svc.cluster.local:4222"
 
 # With custom values
-helm install nats-monitoring ./helm/nats-monitor -f custom-values.yaml
+helm install nats-horizon ./helm/nats-horizon -f custom-values.yaml
 
 # Upgrade
-helm upgrade nats-monitoring ./helm/nats-monitor
+helm upgrade nats-horizon ./helm/nats-horizon
 
 # Uninstall
-helm uninstall nats-monitoring
+helm uninstall nats-horizon
 ```
 
 **Production configuration example:**
@@ -177,7 +177,7 @@ helm uninstall nats-monitoring
 # custom-values.yaml
 replicaCount: 3
 image:
-  repository: your-registry/nats-monitoring
+  repository: your-registry/nats-horizon
   tag: "v1.0.0"
 ingress:
   enabled: true
@@ -185,14 +185,14 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-    - host: nats-monitor.example.com
+    - host: nats-horizon.example.com
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: nats-monitor-tls
+    - secretName: nats-horizon-tls
       hosts:
-        - nats-monitor.example.com
+        - nats-horizon.example.com
 resources:
   limits:
     cpu: 1000m
@@ -207,7 +207,7 @@ autoscaling:
   targetCPUUtilizationPercentage: 70
 app:
   natsUrl: "nats://nats.production.svc.cluster.local:4222"
-  corsAllowedOrigins: "https://nats-monitor.example.com"
+  corsAllowedOrigins: "https://nats-horizon.example.com"
 ```
 
 See [`helm/README.md`](helm/README.md) for full Helm chart documentation.
@@ -293,7 +293,7 @@ See `.env.example` for the full list.
 
 ## ⚖️ Vs. Others
 
-|  | nats-console | nats-nui | nats-dashboard | cobra-nats | **nats-monitoring** |
+|  | nats-console | nats-nui | nats-dashboard | cobra-nats | **nats-horizon** |
 |---|---|---|---|---|---|
 | **Backend** | Fastify/Node | Go | None (static) | Next.js | **Go + Gin** |
 | **Database** | Postgres + ClickHouse + Redis | None | None | None | **None** |
@@ -319,22 +319,22 @@ See `.env.example` for the full list.
 #### nats-console (KLogicHQ) — The "Enterprise" Choice
 Feature-complete with ClickHouse time-series, dashboard builder, Slack/PagerDuty alerts, and multi-cluster support. But you're managing **five services** — PostgreSQL, ClickHouse, Redis, Fastify, and Next.js. Great if you have a dedicated platform team. Overkill if you want one binary.
 
-**What nats-monitoring does better**: Zero-database deployment. Same core alerting, multi-tenancy, and cluster topology — without the operational overhead.
+**What nats-horizon does better**: Zero-database deployment. Same core alerting, multi-tenancy, and cluster topology — without the operational overhead.
 
 #### nats-nui (589 ⭐) — The "Popular" Choice
 Fast, clean, truly open-source (Unlicense). But it's fundamentally a **browser**, not a **command center**. Missing alerts, audit logs, security dashboards, history reports, consumer replay/pause, and multi-tenancy.
 
-**What nats-monitoring does better**: Complete observability: alerts, audit trails, history, and security — everything needed for production operations.
+**What nats-horizon does better**: Complete observability: alerts, audit trails, history, and security — everything needed for production operations.
 
 #### nats-dashboard (213 ⭐) — The "Monitor"
 Beautiful read-only monitoring surface. No backend, just a static app hitting the NATS monitoring endpoint. Can watch, but can't manage: no CRUD, no KV store, no consumer ops, no alerts.
 
-**What nats-monitoring does better**: Not just watching — acting. Real-time metrics + full management plane in one cohesive tool.
+**What nats-horizon does better**: Not just watching — acting. Real-time metrics + full management plane in one cohesive tool.
 
 #### cobra-nats — The "Newcomer"
 Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark mode. Only 1 ⭐, no alerting, no audit, requires Node.js.
 
-**What nats-monitoring does better**: Go backend performance, mature feature depth, zero Node dependency.
+**What nats-horizon does better**: Go backend performance, mature feature depth, zero Node dependency.
 
 ---
 
@@ -348,7 +348,7 @@ Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark
                            │  REST API  │  SSE (events)
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  nats-monitoring Server                      │
+│                  nats-horizon Server                      │
 │                    (Go 1.25 + Gin)                          │
 │  ┌─────────────┐ ┌──────────────┐ ┌────────────────────┐  │
 │  │   REST      │ │   SSE Hub    │ │   Static Assets    │  │
@@ -409,23 +409,23 @@ We chose **SSE over WebSocket** because:
 ### Docker Compose (Recommended)
 
 ```bash
-git clone https://github.com/amir-baghshahy/nats-monitor.git
-cd nats-monitoring
+git clone https://github.com/amir-baghshahy/nats-horizon.git
+cd nats-horizon
 docker compose up
 ```
 
 ### Binary (Mac / Linux / Windows)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-monitor/main/install.sh | bash
-nats-monitoring --nats-url nats://your-server:4222
+curl -fsSL https://raw.githubusercontent.com/amir-baghshahy/nats-horizon/main/install.sh | bash
+nats-horizon --nats-url nats://your-server:4222
 ```
 
 ### Source
 
 ```bash
-git clone https://github.com/amir-baghshahy/nats-monitor.git
-cd nats-monitoring
+git clone https://github.com/amir-baghshahy/nats-horizon.git
+cd nats-horizon
 make install
 make dev
 ```
@@ -448,7 +448,7 @@ make dev
 
 ### Smart Port Selection
 
-No more "port already in use" errors. nats-monitoring finds an available port automatically:
+No more "port already in use" errors. nats-horizon finds an available port automatically:
 
 1. Tries your preferred port (`PORT`, default `3000`)
 2. If busy, sweeps sequentially through `PORT_RANGE_START` → `PORT_RANGE_END` (default `3001`–`3019`)
@@ -527,8 +527,8 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ```bash
-git clone https://github.com/amir-baghshahy/nats-monitor.git
-cd nats-monitoring
+git clone https://github.com/amir-baghshahy/nats-horizon.git
+cd nats-horizon
 make install
 make dev
 ```

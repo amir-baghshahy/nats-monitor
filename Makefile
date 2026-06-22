@@ -1,4 +1,4 @@
-.PHONY: dev dev-backend dev-frontend build clean test test-e2e test-e2e-nats fmt deps openapi docker-build docker-run install-binary
+.PHONY: dev dev-backend dev-frontend build clean test test-e2e test-e2e-nats fmt deps openapi docker-build docker-run install-binary generate-api
 
 # ── Development ─────────────────────────────────────────────────────────────
 
@@ -73,11 +73,15 @@ openapi:
 	@go run cmd/openapi3gen/main.go
 	@rm -f api/swagger/swagger.json api/swagger/swagger.yaml api/swagger/openapi.yaml
 
+generate-api: openapi
+	@echo "Generating TypeScript API client..."
+	@cd web && npm run generate:api
+
 # ── Docker ──────────────────────────────────────────────────────────────────
 
 docker-build:
 	@echo "Building Docker image..."
-	@docker build -t nats-monitoring .
+	@docker build -t nats-horizon .
 
 docker-run:
 	@echo "Starting with Docker Compose..."
@@ -95,5 +99,5 @@ docker-logs:
 # ── Binary Release ──────────────────────────────────────────────────────────
 
 install-binary:
-	@echo "Downloading latest nats-monitoring binary..."
+	@echo "Downloading latest nats-horizon binary..."
 	@bash install.sh

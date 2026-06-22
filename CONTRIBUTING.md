@@ -1,4 +1,4 @@
-# Contributing to nats-monitoring
+# Contributing to nats-horizon
 
 Thank you for your interest in contributing! This document will help you get started.
 
@@ -48,8 +48,8 @@ Open an issue with:
 ## Development Setup
 
 ```bash
-git clone https://github.com/amir-baghshahy/nats-monitor.git
-cd nats-monitoring
+git clone https://github.com/amir-baghshahy/nats-horizon.git
+cd nats-horizon
 make install
 make dev
 ```

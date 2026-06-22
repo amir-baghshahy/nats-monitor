@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { github_com_amir_baghshahy_nats_monitor_internal_dto_SuccessResponse } from '../models/github_com_amir_baghshahy_nats_monitor_internal_dto_SuccessResponse';
+import type { github_com_amir_baghshahy_nats_horizon_internal_dto_SuccessResponse } from '../models/github_com_amir_baghshahy_nats_horizon_internal_dto_SuccessResponse';
 import type { internal_handlers_User } from '../models/internal_handlers_User';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -83,12 +83,12 @@ export class SecurityService {
      * Delete a user
      * Deletes a NATS user (not implemented)
      * @param name User name
-     * @returns github_com_amir_baghshahy_nats_monitor_internal_dto_SuccessResponse OK
+     * @returns github_com_amir_baghshahy_nats_horizon_internal_dto_SuccessResponse OK
      * @throws ApiError
      */
     public static deleteSecurityUsers(
         name: string,
-    ): CancelablePromise<github_com_amir_baghshahy_nats_monitor_internal_dto_SuccessResponse> {
+    ): CancelablePromise<github_com_amir_baghshahy_nats_horizon_internal_dto_SuccessResponse> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/security/users/{name}',

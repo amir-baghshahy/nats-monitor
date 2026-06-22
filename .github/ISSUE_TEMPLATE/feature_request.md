@@ -1,6 +1,6 @@
 ---
 name: ✨ Feature Request
-about: Suggest an idea for nats-monitoring
+about: Suggest an idea for nats-horizon
 title: '[FEATURE] '
 labels: enhancement, triage
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 
 ## ✨ Feature Description
 
-A clear and concise description of the feature you'd like to see added to nats-monitoring.
+A clear and concise description of the feature you'd like to see added to nats-horizon.
 
 ## 🎯 Use Case
 

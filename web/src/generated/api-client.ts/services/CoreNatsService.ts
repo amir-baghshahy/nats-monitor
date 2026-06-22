@@ -2,12 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { github_com_amir_baghshahy_nats_monitor_internal_dto_MessageResponse } from '../models/github_com_amir_baghshahy_nats_monitor_internal_dto_MessageResponse';
-import type { github_com_amir_baghshahy_nats_monitor_internal_dto_PublishMessageRequest } from '../models/github_com_amir_baghshahy_nats_monitor_internal_dto_PublishMessageRequest';
-import type { github_com_amir_baghshahy_nats_monitor_internal_dto_PublishMessageResponse } from '../models/github_com_amir_baghshahy_nats_monitor_internal_dto_PublishMessageResponse';
-import type { github_com_amir_baghshahy_nats_monitor_internal_dto_RequestMessageRequest } from '../models/github_com_amir_baghshahy_nats_monitor_internal_dto_RequestMessageRequest';
-import type { github_com_amir_baghshahy_nats_monitor_internal_dto_ServiceDiscoveryResponse } from '../models/github_com_amir_baghshahy_nats_monitor_internal_dto_ServiceDiscoveryResponse';
-import type { github_com_amir_baghshahy_nats_monitor_internal_dto_SubscriptionsResponse } from '../models/github_com_amir_baghshahy_nats_monitor_internal_dto_SubscriptionsResponse';
+import type { github_com_amir_baghshahy_nats_horizon_internal_dto_MessageResponse } from '../models/github_com_amir_baghshahy_nats_horizon_internal_dto_MessageResponse';
+import type { github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageRequest } from '../models/github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageRequest';
+import type { github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageResponse } from '../models/github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageResponse';
+import type { github_com_amir_baghshahy_nats_horizon_internal_dto_RequestMessageRequest } from '../models/github_com_amir_baghshahy_nats_horizon_internal_dto_RequestMessageRequest';
+import type { github_com_amir_baghshahy_nats_horizon_internal_dto_ServiceDiscoveryResponse } from '../models/github_com_amir_baghshahy_nats_horizon_internal_dto_ServiceDiscoveryResponse';
+import type { github_com_amir_baghshahy_nats_horizon_internal_dto_SubscriptionsResponse } from '../models/github_com_amir_baghshahy_nats_horizon_internal_dto_SubscriptionsResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -38,12 +38,12 @@ export class CoreNatsService {
      * Publish a Core NATS message
      * Publishes a message to a NATS subject (non-JetStream)
      * @param requestBody Message to publish
-     * @returns github_com_amir_baghshahy_nats_monitor_internal_dto_PublishMessageResponse OK
+     * @returns github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageResponse OK
      * @throws ApiError
      */
     public static postCorePublish(
-        requestBody: github_com_amir_baghshahy_nats_monitor_internal_dto_PublishMessageRequest,
-    ): CancelablePromise<github_com_amir_baghshahy_nats_monitor_internal_dto_PublishMessageResponse> {
+        requestBody: github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageRequest,
+    ): CancelablePromise<github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageResponse> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/core/publish',
@@ -59,12 +59,12 @@ export class CoreNatsService {
      * Send a Core NATS request
      * Publishes a request message and waits for a reply (request/reply pattern)
      * @param requestBody Request message
-     * @returns github_com_amir_baghshahy_nats_monitor_internal_dto_MessageResponse OK
+     * @returns github_com_amir_baghshahy_nats_horizon_internal_dto_MessageResponse OK
      * @throws ApiError
      */
     public static postCoreRequest(
-        requestBody: github_com_amir_baghshahy_nats_monitor_internal_dto_RequestMessageRequest,
-    ): CancelablePromise<github_com_amir_baghshahy_nats_monitor_internal_dto_MessageResponse> {
+        requestBody: github_com_amir_baghshahy_nats_horizon_internal_dto_RequestMessageRequest,
+    ): CancelablePromise<github_com_amir_baghshahy_nats_horizon_internal_dto_MessageResponse> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/core/request',
@@ -81,10 +81,10 @@ export class CoreNatsService {
     /**
      * Get service discovery info
      * Returns connection and server discovery information for the NATS cluster
-     * @returns github_com_amir_baghshahy_nats_monitor_internal_dto_ServiceDiscoveryResponse OK
+     * @returns github_com_amir_baghshahy_nats_horizon_internal_dto_ServiceDiscoveryResponse OK
      * @throws ApiError
      */
-    public static getCoreServices(): CancelablePromise<github_com_amir_baghshahy_nats_monitor_internal_dto_ServiceDiscoveryResponse> {
+    public static getCoreServices(): CancelablePromise<github_com_amir_baghshahy_nats_horizon_internal_dto_ServiceDiscoveryResponse> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/core/services',
@@ -115,10 +115,10 @@ export class CoreNatsService {
     /**
      * Get active subscriptions info
      * Returns connection status and active subscription information
-     * @returns github_com_amir_baghshahy_nats_monitor_internal_dto_SubscriptionsResponse OK
+     * @returns github_com_amir_baghshahy_nats_horizon_internal_dto_SubscriptionsResponse OK
      * @throws ApiError
      */
-    public static getCoreSubscriptions(): CancelablePromise<github_com_amir_baghshahy_nats_monitor_internal_dto_SubscriptionsResponse> {
+    public static getCoreSubscriptions(): CancelablePromise<github_com_amir_baghshahy_nats_horizon_internal_dto_SubscriptionsResponse> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/core/subscriptions',

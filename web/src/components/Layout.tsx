@@ -55,7 +55,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             </div>
             <div>
               <h1 className="text-lg font-bold tracking-tight text-dark-text">nats-ui</h1>
-              <p className="text-xs text-dark-muted">NATS Monitoring Platform</p>
+              <p className="text-xs text-dark-muted">NATS Horizon Platform</p>
             </div>
           </div>
         </div>
