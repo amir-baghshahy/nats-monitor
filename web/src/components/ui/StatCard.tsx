@@ -71,15 +71,15 @@ export default function StatCard({
 
   const card = (
     <div className="card">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div
-          className={`${containerSize} rounded-xl ${iconBg} flex items-center justify-center`}
+          className={`${containerSize} rounded-xl ${iconBg} flex items-center justify-center shrink-0`}
         >
           <Icon className={`${iconSize} ${iconColor}`} />
         </div>
-        <div>
-          <p className={`${valueSize} font-bold`}>{displayValue}</p>
-          <p className={`${labelSize} text-dark-muted`}>{label}</p>
+        <div className="min-w-0">
+          <p className={`${valueSize} font-bold truncate`}>{displayValue}</p>
+          <p className={`${labelSize} text-dark-muted truncate`}>{label}</p>
         </div>
       </div>
     </div>

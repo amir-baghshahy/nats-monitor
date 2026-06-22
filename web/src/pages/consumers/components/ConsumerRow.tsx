@@ -108,7 +108,7 @@ export default function ConsumerRow({
               onClick={() => onTogglePauseResume(consumer)}
               className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
               title={
-                consumer.status === "active"
+                !consumer.paused
                   ? "Pause consumer"
                   : "Resume consumer"
               }

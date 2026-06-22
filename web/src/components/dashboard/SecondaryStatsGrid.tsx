@@ -35,7 +35,7 @@ export default function SecondaryStatsGrid({
       : "bg-green-500/20 text-green-400";
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
       <StatCard
         icon={HardDrive}
         value={account.storage || 0}

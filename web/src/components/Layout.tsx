@@ -46,8 +46,8 @@ export default function Layout({ children }: { children: ReactNode }) {
   const connected = health?.nats === "connected";
 
   return (
-    <div className="flex min-h-screen overflow-hidden bg-dark-bg">
-      <aside className="flex w-72 flex-col border-r border-dark-border/70 bg-dark-card/75 shadow-2xl shadow-black/20 backdrop-blur-xl">
+    <div className="flex h-screen overflow-hidden bg-dark-bg">
+      <aside className="flex w-72 flex-shrink-0 flex-col border-r border-dark-border/70 bg-dark-card/75 shadow-2xl shadow-black/20 backdrop-blur-xl overflow-hidden">
         <div className="border-b border-dark-border/70 px-6 py-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-500/20 text-primary-300 ring-1 ring-primary-400/30">
@@ -99,7 +99,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className="page-shell flex-1">{children}</main>
+      <main className="h-full overflow-y-auto flex-1">{children}</main>
     </div>
   );
 }

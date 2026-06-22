@@ -35,8 +35,7 @@ export interface UseConsumerDetailReturn {
   updatePending: boolean;
   clonePending: boolean;
   setActiveTab: (tab: "overview" | "messages" | "config") => void;
-  setIsPaused: (value: boolean) => void;
-  setShowEditModal: (value: boolean) => void;
+    setShowEditModal: (value: boolean) => void;
   setShowCloneModal: (value: boolean) => void;
   setCloneName: (value: string) => void;
   setEditForm: (form: ConsumerEditForm) => void;
@@ -62,8 +61,7 @@ export function useConsumerDetail(): UseConsumerDetailReturn {
   const { confirm } = useConfirm();
 
   const [activeTab, setActiveTab] = useState<"overview" | "messages" | "config">("overview");
-  const [isPaused, setIsPaused] = useState(false);
-  const [isTabHidden, setIsTabHidden] = useState(false);
+    const [isTabHidden, setIsTabHidden] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
@@ -84,10 +82,18 @@ export function useConsumerDetail(): UseConsumerDetailReturn {
   const { data: consumer, refetch } = useQuery({
     queryKey: ["consumer", name],
     queryFn: () => ConsumersService.getConsumers1(name || ""),
-    refetchInterval: isPaused || isTabHidden ? false : 5000,
     refetchOnWindowFocus: false,
     enabled: !!name,
   });
+
+  const isPaused = consumer?.paused ?? false;
+
+  useEffect(() => {
+    if (!isPaused && !isTabHidden) {
+      const id = setInterval(() => refetch(), 5000);
+      return () => clearInterval(id);
+    }
+  }, [isPaused, isTabHidden, refetch]);
 
   const consumerData = consumer || {
     name,
@@ -175,8 +181,7 @@ export function useConsumerDetail(): UseConsumerDetailReturn {
     if (!name || !consumerData.stream) return;
     setLoadingAction("pause-resume");
     const newState = !isPaused;
-    const result = await setConsumerState(consumerData.stream, name, newState);
-    if (result.success) setIsPaused(newState);
+    await setConsumerState(consumerData.stream, name, newState);
     setLoadingAction(null);
   };
 
@@ -248,7 +253,6 @@ export function useConsumerDetail(): UseConsumerDetailReturn {
     updatePending: updateMutation.isPending,
     clonePending: cloneMutation.isPending,
     setActiveTab,
-    setIsPaused,
     setShowEditModal,
     setShowCloneModal,
     setCloneName,

@@ -38,16 +38,16 @@ export default function ConnectionStatus({
   const shouldExpand = connections.length > VISIBLE_CONNECTIONS;
 
   return (
-    <div className="card mb-8">
-      <div className="mb-5 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+    <div className="card mb-4">
+      <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-primary-500/20 p-3">
-              <Radio className="h-5 w-5 text-primary-400" />
+          <div className="flex items-center gap-2">
+            <div className="rounded-xl bg-primary-500/20 p-2">
+              <Radio className="h-4 w-4 text-primary-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Connection Status</h3>
-              <p className="text-sm text-dark-muted">
+              <h3 className="text-base font-semibold">Connection Status</h3>
+              <p className="text-xs text-dark-muted">
                 {connections.length} active connection{connections.length === 1 ? "" : "s"}
               </p>
             </div>
@@ -59,38 +59,38 @@ export default function ConnectionStatus({
         />
       </div>
 
-      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div className="rounded-xl bg-dark-bg/50 p-4">
+      <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+        <div className="rounded-xl bg-dark-bg/50 p-3">
           <p className="text-xs text-dark-muted">Active</p>
-          <p className="mt-1 text-xl font-semibold">{connections.length}</p>
+          <p className="mt-1 text-lg font-semibold">{connections.length}</p>
         </div>
-        <div className="rounded-xl bg-dark-bg/50 p-4">
+        <div className="rounded-xl bg-dark-bg/50 p-3">
           <p className="text-xs text-dark-muted">Subscriptions</p>
-          <p className="mt-1 text-xl font-semibold">{formatNumber(totalSubscriptions)}</p>
+          <p className="mt-1 text-lg font-semibold">{formatNumber(totalSubscriptions)}</p>
         </div>
-        <div className="rounded-xl bg-dark-bg/50 p-4">
+        <div className="rounded-xl bg-dark-bg/50 p-3">
           <p className="text-xs text-dark-muted">Pending</p>
-          <p className="mt-1 text-xl font-semibold">{formatNumber(totalPendingBytes)}</p>
+          <p className="mt-1 text-lg font-semibold">{formatNumber(totalPendingBytes)}</p>
         </div>
-        <div className="rounded-xl bg-dark-bg/50 p-4">
+        <div className="rounded-xl bg-dark-bg/50 p-3">
           <p className="text-xs text-dark-muted">Servers</p>
-          <p className="mt-1 text-xl font-semibold">
+          <p className="mt-1 text-lg font-semibold">
             {new Set(connections.map((conn) => conn.server || conn.server_id || "unknown")).size}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 lg:grid-cols-3">
         {visibleConnections.map((conn) => (
           <div
             key={conn.cid || conn.server_id || conn.ip || conn.name}
-            className="rounded-2xl border border-dark-border/60 bg-dark-bg/40 p-4"
+            className="rounded-2xl border border-dark-border/60 bg-dark-bg/40 p-3"
           >
-            <div className="mb-4 flex items-start justify-between gap-3">
+            <div className="mb-3 flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <Server className="h-4 w-4 shrink-0 text-primary-400" />
-                  <p className="truncate font-medium">
+                  <Server className="h-3.5 w-3.5 shrink-0 text-primary-400" />
+                  <p className="truncate text-sm font-medium">
                     {conn.name || conn.server || "NATS Server"}
                   </p>
                 </div>
@@ -99,12 +99,12 @@ export default function ConnectionStatus({
                   {conn.port ? `:${conn.port}` : ""}
                 </p>
               </div>
-              <span className="rounded-full bg-primary-500/10 px-2 py-1 text-xs text-primary-300">
+              <span className="rounded-full bg-primary-500/10 px-2 py-0.5 text-xs text-primary-300">
                 #{conn.cid || "N/A"}
               </span>
             </div>
 
-            <div className="space-y-2 text-sm text-dark-muted">
+            <div className="space-y-1.5 text-xs text-dark-muted">
               <div className="flex items-center justify-between gap-3">
                 <span>User</span>
                 <span className="font-medium text-dark-text">{conn.user || "N/A"}</span>
@@ -153,16 +153,16 @@ export default function ConnectionStatus({
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="btn-secondary mt-5 inline-flex items-center gap-2"
+          className="btn-secondary mt-3 inline-flex items-center gap-2 text-sm px-3 py-1.5"
         >
           {expanded ? (
             <>
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="h-3.5 w-3.5" />
               Show less
             </>
           ) : (
             <>
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="h-3.5 w-3.5" />
               Show {connections.length - VISIBLE_CONNECTIONS} more
             </>
           )}

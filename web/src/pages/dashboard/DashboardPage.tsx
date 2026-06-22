@@ -50,7 +50,7 @@ export default function DashboardPage({
   }
 
   return (
-    <div className="p-4 md:p-8 animate-fade-in">
+    <div className="p-3 md:p-4 animate-fade-in">
       <DashboardHeader
         sseConnected={sseConnected}
         onRefresh={() => refetch()}
@@ -58,8 +58,8 @@ export default function DashboardPage({
 
       <StatsGrid stats={stats} />
 
-      <div className="mb-8 animate-slide-up animate-delay-100">
-        <h2 className="text-lg font-semibold mb-4">Real-time Metrics</h2>
+      <div className="mb-4 mt-4 animate-slide-up animate-delay-100">
+        <h2 className="text-base font-semibold mb-3">Real-time Metrics</h2>
         <SystemMetrics />
       </div>
 

@@ -17,12 +17,12 @@ export default function ConsumerHealth({ consumers }: ConsumerHealthProps) {
     .slice(0, 5);
 
   return (
-    <div className="card">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Consumer Health (Highest Lag)</h3>
+    <div className="card overflow-hidden flex flex-col max-h-[350px]">
+      <div className="p-3 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
+        <h3 className="text-base font-semibold">Consumer Health (Highest Lag)</h3>
       </div>
 
-      <div className="space-y-2">
+      <div className="overflow-y-auto scrollbar-thin flex-1 p-3 space-y-2">
         {topLagging.map((consumer) => {
           const lag = consumer.lag || consumer.num_pending || 0;
           const status = getConsumerStatus(lag);
@@ -37,17 +37,17 @@ export default function ConsumerHealth({ consumers }: ConsumerHealthProps) {
           return (
             <div
               key={consumer.name}
-              className="flex items-center justify-between p-3 bg-dark-bg rounded-lg"
+              className="flex items-center justify-between p-2.5 bg-dark-bg rounded-lg"
             >
-              <div className="flex-1">
-                <p className="font-medium">{consumer.name}</p>
-                <p className="text-xs text-dark-muted">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{consumer.name}</p>
+                <p className="text-xs text-dark-muted truncate">
                   {consumer.stream || "Not specified"}
                 </p>
               </div>
-              <div className="text-right">
+              <div className="text-right shrink-0 ml-2">
                 <p
-                  className={`font-semibold ${
+                  className={`text-sm font-semibold ${
                     status === "error"
                       ? "text-red-400"
                       : status === "warning"
@@ -62,6 +62,9 @@ export default function ConsumerHealth({ consumers }: ConsumerHealthProps) {
             </div>
           );
         })}
+      </div>
+      <div className="p-2 border-t border-dark-border bg-dark-bg/50 text-center text-xs text-dark-muted flex-shrink-0">
+        {topLagging.length} consumer{topLagging.length !== 1 ? 's' : ''}
       </div>
     </div>
   );
