@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"sync"
 	"time"
@@ -16,9 +17,9 @@ import (
 
 // SSEEvent represents a Server-Sent Event
 type SSEEvent struct {
-	Type      string      `json:"type"`
-	Timestamp int64       `json:"timestamp"`
-	Data      interface{} `json:"data"`
+	Type      string `json:"type"`
+	Timestamp int64  `json:"timestamp"`
+	Data      any    `json:"data"`
 }
 
 // SSEClient represents a connected SSE client
@@ -330,7 +331,11 @@ func (h *SSEHub) HandleSSE(c *gin.Context) {
 			"id":      clientID,
 		},
 	}
-	data, _ := json.Marshal(event)
+	data, err := json.Marshal(event)
+	if err != nil {
+		log.Printf("Failed to marshal SSE connected event: %v", err)
+		return
+	}
 	fmt.Fprintf(c.Writer, "data: %s\n\n", data)
 	flusher.Flush()
 
@@ -370,7 +375,13 @@ func (h *SSEHub) BroadcastDashboardStats() {
 	streamCount = len(response.Streams)
 	for _, stream := range response.Streams {
 		totalMessages += stream.State.Messages
-		consumerCount += int(stream.State.Consumers)
+		newCount := consumerCount + int(stream.State.Consumers)
+		if newCount < consumerCount {
+			// Integer overflow detected
+			consumerCount = math.MaxInt32
+		} else {
+			consumerCount = newCount
+		}
 	}
 
 	h.Broadcast("dashboard", SSEEvent{

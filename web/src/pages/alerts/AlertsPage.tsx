@@ -41,12 +41,12 @@ export default function AlertsPage() {
     return "Unable to load alerts";
   };
 
-  const filteredAlerts = alerts?.filter((alert: Alert) => {
+  const filteredAlerts = (alerts ?? []).filter((alert: Alert) => {
     if (filterSeverity === "all") return true;
     return alert.severity === filterSeverity;
-  }) || [];
+  });
 
-  const unackedTriggers = triggers?.filter((t) => !t.acked) || [];
+  const unackedTriggers = (triggers ?? []).filter((t) => !t.acked);
 
   if (alertsLoading || (activeTab === "triggers" && triggersLoading)) {
     return (

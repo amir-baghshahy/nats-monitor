@@ -57,7 +57,7 @@ export function useSSE(channel: string) {
       console.log(`Closing SSE connection to channel: ${channel}`)
       eventSource.close()
     }
-  }, [channel, queryClient])
+  }, [channel])
 
   return { connected, lastEvent }
 }
