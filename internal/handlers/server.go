@@ -262,7 +262,14 @@ func (h *ServerHandler) GetStreamMessagesByPage(c *gin.Context) {
 	}
 
 	total := streamInfo.Messages
-	startSeq := streamInfo.FirstSeq + uint64((page-1)*pageSize)
+
+	offset := uint64((page - 1) * pageSize)
+	var startSeq uint64
+	if offset < total {
+		startSeq = streamInfo.FirstSeq + offset
+	} else {
+		startSeq = streamInfo.LastSeq + 1
+	}
 
 	messages, err := h.messageUseCase.ListMessages(c.Request.Context(), stream, models.MessageFilter{
 		Limit:    pageSize,

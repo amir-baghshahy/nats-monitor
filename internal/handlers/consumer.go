@@ -353,11 +353,6 @@ func (h *ConsumerHandler) Resume(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "Consumer resumed successfully"})
 }
 
-// pauseSentinel is the MaxDeliver value used to mark a paused consumer.
-// -2 is chosen because NATS uses -1 for unlimited and 0 as the Go zero-value
-// default, so -2 cannot be confused with either a default or an unlimited consumer.
-const pauseSentinel = -2
-
 // fetchStreamNames returns the list of stream names by querying NATS.
 func (h *ConsumerHandler) fetchStreamNames() ([]string, error) {
 	streamMsg, err := h.nc.Request(
@@ -460,7 +455,7 @@ func (h *ConsumerHandler) ListAll(c *gin.Context) {
 					Lag:        consumer.State.NumPending,
 					AckRate:    "",
 					NumPending: consumer.State.NumPending,
-					Paused:     consumer.Config.MaxDeliver == pauseSentinel,
+					Paused:     consumer.Config.MaxDeliver == constants.PauseSentinel,
 					Config: &dto.ConsumerConfigResponse{
 						Durable:       durable,
 						AckPolicy:     consumer.Config.AckPolicy,
@@ -522,7 +517,7 @@ func (h *ConsumerHandler) GetConsumerByName(c *gin.Context) {
 				Lag:        consumerInfo.NumPending,
 				AckRate:    "",
 				NumPending: consumerInfo.NumPending,
-				Paused:     consumerInfo.Config.MaxDeliver == pauseSentinel,
+				Paused:     consumerInfo.Config.MaxDeliver == constants.PauseSentinel,
 				Config: &dto.ConsumerConfigResponse{
 					Durable:       durable,
 					AckPolicy:     utils.AckPolicyToString(int(consumerInfo.Config.AckPolicy)),

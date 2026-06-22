@@ -187,7 +187,11 @@ func (r *NATSConsumerRepository) Resume(ctx context.Context, req *models.ResumeR
 		return fmt.Errorf("failed to get consumer info: %w", err)
 	}
 
-	info.Config.MaxDeliver = -1
+	if info.Config.MaxDeliver != constants.PauseSentinel {
+		return nil
+	}
+
+	info.Config.MaxDeliver = constants.DefaultMaxDeliver
 
 	_, err = r.js.UpdateConsumer(req.StreamName, &info.Config)
 	if err != nil {

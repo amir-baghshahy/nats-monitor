@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -339,12 +340,7 @@ func (h *HistoryHandler) GetReport(c *gin.Context) {
 	})
 }
 
-// Helper function to split string
+// Helper function to split string - delegates to strings.SplitN
 func splitString(s string, sep string) []string {
-	for i := 0; i <= len(s)-len(sep); i++ {
-		if s[i:i+len(sep)] == sep {
-			return []string{s[:i], s[i+len(sep):]}
-		}
-	}
-	return []string{s}
+	return strings.SplitN(s, sep, 2)
 }

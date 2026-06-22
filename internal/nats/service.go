@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/amir-baghshahy/nats-monitor/internal/constants"
 	"github.com/nats-io/nats.go"
 )
 
@@ -315,7 +316,7 @@ func (s *Service) PauseConsumer(streamName, consumerName string) error {
 	// -1 means unlimited in NATS and 0 is the Go zero-value default,
 	// so -2 is the only value that unambiguously signals a paused consumer.
 	originalMaxDeliver := info.Config.MaxDeliver
-	info.Config.MaxDeliver = -2
+	info.Config.MaxDeliver = constants.PauseSentinel
 
 	_, err = s.js.UpdateConsumer(streamName, &info.Config)
 	if err != nil {
@@ -342,8 +343,11 @@ func (s *Service) ResumeConsumer(streamName, consumerName string) error {
 		return fmt.Errorf("failed to get consumer info: %w", err)
 	}
 
-	// Resume by setting MaxDeliver back to -1 (unlimited)
-	info.Config.MaxDeliver = -1
+	if info.Config.MaxDeliver != constants.PauseSentinel {
+		return nil
+	}
+
+	info.Config.MaxDeliver = constants.DefaultMaxDeliver
 
 	_, err = s.js.UpdateConsumer(streamName, &info.Config)
 	if err != nil {
