@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useToast } from '../../../components/Toast'
 import { useConfirm } from '../../../components/ConfirmDialog'
 import { HealthService } from '../../../types'
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_ConnectionInfo as ConnectionInfo } from '../../../types'
+import type { ConnectionInfo } from '../../../types'
 
 export interface UseConnectionsReturn {
   searchQuery: string

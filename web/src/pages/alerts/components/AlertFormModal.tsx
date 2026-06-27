@@ -1,4 +1,6 @@
 import type { Alert } from "../../../types";
+import { Duration } from "../../../types";
+import { createPortal } from "react-dom";
 
 interface AlertFormModalProps {
   isOpen: boolean;
@@ -20,6 +22,13 @@ export default function AlertFormModal({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+
+    // Collect selected channels
+    const channels: string[] = [];
+    if ((formData.get("channel_email") as string) === "on") channels.push("email");
+    if ((formData.get("channel_webhook") as string) === "on") channels.push("webhook");
+    if ((formData.get("channel_slack") as string) === "on") channels.push("slack");
+
     const data: Partial<Alert> = {
       name: formData.get("name") as string,
       description: formData.get("description") as string,
@@ -32,13 +41,13 @@ export default function AlertFormModal({
         threshold: parseInt(formData.get("threshold") as string),
         operator: formData.get("operator") as string,
       },
-      channels: [],
-      cooldown: 300000000000,
+      channels,
+      cooldown: Duration.Minute * 5,
     };
     onSubmit(data);
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="card max-w-lg w-full">
         <div className="flex items-center justify-between mb-6">
@@ -112,7 +121,7 @@ export default function AlertFormModal({
                 defaultValue={alert?.condition?.operator || ">"}
                 className="input w-full"
               >
-                <option value=">{">Greater than</option>
+                <option value=">">Greater than</option>
                 <option value="<">Less than</option>
                 <option value=">=">Greater or equal</option>
                 <option value="<=">Less or equal</option>
@@ -153,6 +162,40 @@ export default function AlertFormModal({
               className="input w-full"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Notification Channels
+            </label>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="channel_email"
+                  defaultChecked={alert?.channels?.includes("email")}
+                  className="rounded"
+                />
+                <span className="text-sm">Email</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="channel_webhook"
+                  defaultChecked={alert?.channels?.includes("webhook")}
+                  className="rounded"
+                />
+                <span className="text-sm">Webhook</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="channel_slack"
+                  defaultChecked={alert?.channels?.includes("slack")}
+                  className="rounded"
+                />
+                <span className="text-sm">Slack</span>
+              </label>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -183,6 +226,7 @@ export default function AlertFormModal({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

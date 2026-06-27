@@ -42,15 +42,16 @@ func NewConsumerHandler(
 }
 
 // ListConsumers handles GET /consumers
-// @Summary List consumers for a stream
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param stream query string true "Stream name"
-// @Success 200 {array} dto.ConsumerResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /consumers [get]
+//
+//	@Summary	List consumers for a stream
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		stream	query		string	true	"Stream name"
+//	@Success	200		{array}		dto.ConsumerResponse
+//	@Failure	400		{object}	dto.ErrorResponse
+//	@Failure	500		{object}	dto.ErrorResponse
+//	@Router		/consumers [get]
 func (h *ConsumerHandler) ListConsumers(c *gin.Context) {
 	streamName := c.Query("stream")
 	if streamName == "" {
@@ -73,16 +74,17 @@ func (h *ConsumerHandler) ListConsumers(c *gin.Context) {
 }
 
 // GetConsumer handles GET /streams/:name/consumers/:consumer
-// @Summary Get consumer details
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Success 200 {object} dto.ConsumerResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer} [get]
+//
+//	@Summary	Get consumer details
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string	true	"Stream name"
+//	@Param		consumer	path		string	true	"Consumer name"
+//	@Success	200			{object}	dto.ConsumerResponse
+//	@Failure	404			{object}	dto.ErrorResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer} [get]
 func (h *ConsumerHandler) GetConsumer(c *gin.Context) {
 	streamName := c.Param("name")
 	name := c.Param("consumer")
@@ -100,16 +102,17 @@ func (h *ConsumerHandler) GetConsumer(c *gin.Context) {
 }
 
 // CreateConsumer handles POST /streams/:name/consumers
-// @Summary Create a consumer
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param request body dto.CreateConsumerRequest true "Consumer creation request"
-// @Success 201 {object} dto.ConsumerResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers [post]
+//
+//	@Summary	Create a consumer
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name	path		string						true	"Stream name"
+//	@Param		request	body		dto.CreateConsumerRequest	true	"Consumer creation request"
+//	@Success	201		{object}	dto.ConsumerResponse
+//	@Failure	400		{object}	dto.ErrorResponse
+//	@Failure	500		{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers [post]
 func (h *ConsumerHandler) CreateConsumer(c *gin.Context) {
 	streamName := c.Param("name")
 	var req dto.CreateConsumerRequest
@@ -143,17 +146,18 @@ func (h *ConsumerHandler) CreateConsumer(c *gin.Context) {
 }
 
 // UpdateConsumer handles PUT /streams/:name/consumers/:consumer
-// @Summary Update a consumer
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Param request body dto.UpdateConsumerRequest true "Consumer update request"
-// @Success 200 {object} dto.ConsumerResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer} [put]
+//
+//	@Summary	Update a consumer
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string						true	"Stream name"
+//	@Param		consumer	path		string						true	"Consumer name"
+//	@Param		request		body		dto.UpdateConsumerRequest	true	"Consumer update request"
+//	@Success	200			{object}	dto.ConsumerResponse
+//	@Failure	400			{object}	dto.ErrorResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer} [put]
 func (h *ConsumerHandler) UpdateConsumer(c *gin.Context) {
 	streamName := c.Param("name")
 	name := c.Param("consumer")
@@ -188,15 +192,16 @@ func (h *ConsumerHandler) UpdateConsumer(c *gin.Context) {
 }
 
 // DeleteConsumer handles DELETE /streams/:name/consumers/:consumer
-// @Summary Delete a consumer
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer} [delete]
+//
+//	@Summary	Delete a consumer
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string	true	"Stream name"
+//	@Param		consumer	path		string	true	"Consumer name"
+//	@Success	200			{object}	dto.SuccessResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer} [delete]
 func (h *ConsumerHandler) DeleteConsumer(c *gin.Context) {
 	streamName := c.Param("name")
 	name := c.Param("consumer")
@@ -213,16 +218,17 @@ func (h *ConsumerHandler) DeleteConsumer(c *gin.Context) {
 }
 
 // ResetLag handles POST /streams/:name/consumers/:consumer/lag-reset
-// @Summary Reset consumer lag
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Param request body dto.ResetLagRequest false "Reset lag options"
-// @Success 200 {object} dto.ResetLagResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/lag-reset [post]
+//
+//	@Summary	Reset consumer lag
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string				true	"Stream name"
+//	@Param		consumer	path		string				true	"Consumer name"
+//	@Param		request		body		dto.ResetLagRequest	false	"Reset lag options"
+//	@Success	200			{object}	dto.ResetLagResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/lag-reset [post]
 func (h *ConsumerHandler) ResetLag(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -253,16 +259,17 @@ func (h *ConsumerHandler) ResetLag(c *gin.Context) {
 }
 
 // Replay handles POST /streams/:name/consumers/:consumer/replay
-// @Summary Replay messages to consumer
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Param request body dto.ReplayRequest false "Replay options"
-// @Success 200 {object} dto.ReplayResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/replay [post]
+//
+//	@Summary	Replay messages to consumer
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string				true	"Stream name"
+//	@Param		consumer	path		string				true	"Consumer name"
+//	@Param		request		body		dto.ReplayRequest	false	"Replay options"
+//	@Success	200			{object}	dto.ReplayResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/replay [post]
 func (h *ConsumerHandler) Replay(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -294,15 +301,16 @@ func (h *ConsumerHandler) Replay(c *gin.Context) {
 }
 
 // Pause handles POST /streams/:name/consumers/:consumer/pause
-// @Summary Pause a consumer
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/pause [post]
+//
+//	@Summary	Pause a consumer
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string	true	"Stream name"
+//	@Param		consumer	path		string	true	"Consumer name"
+//	@Success	200			{object}	dto.SuccessResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/pause [post]
 func (h *ConsumerHandler) Pause(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -324,15 +332,16 @@ func (h *ConsumerHandler) Pause(c *gin.Context) {
 }
 
 // Resume handles POST /streams/:name/consumers/:consumer/resume
-// @Summary Resume a paused consumer
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/resume [post]
+//
+//	@Summary	Resume a paused consumer
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string	true	"Stream name"
+//	@Param		consumer	path		string	true	"Consumer name"
+//	@Success	200			{object}	dto.SuccessResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/resume [post]
 func (h *ConsumerHandler) Resume(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -384,13 +393,14 @@ func (h *ConsumerHandler) fetchStreamNames() ([]string, error) {
 }
 
 // ListAll handles GET /consumers without stream filter
-// @Summary List all consumers across all streams
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Success 200 {array} dto.ConsumerResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /consumers [get]
+//
+//	@Summary	List all consumers across all streams
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{array}		dto.ConsumerResponse
+//	@Failure	500	{object}	dto.ErrorResponse
+//	@Router		/consumers [get]
 func (h *ConsumerHandler) ListAll(c *gin.Context) {
 	streamNames, err := h.fetchStreamNames()
 	if err != nil {
@@ -480,15 +490,16 @@ func (h *ConsumerHandler) ListAll(c *gin.Context) {
 }
 
 // GetConsumerByName handles GET /consumers/:name
-// @Summary Get consumer by name across all streams
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Consumer name"
-// @Success 200 {object} dto.ConsumerResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /consumers/{name} [get]
+//
+//	@Summary	Get consumer by name across all streams
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name	path		string	true	"Consumer name"
+//	@Success	200		{object}	dto.ConsumerResponse
+//	@Failure	404		{object}	dto.ErrorResponse
+//	@Failure	500		{object}	dto.ErrorResponse
+//	@Router		/consumers/{name} [get]
 func (h *ConsumerHandler) GetConsumerByName(c *gin.Context) {
 	name := c.Param("name")
 
@@ -536,16 +547,17 @@ func (h *ConsumerHandler) GetConsumerByName(c *gin.Context) {
 }
 
 // DeleteStreamMessage handles DELETE /streams/:name/messages/:sequence
-// @Summary Delete a message from a stream
-// @Tags messages
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param sequence path string true "Message sequence number"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/messages/{sequence} [delete]
+//
+//	@Summary	Delete a message from a stream
+//	@Tags		messages
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string	true	"Stream name"
+//	@Param		sequence	path		string	true	"Message sequence number"
+//	@Success	200			{object}	dto.SuccessResponse
+//	@Failure	400			{object}	dto.ErrorResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/messages/{sequence} [delete]
 func (h *ConsumerHandler) DeleteStreamMessage(c *gin.Context) {
 	streamName := c.Param("name")
 	sequenceStr := c.Param("sequence")
@@ -570,16 +582,17 @@ func (h *ConsumerHandler) DeleteStreamMessage(c *gin.Context) {
 }
 
 // PublishMessage handles POST /streams/:name/messages/publish
-// @Summary Publish a message to a stream
-// @Tags messages
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param request body dto.PublishMessageRequest true "Message to publish"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/messages/publish [post]
+//
+//	@Summary	Publish a message to a stream
+//	@Tags		messages
+//	@Accept		json
+//	@Produce	json
+//	@Param		name	path		string						true	"Stream name"
+//	@Param		request	body		dto.PublishMessageRequest	true	"Message to publish"
+//	@Success	200		{object}	dto.SuccessResponse
+//	@Failure	400		{object}	dto.ErrorResponse
+//	@Failure	500		{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/messages/publish [post]
 func (h *ConsumerHandler) PublishMessage(c *gin.Context) {
 	var req dto.PublishMessageRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -609,16 +622,17 @@ func (h *ConsumerHandler) PublishMessage(c *gin.Context) {
 }
 
 // GetPendingMessages handles GET /streams/:name/consumers/:consumer/pending
-// @Summary Get pending messages for a consumer
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Param limit query int false "Maximum number of messages to return" default(25)
-// @Success 200 {object} dto.PendingMessagesResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/pending [get]
+//
+//	@Summary	Get pending messages for a consumer
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string	true	"Stream name"
+//	@Param		consumer	path		string	true	"Consumer name"
+//	@Param		limit		query		int		false	"Maximum number of messages to return"	default(25)
+//	@Success	200			{object}	dto.PendingMessagesResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/pending [get]
 func (h *ConsumerHandler) GetPendingMessages(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -660,17 +674,18 @@ func (h *ConsumerHandler) GetPendingMessages(c *gin.Context) {
 }
 
 // AckMessage handles POST /streams/:name/consumers/:consumer/ack
-// @Summary Acknowledge a message
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Param request body dto.AckMessageRequest true "Acknowledgment request"
-// @Success 200 {object} dto.AckMessageResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/ack [post]
+//
+//	@Summary	Acknowledge a message
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string					true	"Stream name"
+//	@Param		consumer	path		string					true	"Consumer name"
+//	@Param		request		body		dto.AckMessageRequest	true	"Acknowledgment request"
+//	@Success	200			{object}	dto.AckMessageResponse
+//	@Failure	400			{object}	dto.ErrorResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/ack [post]
 func (h *ConsumerHandler) AckMessage(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -699,17 +714,18 @@ func (h *ConsumerHandler) AckMessage(c *gin.Context) {
 }
 
 // NackMessage handles POST /streams/:name/consumers/:consumer/nack
-// @Summary Negatively acknowledge a message
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Param request body dto.NackMessageRequest true "Negative acknowledgment request"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/nack [post]
+//
+//	@Summary	Negatively acknowledge a message
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string					true	"Stream name"
+//	@Param		consumer	path		string					true	"Consumer name"
+//	@Param		request		body		dto.NackMessageRequest	true	"Negative acknowledgment request"
+//	@Success	200			{object}	dto.SuccessResponse
+//	@Failure	400			{object}	dto.ErrorResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/nack [post]
 func (h *ConsumerHandler) NackMessage(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")
@@ -735,17 +751,18 @@ func (h *ConsumerHandler) NackMessage(c *gin.Context) {
 }
 
 // AckTermMessage handles POST /streams/:name/consumers/:consumer/term
-// @Summary Terminate a message
-// @Tags consumers
-// @Accept json
-// @Produce json
-// @Param name path string true "Stream name"
-// @Param consumer path string true "Consumer name"
-// @Param request body dto.AckTermMessageRequest true "Termination request"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /streams/{name}/consumers/{consumer}/term [post]
+//
+//	@Summary	Terminate a message
+//	@Tags		consumers
+//	@Accept		json
+//	@Produce	json
+//	@Param		name		path		string						true	"Stream name"
+//	@Param		consumer	path		string						true	"Consumer name"
+//	@Param		request		body		dto.AckTermMessageRequest	true	"Termination request"
+//	@Success	200			{object}	dto.SuccessResponse
+//	@Failure	400			{object}	dto.ErrorResponse
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/streams/{name}/consumers/{consumer}/term [post]
 func (h *ConsumerHandler) AckTermMessage(c *gin.Context) {
 	streamName := c.Param("name")
 	consumerName := c.Param("consumer")

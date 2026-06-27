@@ -80,7 +80,7 @@ export default function AlertsList({
                   <h3 className="font-semibold">{alert.name}</h3>
                   <span
                     className={`text-xs px-2 py-1 rounded border ${
-                      SEVERITY_COLORS[alert.severity]
+                      SEVERITY_COLORS[alert.severity || 'info']
                     }`}
                   >
                     {alert.severity}
@@ -93,15 +93,17 @@ export default function AlertsList({
                   {alert.description}
                 </p>
                 <div className="flex items-center gap-4 text-xs text-dark-muted">
-                  <span className="font-mono bg-dark-bg px-2 py-1 rounded">
-                    {alert.condition.type}: {alert.condition.operator}{" "}
-                    {alert.condition.threshold}
-                  </span>
-                  {alert.condition.stream && (
+                  {alert.condition && (
+                    <span className="font-mono bg-dark-bg px-2 py-1 rounded">
+                      {alert.condition.type}: {alert.condition.operator}{" "}
+                      {alert.condition.threshold}
+                    </span>
+                  )}
+                  {alert.condition?.stream && (
                     <span>Stream: {alert.condition.stream}</span>
                   )}
-                  <span>Cooldown: {formatCooldown(alert.cooldown)}</span>
-                  <span>Triggered: {alert.trigger_count}x</span>
+                  <span>Cooldown: {formatCooldown(alert.cooldown || 0)}</span>
+                  <span>Triggered: {alert.trigger_count || 0}x</span>
                   {alert.last_trigger && (
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />

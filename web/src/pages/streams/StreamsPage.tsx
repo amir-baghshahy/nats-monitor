@@ -5,7 +5,7 @@ import StreamsHeader from "./components/StreamsHeader";
 import StreamsList from "./components/StreamsList";
 import StreamsStats from "./components/StreamsStats";
 import CreateStreamModal from "./components/CreateStreamModal";
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_CreateStreamRequest as CreateStreamRequest } from "../../types";
+import type { CreateStreamRequest } from "../../types";
 
 export default function StreamsPage() {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ export default function StreamsPage() {
   } = useStreamsPage();
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <StreamsHeader
         sseConnected={sseConnected}
         onShowCreateModal={() => setShowCreateModal(true)}

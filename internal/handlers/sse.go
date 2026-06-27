@@ -24,11 +24,15 @@ type SSEEvent struct {
 
 // SSEClient represents a connected SSE client
 type SSEClient struct {
-	ID      string
-	Channel string
-	Writer  http.ResponseWriter
-	Flusher http.Flusher
-	mu      sync.Mutex
+	ID          string
+	Channel     string
+	Writer      http.ResponseWriter
+	Flusher     http.Flusher
+	mu          sync.Mutex
+	ConnectedAt time.Time
+	LastPing    time.Time
+	closed      bool
+	closeChan   chan struct{}
 }
 
 // SSEHub manages SSE client connections
@@ -72,6 +76,10 @@ func NewSSEHub(nc *nats.Conn) *SSEHub {
 		ctx:     ctx,
 		cancel:  cancel,
 	}
+
+	// Start client cleanup goroutine
+	go hub.clientCleanup()
+
 	return hub
 }
 
@@ -86,7 +94,51 @@ func (h *SSEHub) AddClient(client *SSEClient) {
 func (h *SSEHub) RemoveClient(id string) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-	delete(h.clients, id)
+	if client, exists := h.clients[id]; exists {
+		client.closed = true
+		close(client.closeChan)
+		delete(h.clients, id)
+	}
+}
+
+// IsClientConnected checks if a client is still connected
+func (h *SSEHub) IsClientConnected(id string) bool {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	client, exists := h.clients[id]
+	return exists && !client.closed
+}
+
+// clientCleanup periodically removes disconnected clients
+func (h *SSEHub) clientCleanup() {
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-h.ctx.Done():
+			return
+		case <-ticker.C:
+			h.cleanupDisconnectedClients()
+		}
+	}
+}
+
+// cleanupDisconnectedClients removes clients that are no longer connected
+func (h *SSEHub) cleanupDisconnectedClients() {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	now := time.Now()
+	for id, client := range h.clients {
+		// Remove clients that haven't received a ping in 2 minutes
+		if now.Sub(client.LastPing) > 2*time.Minute {
+			log.Printf("Removing stale SSE client: %s (last ping: %v ago)", id, now.Sub(client.LastPing))
+			client.closed = true
+			close(client.closeChan)
+			delete(h.clients, id)
+		}
+	}
 }
 
 // Broadcast sends an event to all clients in a channel
@@ -103,7 +155,7 @@ func (h *SSEHub) Broadcast(channel string, event SSEEvent) {
 	h.mu.RLock()
 	var targets []*SSEClient
 	for _, client := range h.clients {
-		if client.Channel == channel || client.Channel == "all" {
+		if !client.closed && (client.Channel == channel || client.Channel == "all") {
 			targets = append(targets, client)
 		}
 	}
@@ -113,9 +165,25 @@ func (h *SSEHub) Broadcast(channel string, event SSEEvent) {
 		select {
 		case <-h.ctx.Done():
 			return
+		case <-client.closeChan:
+			continue // Client is closed, skip
 		default:
 			client.mu.Lock()
-			fmt.Fprintf(client.Writer, "data: %s\n\n", data)
+			if client.closed {
+				client.mu.Unlock()
+				continue
+			}
+
+			// Try to write to the client
+			_, err := fmt.Fprintf(client.Writer, "data: %s\n\n", data)
+			if err != nil {
+				log.Printf("Failed to write to SSE client %s: %v, removing client", client.ID, err)
+				client.closed = true
+				client.mu.Unlock()
+				h.RemoveClient(client.ID)
+				continue
+			}
+
 			client.Flusher.Flush()
 			client.mu.Unlock()
 		}
@@ -280,14 +348,15 @@ func (h *SSEHub) Close() {
 }
 
 // HandleSSE handles SSE connections
-// @Summary Server-Sent Events stream
-// @Description Opens a Server-Sent Events stream for real-time stream/consumer/dashboard updates
-// @Tags events
-// @Produce text/event-stream
-// @Param channel query string false "Event channel (streams, consumers, dashboard, all)" default(all)
-// @Success 200 {string} string "text/event-stream"
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /events [get]
+//
+//	@Summary		Server-Sent Events stream
+//	@Description	Opens a Server-Sent Events stream for real-time stream/consumer/dashboard updates
+//	@Tags			events
+//	@Produce		text/event-stream
+//	@Param			channel	query		string	false	"Event channel (streams, consumers, dashboard, all)"	default(all)
+//	@Success		200		{string}	string	"text/event-stream"
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/events [get]
 func (h *SSEHub) HandleSSE(c *gin.Context) {
 	// Set SSE headers
 	c.Writer.Header().Set("Content-Type", "text/event-stream")
@@ -311,10 +380,14 @@ func (h *SSEHub) HandleSSE(c *gin.Context) {
 
 	// Create client
 	client := &SSEClient{
-		ID:      clientID,
-		Channel: channel,
-		Writer:  c.Writer,
-		Flusher: flusher,
+		ID:          clientID,
+		Channel:     channel,
+		Writer:      c.Writer,
+		Flusher:     flusher,
+		ConnectedAt: time.Now(),
+		LastPing:    time.Now(),
+		closed:      false,
+		closeChan:   make(chan struct{}),
 	}
 
 	// Add client to hub
@@ -349,9 +422,18 @@ func (h *SSEHub) HandleSSE(c *gin.Context) {
 			return
 		case <-h.ctx.Done():
 			return
+		case <-client.closeChan:
+			return
 		case <-ticker.C:
+			client.mu.Lock()
+			if client.closed {
+				client.mu.Unlock()
+				return
+			}
+			client.LastPing = time.Now()
 			fmt.Fprintf(c.Writer, ": keepalive\n\n")
 			flusher.Flush()
+			client.mu.Unlock()
 		}
 	}
 }

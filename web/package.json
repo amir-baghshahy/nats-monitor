@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "generate:api": "openapi --input ../api/swagger/openapi.json --output src/generated/api-client.ts --client fetch && bash ../scripts/fix-types.sh"
+    "generate:api": "npx openapi-typescript-codegen --input ../api/swagger/openapi.json --output src/generated --client fetch",
+    "generate:api:full": "cd .. && make generate-api && cd web"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.12.0",

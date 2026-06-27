@@ -5,7 +5,7 @@ import {
 } from 'lucide-react'
 import ConnectionFilters from '../../components/connections/ConnectionFilters'
 import { HealthService } from '../../types'
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_ConnectionInfo as ConnectionInfo } from '../../types'
+import type { ConnectionInfo } from '../../types'
 
 export default function ConnectionsPage({
   searchQuery,
@@ -26,8 +26,8 @@ export default function ConnectionsPage({
   confirm,
 }: UseConnectionsReturn) {
   return (
-    <div className="p-4 md:p-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+    <div className="p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Connections</h1>
           <p className="text-dark-muted mt-1">

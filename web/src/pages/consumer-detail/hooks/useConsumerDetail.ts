@@ -3,9 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ConsumersService } from "../../../types";
 import type {
-  github_com_amir_baghshahy_nats_horizon_internal_dto_AckMessageRequest,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_AckTermMessageRequest,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_NackMessageRequest,
+  AckMessageRequest,
+  AckTermMessageRequest,
+  NackMessageRequest,
 } from "../../../types";
 import { useConfirm } from "../../../components/ConfirmDialog";
 import { deleteConsumer, resetConsumerLag, replayMessages, setConsumerState } from "../../../utils/natsOperations";
@@ -113,7 +113,7 @@ export function useConsumerDetail(): UseConsumerDetailReturn {
 
   const ackMutation = useMutation({
     mutationFn: (sequence: number) => {
-      const payload: github_com_amir_baghshahy_nats_horizon_internal_dto_AckMessageRequest = { sequence };
+      const payload: AckMessageRequest = { sequence };
       return ConsumersService.postStreamsConsumersAck(consumerData.stream ?? "", name || "", payload);
     },
     onSuccess: () => { refetchPending(); refetch(); },
@@ -121,7 +121,7 @@ export function useConsumerDetail(): UseConsumerDetailReturn {
 
   const nackMutation = useMutation({
     mutationFn: ({ sequence }: { sequence: number }) => {
-      const payload: github_com_amir_baghshahy_nats_horizon_internal_dto_NackMessageRequest = { sequence };
+      const payload: NackMessageRequest = { sequence };
       return ConsumersService.postStreamsConsumersNack(consumerData.stream ?? "", name || "", payload);
     },
     onSuccess: () => { refetchPending(); refetch(); },
@@ -129,7 +129,7 @@ export function useConsumerDetail(): UseConsumerDetailReturn {
 
   const termMutation = useMutation({
     mutationFn: (sequence: number) => {
-      const payload: github_com_amir_baghshahy_nats_horizon_internal_dto_AckTermMessageRequest = { sequence };
+      const payload: AckTermMessageRequest = { sequence };
       return ConsumersService.postStreamsConsumersTerm(consumerData.stream ?? "", name || "", payload);
     },
     onSuccess: () => { refetchPending(); refetch(); },

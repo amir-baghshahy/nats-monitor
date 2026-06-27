@@ -136,7 +136,7 @@ func TestAlerts_CreateAndDelete(t *testing.T) {
 
 func TestAlerts_Create_MissingName(t *testing.T) {
 	body := map[string]interface{}{
-		"enabled": true,
+		"enabled":  true,
 		"severity": "warning",
 		"condition": map[string]interface{}{
 			"type":      "lag",

@@ -54,7 +54,7 @@ export default function SecurityPage({
   }
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
@@ -103,7 +103,7 @@ export default function SecurityPage({
               <Users className="w-5 h-5" />
               Account Information
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-dark-bg/50 rounded-lg p-4">
                 <p className="text-xs text-dark-muted">Account Name</p>
                 <p className="font-medium">{securityInfo?.account?.name || 'N/A'}</p>
@@ -127,7 +127,7 @@ export default function SecurityPage({
 
           <div className="card">
             <h3 className="text-lg font-semibold mb-4">Resource Limits</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-dark-bg/50 rounded-lg p-4">
                 <p className="text-xs text-dark-muted">Max Connections</p>
                 <p className="font-medium">{securityInfo?.limits?.connections || 'Unlimited'}</p>

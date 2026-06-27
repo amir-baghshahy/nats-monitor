@@ -15,7 +15,7 @@ export default function HistoryPage({
   streamHistoryPoints,
 }: UseHistoryReturn) {
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-bold md:text-3xl">History</h1>

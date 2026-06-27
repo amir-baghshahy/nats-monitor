@@ -1,4 +1,4 @@
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_ConsumerResponse as ConsumerResponse } from "../../types";
+import type { ConsumerResponse } from "../../types";
 import { getConsumerStatus } from "../../utils/validators";
 
 interface ConsumerHealthProps {

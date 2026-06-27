@@ -16,25 +16,25 @@ import (
 	"github.com/amir-baghshahy/nats-horizon/internal/handlers"
 	"github.com/amir-baghshahy/nats-horizon/internal/middleware"
 	"github.com/amir-baghshahy/nats-horizon/internal/repositories"
-	"github.com/amir-baghshahy/nats-horizon/internal/services"
+	servicespkg "github.com/amir-baghshahy/nats-horizon/internal/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )
 
-// @title NATS Horizon API
-// @version 1.0
-// @description Comprehensive API for monitoring and managing NATS JetStream instances.
-// @termsOfService http://swagger.io/terms/
+//	@title			NATS Horizon API
+//	@version		1.0
+//	@description	Comprehensive API for monitoring and managing NATS JetStream instances.
+//	@termsOfService	http://swagger.io/terms/
 
-// @contact.name NATS Horizon Project
-// @contact.url http://github.com/nats-horizon
+//	@contact.name	NATS Horizon Project
+//	@contact.url	http://github.com/nats-horizon
 
-// @license.name Apache-2.0
-// @license.url https://opensource.org/licenses/Apache-2.0
+//	@license.name	Apache-2.0
+//	@license.url	https://opensource.org/licenses/Apache-2.0
 
-// @BasePath /api
-// @schemes http https
+//	@BasePath	/api
+//	@schemes	http https
 
 // NATSConnection manages the NATS connection
 type NATSConnection struct {
@@ -150,10 +150,24 @@ func main() {
 	consumerRepo := repositories.NewNATSConsumerRepository(natsConn.nc, natsConn.js)
 	messageRepo := repositories.NewNATSMessageRepository(natsConn.nc, natsConn.js)
 
-	streamUseCase := services.NewStreamUseCase(streamRepo)
-	consumerUseCase := services.NewConsumerUseCase(consumerRepo)
-	messageUseCase := services.NewMessageUseCase(messageRepo)
-	serverUseCase := services.NewServerUseCase(natsConn.nc, natsConn.js)
+	streamUseCase := servicespkg.NewStreamUseCase(streamRepo)
+	consumerUseCase := servicespkg.NewConsumerUseCase(consumerRepo)
+	messageUseCase := servicespkg.NewMessageUseCase(messageRepo)
+	serverUseCase := servicespkg.NewServerUseCase(natsConn.nc, natsConn.js)
+
+	// Initialize audit service
+	auditService := servicespkg.NewAuditService(natsConn.nc, natsConn.js)
+	if err := auditService.Initialize(); err != nil {
+		log.Printf("Failed to initialize audit service: %v", err)
+		// Continue anyway - audit logs won't be available but app should still work
+	}
+
+	// Initialize notification service
+	notificationService := servicespkg.NewNotificationService()
+
+	// Add default notification channels from environment or config
+	// This would typically be loaded from config file or environment variables
+	// For now, channels can be added via API
 
 	streamHandler := handlers.NewStreamHandler(streamUseCase)
 	consumerHandler := handlers.NewConsumerHandler(consumerUseCase, messageUseCase, natsConn.nc, natsConn.js)
@@ -161,10 +175,10 @@ func main() {
 	coreNATSHandler := handlers.NewCoreNATShandler(natsConn.nc)
 	kvHandler := handlers.NewKVHandler(natsConn.nc, natsConn.js)
 	clusterHandler := handlers.NewClusterHandler(natsConn.nc, natsConn.js)
-	alertsHandler := handlers.NewAlertsHandler(natsConn.nc, natsConn.js)
+	alertsHandler := handlers.NewAlertsHandler(natsConn.nc, natsConn.js, notificationService)
 	metricsHandler := handlers.NewMetricsHandler(natsConn.nc, natsConn.js)
 	exportHandler := handlers.NewExportHandler(natsConn.nc, natsConn.js)
-	securityHandler := handlers.NewSecurityHandler(natsConn.nc, natsConn.js)
+	securityHandler := handlers.NewSecurityHandler(natsConn.nc, natsConn.js, auditService)
 	historyHandler := handlers.NewHistoryHandler(natsConn.nc, natsConn.js)
 	defer metricsHandler.Stop()
 	tenancyHandler := handlers.NewTenancyHandler(cfg.NATSURL, natsConn.nc)
@@ -180,6 +194,10 @@ func main() {
 	r.Use(gin.Logger())
 	r.Use(middleware.PanicRecovery())
 	r.Use(CORSMiddleware(cfg.CORSAllowedOrigins))
+	r.Use(middleware.AuditMiddleware(auditService))
+
+	// Start audit cleanup goroutine
+	go middleware.AuditCleanupMiddleware(auditService)
 
 	apiGroup := r.Group("/api")
 	{
@@ -241,6 +259,7 @@ func main() {
 		apiGroup.PUT("/kv/buckets/:name/key", kvHandler.PutKey)
 		apiGroup.DELETE("/kv/buckets/:name/key", kvHandler.DeleteKey)
 		apiGroup.POST("/kv/buckets/:name/purge", kvHandler.PurgeBucket)
+
 
 		// Consumer Ack Management routes
 		apiGroup.GET("/streams/:name/consumers/:consumer/pending", consumerHandler.GetPendingMessages)

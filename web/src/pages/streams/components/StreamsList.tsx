@@ -2,7 +2,7 @@ import { Database, Download, RefreshCw, Trash2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { BulkActions, Pagination } from "../../../components/common";
 import { EmptyState } from "../../../components/ui";
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_StreamResponse as Stream } from "../../../types";
+import type { StreamResponse as Stream } from "../../../types";
 import StreamRow from "./StreamRow";
 
 interface StreamsListProps {

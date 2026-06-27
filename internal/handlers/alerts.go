@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"sync"
 	"time"
 
 	"github.com/amir-baghshahy/nats-horizon/internal/dto"
+	"github.com/amir-baghshahy/nats-horizon/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/nats-io/nats.go"
 )
@@ -60,23 +62,25 @@ type AlertTrigger struct {
 
 // AlertsHandler handles alert management
 type AlertsHandler struct {
-	nc       *nats.Conn
-	js       nats.JetStreamContext
-	alerts   map[string]*Alert
-	triggers []*AlertTrigger
-	mu       sync.RWMutex
-	ticker   *time.Ticker
-	stopChan chan struct{}
+	nc              *nats.Conn
+	js              nats.JetStreamContext
+	notificationSvc *services.NotificationService
+	alerts          map[string]*Alert
+	triggers        []*AlertTrigger
+	mu              sync.RWMutex
+	ticker          *time.Ticker
+	stopChan        chan struct{}
 }
 
 // NewAlertsHandler creates a new alerts handler
-func NewAlertsHandler(nc *nats.Conn, js nats.JetStreamContext) *AlertsHandler {
+func NewAlertsHandler(nc *nats.Conn, js nats.JetStreamContext, notificationSvc *services.NotificationService) *AlertsHandler {
 	h := &AlertsHandler{
-		nc:       nc,
-		js:       js,
-		alerts:   make(map[string]*Alert),
-		triggers: make([]*AlertTrigger, 0),
-		stopChan: make(chan struct{}),
+		nc:              nc,
+		js:              js,
+		notificationSvc: notificationSvc,
+		alerts:          make(map[string]*Alert),
+		triggers:        make([]*AlertTrigger, 0),
+		stopChan:        make(chan struct{}),
 	}
 
 	// Start alert checking goroutine
@@ -257,10 +261,27 @@ func (h *AlertsHandler) triggerAlert(alert *Alert, message string, data map[stri
 	h.sendNotifications(trigger, alert.Channels)
 }
 
-// sendNotifications sends alert notifications
+// sendNotifications sends alert notifications using the notification service
 func (h *AlertsHandler) sendNotifications(trigger *AlertTrigger, channels []string) {
-	// Placeholder for notification sending
-	// In production, this would send to email, Slack, webhook, etc.
+	if h.notificationSvc == nil {
+		log.Printf("Notification service not configured, skipping notifications")
+		return
+	}
+
+	// Convert internal AlertTrigger to services.AlertTrigger
+	svcTrigger := services.AlertTrigger{
+		AlertID:     trigger.AlertID,
+		AlertName:   trigger.AlertName,
+		Severity:    services.AlertSeverity(trigger.Severity),
+		Message:     trigger.Message,
+		Data:        trigger.Data,
+		TriggeredAt: trigger.TriggeredAt,
+		Acked:       trigger.Acked,
+	}
+
+	if err := h.notificationSvc.SendAlertNotification(svcTrigger); err != nil {
+		log.Printf("Failed to send alert notifications: %v", err)
+	}
 }
 
 // getConsumerLag gets the current consumer lag
@@ -296,12 +317,13 @@ func (h *AlertsHandler) getStreamMessageCount(streamName string) (int64, error) 
 }
 
 // ListAlerts returns all alerts
-// @Summary List alerts
-// @Description Returns all configured alert definitions
-// @Tags alerts
-// @Produce json
-// @Success 200 {array} Alert
-// @Router /alerts [get]
+//
+//	@Summary		List alerts
+//	@Description	Returns all configured alert definitions
+//	@Tags			alerts
+//	@Produce		json
+//	@Success		200	{array}	Alert
+//	@Router			/alerts [get]
 func (h *AlertsHandler) ListAlerts(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -315,15 +337,16 @@ func (h *AlertsHandler) ListAlerts(c *gin.Context) {
 }
 
 // CreateAlert creates a new alert
-// @Summary Create an alert
-// @Description Creates a new alert configuration
-// @Tags alerts
-// @Accept json
-// @Produce json
-// @Param request body Alert true "Alert configuration"
-// @Success 201 {object} Alert
-// @Failure 400 {object} dto.ErrorResponse
-// @Router /alerts [post]
+//
+//	@Summary		Create an alert
+//	@Description	Creates a new alert configuration
+//	@Tags			alerts
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		Alert	true	"Alert configuration"
+//	@Success		201		{object}	Alert
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Router			/alerts [post]
 func (h *AlertsHandler) CreateAlert(c *gin.Context) {
 	var alert Alert
 	if err := c.ShouldBindJSON(&alert); err != nil {
@@ -350,11 +373,11 @@ func (h *AlertsHandler) CreateAlert(c *gin.Context) {
 
 	// Validate condition type
 	validTypes := map[string]bool{
-		"lag":           true,
-		"latency":        true,
-		"messages":      true,
-		"consumer_lag":  true,
-		"storage":       true,
+		"lag":          true,
+		"latency":      true,
+		"messages":     true,
+		"consumer_lag": true,
+		"storage":      true,
 	}
 	if !validTypes[alert.Condition.Type] {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "invalid condition type, must be one of: lag, latency, messages, consumer_lag, storage"})
@@ -396,14 +419,15 @@ func (h *AlertsHandler) CreateAlert(c *gin.Context) {
 }
 
 // GetAlert returns a specific alert
-// @Summary Get an alert
-// @Description Returns a single alert configuration by ID
-// @Tags alerts
-// @Produce json
-// @Param id path string true "Alert ID"
-// @Success 200 {object} Alert
-// @Failure 404 {object} dto.ErrorResponse
-// @Router /alerts/{id} [get]
+//
+//	@Summary		Get an alert
+//	@Description	Returns a single alert configuration by ID
+//	@Tags			alerts
+//	@Produce		json
+//	@Param			id	path		string	true	"Alert ID"
+//	@Success		200	{object}	Alert
+//	@Failure		404	{object}	dto.ErrorResponse
+//	@Router			/alerts/{id} [get]
 func (h *AlertsHandler) GetAlert(c *gin.Context) {
 	id := c.Param("id")
 
@@ -420,17 +444,18 @@ func (h *AlertsHandler) GetAlert(c *gin.Context) {
 }
 
 // UpdateAlert updates an alert
-// @Summary Update an alert
-// @Description Updates an existing alert configuration
-// @Tags alerts
-// @Accept json
-// @Produce json
-// @Param id path string true "Alert ID"
-// @Param request body Alert true "Alert configuration"
-// @Success 200 {object} Alert
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Router /alerts/{id} [put]
+//
+//	@Summary		Update an alert
+//	@Description	Updates an existing alert configuration
+//	@Tags			alerts
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"Alert ID"
+//	@Param			request	body		Alert	true	"Alert configuration"
+//	@Success		200		{object}	Alert
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Router			/alerts/{id} [put]
 func (h *AlertsHandler) UpdateAlert(c *gin.Context) {
 	id := c.Param("id")
 
@@ -463,14 +488,15 @@ func (h *AlertsHandler) UpdateAlert(c *gin.Context) {
 }
 
 // DeleteAlert deletes an alert
-// @Summary Delete an alert
-// @Description Deletes an alert configuration by ID
-// @Tags alerts
-// @Produce json
-// @Param id path string true "Alert ID"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Router /alerts/{id} [delete]
+//
+//	@Summary		Delete an alert
+//	@Description	Deletes an alert configuration by ID
+//	@Tags			alerts
+//	@Produce		json
+//	@Param			id	path		string	true	"Alert ID"
+//	@Success		200	{object}	dto.SuccessResponse
+//	@Failure		404	{object}	dto.ErrorResponse
+//	@Router			/alerts/{id} [delete]
 func (h *AlertsHandler) DeleteAlert(c *gin.Context) {
 	id := c.Param("id")
 
@@ -497,12 +523,13 @@ func (h *AlertsHandler) DeleteAlert(c *gin.Context) {
 }
 
 // CheckAlertsNow evaluates enabled alerts immediately
-// @Summary Check alerts now
-// @Description Evaluates all enabled alert conditions immediately and returns how many triggered
-// @Tags alerts
-// @Produce json
-// @Success 200 {object} CheckAlertsResponse
-// @Router /alerts/check [post]
+//
+//	@Summary		Check alerts now
+//	@Description	Evaluates all enabled alert conditions immediately and returns how many triggered
+//	@Tags			alerts
+//	@Produce		json
+//	@Success		200	{object}	CheckAlertsResponse
+//	@Router			/alerts/check [post]
 func (h *AlertsHandler) CheckAlertsNow(c *gin.Context) {
 	evaluated, triggered := h.checkAlerts()
 	c.JSON(http.StatusOK, CheckAlertsResponse{
@@ -513,14 +540,15 @@ func (h *AlertsHandler) CheckAlertsNow(c *gin.Context) {
 }
 
 // ListTriggers returns alert triggers
-// @Summary List alert triggers
-// @Description Returns triggered alert instances, optionally filtered
-// @Tags alerts
-// @Produce json
-// @Param alert_id query string false "Filter by alert ID"
-// @Param acked query string false "Filter by acked state (true/false)"
-// @Success 200 {array} AlertTrigger
-// @Router /alerts/triggers [get]
+//
+//	@Summary		List alert triggers
+//	@Description	Returns triggered alert instances, optionally filtered
+//	@Tags			alerts
+//	@Produce		json
+//	@Param			alert_id	query	string	false	"Filter by alert ID"
+//	@Param			acked		query	string	false	"Filter by acked state (true/false)"
+//	@Success		200			{array}	AlertTrigger
+//	@Router			/alerts/triggers [get]
 func (h *AlertsHandler) ListTriggers(c *gin.Context) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -553,15 +581,16 @@ func (h *AlertsHandler) ListTriggers(c *gin.Context) {
 }
 
 // AckTrigger acknowledges a trigger
-// @Summary Acknowledge an alert trigger
-// @Description Acknowledges one or more triggers for the given alert ID
-// @Tags alerts
-// @Accept json
-// @Produce json
-// @Param id path string true "Alert ID"
-// @Param request body object false "Acknowledging user" example({"user":"alice"})
-// @Success 200 {object} dto.SuccessResponse
-// @Router /alerts/triggers/{id}/ack [post]
+//
+//	@Summary		Acknowledge an alert trigger
+//	@Description	Acknowledges one or more triggers for the given alert ID
+//	@Tags			alerts
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string	true	"Alert ID"
+//	@Param			request	body		object	false	"Acknowledging user"	example({"user":"alice"})
+//	@Success		200		{object}	dto.SuccessResponse
+//	@Router			/alerts/triggers/{id}/ack [post]
 func (h *AlertsHandler) AckTrigger(c *gin.Context) {
 	id := c.Param("id")
 

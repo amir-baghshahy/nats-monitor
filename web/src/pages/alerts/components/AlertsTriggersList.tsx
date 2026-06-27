@@ -53,7 +53,7 @@ export default function AlertsTriggersList({
                   <h3 className="font-semibold">{trigger.alert_name}</h3>
                   <span
                     className={`text-xs px-2 py-1 rounded border ${
-                      SEVERITY_COLORS[trigger.severity]
+                      SEVERITY_COLORS[trigger.severity || 'info']
                     }`}
                   >
                     {trigger.severity}
@@ -68,7 +68,7 @@ export default function AlertsTriggersList({
                 <div className="flex items-center gap-4 text-xs text-dark-muted">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
-                    {formatTimestamp(trigger.triggered_at)}
+                    {formatTimestamp(trigger.triggered_at || '')}
                   </span>
                   {trigger.acked_by && (
                     <span>Acked by: {trigger.acked_by}</span>
@@ -77,7 +77,7 @@ export default function AlertsTriggersList({
               </div>
               {!trigger.acked && (
                 <button
-                  onClick={() => onAcknowledge(trigger.alert_id)}
+                  onClick={() => trigger.alert_id && onAcknowledge(trigger.alert_id)}
                   className="btn-secondary text-sm"
                   disabled={isAckPending}
                 >

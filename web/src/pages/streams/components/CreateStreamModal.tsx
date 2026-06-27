@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X } from "lucide-react";
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_CreateStreamRequest as CreateStreamRequest } from "../../../types";
+import type { CreateStreamRequest } from "../../../types";
 
 interface CreateStreamModalProps {
   onClose: () => void;

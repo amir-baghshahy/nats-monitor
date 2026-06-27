@@ -3,8 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/amir-baghshahy/nats-horizon/internal/dto"
@@ -32,13 +32,14 @@ func NewKVHandler(nc *nats.Conn, js nats.JetStreamContext) *KVHandler {
 }
 
 // ListBuckets returns all KV buckets
-// @Summary List KV buckets
-// @Description Returns all JetStream Key-Value store buckets
-// @Tags kv
-// @Produce json
-// @Success 200 {array} dto.KVBucketInfo
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets [get]
+//
+//	@Summary		List KV buckets
+//	@Description	Returns all JetStream Key-Value store buckets
+//	@Tags			kv
+//	@Produce		json
+//	@Success		200	{array}		dto.KVBucketInfo
+//	@Failure		500	{object}	dto.ErrorResponse
+//	@Router			/kv/buckets [get]
 func (h *KVHandler) ListBuckets(c *gin.Context) {
 	// List all keystores in the current account
 	storeNames := []string{}
@@ -130,15 +131,16 @@ func (h *KVHandler) ListBuckets(c *gin.Context) {
 }
 
 // GetBucket returns detailed bucket information
-// @Summary Get a KV bucket
-// @Description Returns detailed information about a single KV bucket
-// @Tags kv
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Success 200 {object} dto.KVBucketInfo
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name} [get]
+//
+//	@Summary		Get a KV bucket
+//	@Description	Returns detailed information about a single KV bucket
+//	@Tags			kv
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Success		200		{object}	dto.KVBucketInfo
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name} [get]
 func (h *KVHandler) GetBucket(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 
@@ -163,16 +165,17 @@ func (h *KVHandler) GetBucket(c *gin.Context) {
 }
 
 // CreateBucket creates a new KV bucket
-// @Summary Create a KV bucket
-// @Description Creates a new JetStream Key-Value store bucket
-// @Tags kv
-// @Accept json
-// @Produce json
-// @Param request body object true "Bucket configuration" example({"name":"mybucket","history":1,"ttl":0,"max_bytes":0,"max_value_size":0,"compression":false,"replicas":1,"storage":"file"})
-// @Success 201 {object} dto.KVBucketCreateResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets [post]
+//
+//	@Summary		Create a KV bucket
+//	@Description	Creates a new JetStream Key-Value store bucket
+//	@Tags			kv
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		object	true	"Bucket configuration"	example({"name":"mybucket","history":1,"ttl":0,"max_bytes":0,"max_value_size":0,"compression":false,"replicas":1,"storage":"file"})
+//	@Success		201		{object}	dto.KVBucketCreateResponse
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets [post]
 func (h *KVHandler) CreateBucket(c *gin.Context) {
 	var req struct {
 		Name         string `json:"name" binding:"required"`
@@ -277,14 +280,15 @@ func (h *KVHandler) CreateBucket(c *gin.Context) {
 }
 
 // DeleteBucket deletes a KV bucket
-// @Summary Delete a KV bucket
-// @Description Deletes a JetStream Key-Value store bucket
-// @Tags kv
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Success 200 {object} dto.KVBucketDeleteResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name} [delete]
+//
+//	@Summary		Delete a KV bucket
+//	@Description	Deletes a JetStream Key-Value store bucket
+//	@Tags			kv
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Success		200		{object}	dto.KVBucketDeleteResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name} [delete]
 func (h *KVHandler) DeleteBucket(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 
@@ -302,15 +306,16 @@ func (h *KVHandler) DeleteBucket(c *gin.Context) {
 }
 
 // ListKeys returns all keys in a bucket
-// @Summary List keys in a KV bucket
-// @Description Returns all keys (with values and revisions) in a KV bucket
-// @Tags kv
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Success 200 {array} dto.KVKeyEntry
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name}/keys [get]
+//
+//	@Summary		List keys in a KV bucket
+//	@Description	Returns all keys (with values and revisions) in a KV bucket
+//	@Tags			kv
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Success		200		{array}		dto.KVKeyEntry
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name}/keys [get]
 func (h *KVHandler) ListKeys(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 
@@ -320,12 +325,31 @@ func (h *KVHandler) ListKeys(c *gin.Context) {
 		return
 	}
 
-	// List all keys
-	keysList, err := kv.Keys()
+	// List all keys using watcher
+	keysList := make([]string, 0)
+	watcher, err := kv.WatchAll(nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: err.Error()})
 		return
 	}
+	defer watcher.Stop()
+
+	// Collect all keys from the watcher
+	for {
+		select {
+		case key := <-watcher.Updates():
+			if key == nil {
+				goto Done
+			}
+			if key.Key() != "" && key.Operation().String() != "D" {
+				keysList = append(keysList, key.Key())
+			}
+		case <-time.After(100 * time.Millisecond):
+			// Timeout - we've collected initial keys
+			goto Done
+		}
+	}
+Done:
 
 	keys := []dto.KVKeyEntry{}
 	for _, key := range keysList {
@@ -346,16 +370,17 @@ func (h *KVHandler) ListKeys(c *gin.Context) {
 }
 
 // GetKey returns a specific key from a bucket
-// @Summary Get a KV key
-// @Description Returns the value and revision of a single key in a KV bucket
-// @Tags kv
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Param key query string true "Key name"
-// @Success 200 {object} dto.KVKeyEntry
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name}/key [get]
+//
+//	@Summary		Get a KV key
+//	@Description	Returns the value and revision of a single key in a KV bucket
+//	@Tags			kv
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Param			key		query		string	true	"Key name"
+//	@Success		200		{object}	dto.KVKeyEntry
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name}/key [get]
 func (h *KVHandler) GetKey(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 	key := c.Query("key")
@@ -385,17 +410,18 @@ func (h *KVHandler) GetKey(c *gin.Context) {
 }
 
 // GetKeyHistory returns the history of a key
-// @Summary Get KV key history
-// @Description Returns the revision history of a single key in a KV bucket
-// @Tags kv
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Param key query string true "Key name"
-// @Success 200 {array} dto.KVKeyHistoryEntry
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name}/history [get]
+//
+//	@Summary		Get KV key history
+//	@Description	Returns the revision history of a single key in a KV bucket
+//	@Tags			kv
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Param			key		query		string	true	"Key name"
+//	@Success		200		{array}		dto.KVKeyHistoryEntry
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name}/history [get]
 func (h *KVHandler) GetKeyHistory(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 	key := c.Query("key")
@@ -437,18 +463,19 @@ func (h *KVHandler) GetKeyHistory(c *gin.Context) {
 }
 
 // PutKey creates or updates a key
-// @Summary Put a KV key
-// @Description Creates or updates a key in a KV bucket
-// @Tags kv
-// @Accept json
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Param request body object true "Key/value to write" example({"key":"foo","value":"bar"})
-// @Success 200 {object} dto.KVKeyPutResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name}/key [put]
+//
+//	@Summary		Put a KV key
+//	@Description	Creates or updates a key in a KV bucket
+//	@Tags			kv
+//	@Accept			json
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Param			request	body		object	true	"Key/value to write"	example({"key":"foo","value":"bar"})
+//	@Success		200		{object}	dto.KVKeyPutResponse
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name}/key [put]
 func (h *KVHandler) PutKey(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 
@@ -478,17 +505,18 @@ func (h *KVHandler) PutKey(c *gin.Context) {
 }
 
 // DeleteKey deletes a key
-// @Summary Delete a KV key
-// @Description Deletes a key from a KV bucket
-// @Tags kv
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Param key query string true "Key name"
-// @Success 200 {object} dto.KVKeyDeleteResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name}/key [delete]
+//
+//	@Summary		Delete a KV key
+//	@Description	Deletes a key from a KV bucket
+//	@Tags			kv
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Param			key		query		string	true	"Key name"
+//	@Success		200		{object}	dto.KVKeyDeleteResponse
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name}/key [delete]
 func (h *KVHandler) DeleteKey(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 	key := c.Query("key")
@@ -513,15 +541,16 @@ func (h *KVHandler) DeleteKey(c *gin.Context) {
 }
 
 // PurgeBucket removes all deleted keys from a bucket
-// @Summary Purge a KV bucket
-// @Description Removes all deleted-key tombstones from a KV bucket
-// @Tags kv
-// @Produce json
-// @Param name path string true "Bucket name"
-// @Success 200 {object} dto.KVPurgeResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /kv/buckets/{name}/purge [post]
+//
+//	@Summary		Purge a KV bucket
+//	@Description	Removes all deleted-key tombstones from a KV bucket
+//	@Tags			kv
+//	@Produce		json
+//	@Param			name	path		string	true	"Bucket name"
+//	@Success		200		{object}	dto.KVPurgeResponse
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/kv/buckets/{name}/purge [post]
 func (h *KVHandler) PurgeBucket(c *gin.Context) {
 	bucketName := normalizeBucketName(c.Param("name"))
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ConsumersService, StreamsService } from "../../../types";
 import type {
-  github_com_amir_baghshahy_nats_horizon_internal_dto_StreamResponse as StreamResponse,
+  StreamResponse,
 } from "../../../types";
 import { useConfirm } from "../../../components/ConfirmDialog";
 import { deleteStream, purgeStream } from "../../../utils/natsOperations";

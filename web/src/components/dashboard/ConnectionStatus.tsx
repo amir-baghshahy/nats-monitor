@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Server, Radio, Clock, Download, Upload } from "lucide-react";
 import StatusBadge from "../ui/StatusBadge";
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_ConnectionInfo as ConnectionInfo } from "../../types";
+import type { ConnectionInfo } from "../../types";
 
 interface ConnectionStatusProps {
   connected: boolean;

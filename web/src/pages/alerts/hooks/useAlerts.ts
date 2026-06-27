@@ -53,7 +53,7 @@ export function useAlerts() {
   });
 
   const toggleAlertMutation = useMutation({
-    mutationFn: (alert: Alert) => AlertsService.putAlerts(alert.id, { ...alert, enabled: !alert.enabled } as any),
+    mutationFn: (alert: Alert) => AlertsService.putAlerts(alert.id || '', { ...alert, enabled: !alert.enabled } as any),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["alerts"] }); },
   });
 

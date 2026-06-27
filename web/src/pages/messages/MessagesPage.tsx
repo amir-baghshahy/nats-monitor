@@ -66,7 +66,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <MessagesHeader
         title="Message Browser"
         description="View, publish, and manage stream messages"

@@ -58,7 +58,7 @@ export default function StreamDetailPage() {
   if (!name) return <div>Stream not found</div>;
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <div className="flex items-center gap-4 mb-8">
         <Link to="/streams" className="p-2 hover:bg-dark-bg rounded-lg transition-colors">
           <ArrowLeft className="w-5 h-5" />

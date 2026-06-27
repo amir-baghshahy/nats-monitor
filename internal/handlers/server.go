@@ -27,13 +27,14 @@ func NewServerHandler(useCase *services.ServerUseCase, messageUseCase *services.
 }
 
 // GetDashboardStats returns dashboard statistics
-// @Summary Get dashboard statistics
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} dto.DashboardStatsResponse
-// @Failure 503 {object} dto.DashboardStatsResponse
-// @Router /dashboard/stats [get]
+//
+//	@Summary	Get dashboard statistics
+//	@Tags		health
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	dto.DashboardStatsResponse
+//	@Failure	503	{object}	dto.DashboardStatsResponse
+//	@Router		/dashboard/stats [get]
 func (h *ServerHandler) GetDashboardStats(c *gin.Context) {
 	stats, err := h.useCase.GetDashboardStats(c.Request.Context())
 	if err != nil {
@@ -54,13 +55,14 @@ func (h *ServerHandler) GetDashboardStats(c *gin.Context) {
 }
 
 // GetAccountInfo returns detailed JetStream account information
-// @Summary Get JetStream account information
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} object "Account information"
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /account/info [get]
+//
+//	@Summary	Get JetStream account information
+//	@Tags		health
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	object	"Account information"
+//	@Failure	500	{object}	dto.ErrorResponse
+//	@Router		/account/info [get]
 func (h *ServerHandler) GetAccountInfo(c *gin.Context) {
 	info, err := h.useCase.GetAccountInfo(c.Request.Context())
 	if err != nil {
@@ -92,13 +94,14 @@ func (h *ServerHandler) GetAccountInfo(c *gin.Context) {
 }
 
 // GetConnections returns connection info
-// @Summary Get NATS connections
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} dto.ConnectionsResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /connections [get]
+//
+//	@Summary	Get NATS connections
+//	@Tags		health
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	dto.ConnectionsResponse
+//	@Failure	500	{object}	dto.ErrorResponse
+//	@Router		/connections [get]
 func (h *ServerHandler) GetConnections(c *gin.Context) {
 	conns, err := h.useCase.GetConnections(c.Request.Context())
 	if err != nil {
@@ -139,13 +142,14 @@ func (h *ServerHandler) GetConnections(c *gin.Context) {
 }
 
 // GetSubjects returns subject information from stream configurations
-// @Summary Get subject information
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} dto.SubjectsResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /subjects [get]
+//
+//	@Summary	Get subject information
+//	@Tags		health
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	dto.SubjectsResponse
+//	@Failure	500	{object}	dto.ErrorResponse
+//	@Router		/subjects [get]
 func (h *ServerHandler) GetSubjects(c *gin.Context) {
 	subjects, err := h.useCase.GetSubjects(c.Request.Context())
 	if err != nil {
@@ -172,16 +176,17 @@ func (h *ServerHandler) GetSubjects(c *gin.Context) {
 }
 
 // GetMessages returns messages from a stream
-// @Summary Get stream messages
-// @Description Lists messages from a stream
-// @Tags messages
-// @Produce json
-// @Param stream query string true "Stream name"
-// @Param limit query int false "Maximum number of messages to return" default(25)
-// @Success 200 {object} dto.StreamMessagesResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /messages [get]
+//
+//	@Summary		Get stream messages
+//	@Description	Lists messages from a stream
+//	@Tags			messages
+//	@Produce		json
+//	@Param			stream	query		string	true	"Stream name"
+//	@Param			limit	query		int		false	"Maximum number of messages to return"	default(25)
+//	@Success		200		{object}	dto.StreamMessagesResponse
+//	@Failure		400		{object}	dto.ErrorResponse
+//	@Failure		500		{object}	dto.ErrorResponse
+//	@Router			/messages [get]
 func (h *ServerHandler) GetMessages(c *gin.Context) {
 	stream := c.Query("stream")
 	if stream == "" {
@@ -218,18 +223,19 @@ func (h *ServerHandler) GetMessages(c *gin.Context) {
 }
 
 // GetStreamMessagesByPage returns paginated messages from a stream
-// @Summary Get paginated stream messages
-// @Description Returns paginated messages from a stream.
-// @Tags messages
-// @Produce json
-// @Param stream query string true "Stream name"
-// @Param page query int false "Page number" default(1)
-// @Param page_size query int false "Page size" default(25)
-// @Success 200 {object} dto.PaginatedMessagesResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /messages/page [get]
+//
+//	@Summary		Get paginated stream messages
+//	@Description	Returns paginated messages from a stream.
+//	@Tags			messages
+//	@Produce		json
+//	@Param			stream		query		string	true	"Stream name"
+//	@Param			page		query		int		false	"Page number"	default(1)
+//	@Param			page_size	query		int		false	"Page size"		default(25)
+//	@Success		200			{object}	dto.PaginatedMessagesResponse
+//	@Failure		400			{object}	dto.ErrorResponse
+//	@Failure		404			{object}	dto.ErrorResponse
+//	@Failure		500			{object}	dto.ErrorResponse
+//	@Router			/messages/page [get]
 func (h *ServerHandler) GetStreamMessagesByPage(c *gin.Context) {
 	stream := c.Query("stream")
 	if stream == "" {
@@ -309,13 +315,14 @@ func toStreamMessages(messages []*models.Message) []dto.StreamMessage {
 }
 
 // GetSystemMetrics returns system metrics from NATS server
-// @Summary Get system metrics
-// @Tags metrics
-// @Accept json
-// @Produce json
-// @Success 200 {object} object "System metrics"
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /metrics/system [get]
+//
+//	@Summary	Get system metrics
+//	@Tags		metrics
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	object	"System metrics"
+//	@Failure	500	{object}	dto.ErrorResponse
+//	@Router		/metrics/system [get]
 func (h *ServerHandler) GetSystemMetrics(c *gin.Context) {
 	metrics, err := h.useCase.GetSystemMetrics(c.Request.Context())
 	if err != nil {
@@ -347,14 +354,15 @@ func (h *ServerHandler) GetSystemMetrics(c *gin.Context) {
 }
 
 // GetRateMetrics returns message rate metrics for streams
-// @Summary Get rate metrics
-// @Tags metrics
-// @Accept json
-// @Produce json
-// @Param duration query int false "Duration in seconds" default(60)
-// @Success 200 {object} object "Rate metrics"
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /metrics/rates [get]
+//
+//	@Summary	Get rate metrics
+//	@Tags		metrics
+//	@Accept		json
+//	@Produce	json
+//	@Param		duration	query		int		false	"Duration in seconds"	default(60)
+//	@Success	200			{object}	object	"Rate metrics"
+//	@Failure	500			{object}	dto.ErrorResponse
+//	@Router		/metrics/rates [get]
 func (h *ServerHandler) GetRateMetrics(c *gin.Context) {
 	duration := 60
 	if d := c.Query("duration"); d != "" {
@@ -391,14 +399,15 @@ func (h *ServerHandler) GetRateMetrics(c *gin.Context) {
 }
 
 // TerminateConnection handles DELETE /connections/:id
-// @Summary Terminate a connection
-// @Tags health
-// @Accept json
-// @Produce json
-// @Param id path string true "Connection ID"
-// @Success 200 {object} dto.SuccessResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /connections/{id} [delete]
+//
+//	@Summary	Terminate a connection
+//	@Tags		health
+//	@Accept		json
+//	@Produce	json
+//	@Param		id	path		string	true	"Connection ID"
+//	@Success	200	{object}	dto.SuccessResponse
+//	@Failure	500	{object}	dto.ErrorResponse
+//	@Router		/connections/{id} [delete]
 func (h *ServerHandler) TerminateConnection(c *gin.Context) {
 	id := c.Param("id")
 	if err := h.useCase.TerminateConnection(c.Request.Context(), id); err != nil {
@@ -414,13 +423,14 @@ func (h *ServerHandler) TerminateConnection(c *gin.Context) {
 }
 
 // HealthCheck handles GET /health
-// @Summary Get system health status
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} dto.HealthResponse
-// @Failure 503 {object} dto.HealthResponse
-// @Router /health [get]
+//
+//	@Summary	Get system health status
+//	@Tags		health
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	dto.HealthResponse
+//	@Failure	503	{object}	dto.HealthResponse
+//	@Router		/health [get]
 func HealthCheck(useCase *services.ServerUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		conns, err := useCase.GetConnections(c.Request.Context())
@@ -440,12 +450,13 @@ func HealthCheck(useCase *services.ServerUseCase) gin.HandlerFunc {
 }
 
 // GetServerInfo handles GET /server/info
-// @Summary Get server information
-// @Tags health
-// @Accept json
-// @Produce json
-// @Success 200 {object} object "Server information"
-// @Router /server/info [get]
+//
+//	@Summary	Get server information
+//	@Tags		health
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	object	"Server information"
+//	@Router		/server/info [get]
 func (h *ServerHandler) GetServerInfo(c *gin.Context) {
 	info, err := h.useCase.GetServerInfo(c.Request.Context())
 	if err != nil {

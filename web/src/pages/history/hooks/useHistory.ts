@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { HistoryService, StreamsService } from '../../../types'
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_StreamResponse as Stream } from '../../../types'
+import type { StreamResponse as Stream } from '../../../types'
 
 export interface UseHistoryReturn {
   duration: string

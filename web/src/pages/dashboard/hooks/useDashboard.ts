@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useSSE } from '../../../hooks/useSSE'
 import { ConsumersService, HealthService } from '../../../types'
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_DashboardStatsResponse as DashboardStatsResponse } from '../../../types'
+import type { DashboardStatsResponse } from '../../../types'
 
 export interface UseDashboardReturn {
   sseConnected: boolean

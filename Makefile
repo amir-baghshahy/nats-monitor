@@ -69,7 +69,7 @@ fmt:
 
 openapi:
 	@echo "Generating OpenAPI spec..."
-	@swag init -g cmd/server/main.go -o api/swagger --parseDependency --parseInternal -ot go,json
+	@swag init --dir cmd/server --output api/swagger --parseDependency --parseDependencyLevel 2 --useStructName
 	@go run cmd/openapi3gen/main.go
 	@rm -f api/swagger/swagger.json api/swagger/swagger.yaml api/swagger/openapi.yaml
 

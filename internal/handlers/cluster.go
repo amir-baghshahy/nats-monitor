@@ -42,13 +42,14 @@ type NodeInfo struct {
 }
 
 // GetClusterInfo returns cluster information
-// @Summary Get cluster information
-// @Description Returns JetStream cluster topology and server information
-// @Tags cluster
-// @Produce json
-// @Success 200 {object} dto.ClusterInfoResponse
-// @Failure 500 {object} dto.ErrorResponse
-// @Router /cluster/info [get]
+//
+//	@Summary		Get cluster information
+//	@Description	Returns JetStream cluster topology and server information
+//	@Tags			cluster
+//	@Produce		json
+//	@Success		200	{object}	dto.ClusterInfoResponse
+//	@Failure		500	{object}	dto.ErrorResponse
+//	@Router			/cluster/info [get]
 func (h *ClusterHandler) GetClusterInfo(c *gin.Context) {
 	// Get server info using $JS.API.SERVER.PING with fallback
 	serverName := ""
@@ -107,12 +108,13 @@ func (h *ClusterHandler) GetClusterInfo(c *gin.Context) {
 }
 
 // GetClusterNodes returns information about cluster nodes
-// @Summary Get cluster nodes
-// @Description Returns information about each node in the NATS cluster
-// @Tags cluster
-// @Produce json
-// @Success 200 {object} dto.ClusterNodesResponse
-// @Router /cluster/nodes [get]
+//
+//	@Summary		Get cluster nodes
+//	@Description	Returns information about each node in the NATS cluster
+//	@Tags			cluster
+//	@Produce		json
+//	@Success		200	{object}	dto.ClusterNodesResponse
+//	@Router			/cluster/nodes [get]
 func (h *ClusterHandler) GetClusterNodes(c *gin.Context) {
 	// Try to get cluster info from ROUTERZ
 	msg, err := h.nc.Request("$SYS.CLUSTER.INFO", []byte{}, 2*time.Second)
@@ -167,14 +169,15 @@ func (h *ClusterHandler) GetClusterNodes(c *gin.Context) {
 }
 
 // GetStreamReplicas returns replication info for a stream
-// @Summary Get stream replicas
-// @Description Returns replication, mirror, source, and cluster placement info for a stream
-// @Tags cluster
-// @Produce json
-// @Param name path string true "Stream name"
-// @Success 200 {object} dto.ClusterStreamReplicaResponse
-// @Failure 404 {object} dto.ErrorResponse
-// @Router /cluster/streams/{name}/replicas [get]
+//
+//	@Summary		Get stream replicas
+//	@Description	Returns replication, mirror, source, and cluster placement info for a stream
+//	@Tags			cluster
+//	@Produce		json
+//	@Param			name	path		string	true	"Stream name"
+//	@Success		200		{object}	dto.ClusterStreamReplicaResponse
+//	@Failure		404		{object}	dto.ErrorResponse
+//	@Router			/cluster/streams/{name}/replicas [get]
 func (h *ClusterHandler) GetStreamReplicas(c *gin.Context) {
 	streamName := c.Param("name")
 
@@ -208,13 +211,14 @@ func (h *ClusterHandler) GetStreamReplicas(c *gin.Context) {
 }
 
 // GetClusterHealth returns overall cluster health
-// @Summary Get cluster health
-// @Description Returns connection and JetStream health status of the cluster
-// @Tags cluster
-// @Produce json
-// @Success 200 {object} dto.ClusterHealthResponse
-// @Failure 503 {object} dto.ClusterHealthResponse
-// @Router /cluster/health [get]
+//
+//	@Summary		Get cluster health
+//	@Description	Returns connection and JetStream health status of the cluster
+//	@Tags			cluster
+//	@Produce		json
+//	@Success		200	{object}	dto.ClusterHealthResponse
+//	@Failure		503	{object}	dto.ClusterHealthResponse
+//	@Router			/cluster/health [get]
 func (h *ClusterHandler) GetClusterHealth(c *gin.Context) {
 	// Get server health
 	health := dto.ClusterHealthResponse{

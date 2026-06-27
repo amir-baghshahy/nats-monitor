@@ -79,11 +79,11 @@ export default function AlertsPage() {
       confirmLabel: "Delete",
       variant: "danger",
     });
-    if (ok) deleteAlertMutation.mutate(alert.id);
+    if (ok && alert.id) deleteAlertMutation.mutate(alert.id);
   };
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <AlertsHeader
         onNewAlert={() => {
           setSelectedAlert(null);
@@ -140,7 +140,7 @@ export default function AlertsPage() {
         }}
         onSubmit={(data) => {
           if (selectedAlert) {
-            updateAlertMutation.mutate({ id: selectedAlert.id, data });
+            updateAlertMutation.mutate({ id: selectedAlert.id || '', data });
           } else {
             createAlertMutation.mutate(data);
           }

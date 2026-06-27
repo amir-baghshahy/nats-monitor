@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { HealthService } from "../types";
+import { useState } from "react";
 
 import {
   LayoutDashboard,
@@ -16,6 +17,8 @@ import {
   BarChart3,
   CloudOff,
   History,
+  Menu,
+  X,
 } from "lucide-react";
 
 const navigation = [
@@ -36,6 +39,7 @@ const navigation = [
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { data: health } = useQuery({
     queryKey: ["health"],
@@ -47,7 +51,28 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-dark-bg">
-      <aside className="flex w-72 flex-shrink-0 flex-col border-r border-dark-border/70 bg-dark-card/75 shadow-2xl shadow-black/20 backdrop-blur-xl overflow-hidden">
+      {/* Mobile backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-dark-card border border-dark-border text-dark-text hover:bg-dark-bg transition-colors"
+      >
+        {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+      </button>
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed lg:relative z-50 flex w-72 flex-shrink-0 flex-col border-r border-dark-border/70 bg-dark-card/75 shadow-2xl shadow-black/20 backdrop-blur-xl overflow-hidden transition-transform duration-300 ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
         <div className="border-b border-dark-border/70 px-6 py-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-500/20 text-primary-300 ring-1 ring-primary-400/30">
@@ -67,6 +92,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               <Link
                 key={item.name}
                 to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
                 className={`group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? "bg-primary-600 text-white shadow-lg shadow-primary-500/20"
@@ -99,7 +125,8 @@ export default function Layout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className="h-full overflow-y-auto flex-1">{children}</main>
+      {/* Main content with proper mobile padding */}
+      <main className="h-full overflow-y-auto flex-1 pt-16 lg:pt-0">{children}</main>
     </div>
   );
 }

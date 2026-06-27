@@ -6,7 +6,7 @@ import {
   Pause,
   Play,
 } from "lucide-react";
-import type { github_com_amir_baghshahy_nats_horizon_internal_dto_ConsumerResponse as Consumer } from "../../../types";
+import type { ConsumerResponse as Consumer } from "../../../types";
 
 interface ConsumerRowProps {
   consumer: Consumer;

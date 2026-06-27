@@ -1,20 +1,24 @@
-import { UseMetricsReturn } from './hooks/useMetrics'
+import { UseMetricsReturn } from "./hooks/useMetrics";
 import {
-  Activity, BarChart3, Clock, HardDrive, MessageSquare,
-  RefreshCw, TrendingUp, Zap
-} from 'lucide-react'
-import type {
-  internal_handlers_MetricDataPoint as MetricDataPoint,
-} from '../../types'
-import { formatBytes, formatNumber } from '../../utils/formatters'
-import { PageError, PageLoading } from '../../components/ui/PageState'
+  Activity,
+  BarChart3,
+  Clock,
+  HardDrive,
+  MessageSquare,
+  RefreshCw,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type { MetricDataPoint } from "../../types";
+import { formatBytes, formatNumber } from "../../utils/formatters";
+import { PageError, PageLoading } from "../../components/ui/PageState";
 
 const durations = [
-  { label: 'Last 15 minutes', value: '15m' },
-  { label: 'Last 1 hour', value: '1h' },
-  { label: 'Last 6 hours', value: '6h' },
-  { label: 'Last 24 hours', value: '24h' },
-]
+  { label: "Last 15 minutes", value: "15m" },
+  { label: "Last 1 hour", value: "1h" },
+  { label: "Last 6 hours", value: "6h" },
+  { label: "Last 24 hours", value: "24h" },
+];
 
 function Sparkline({
   data,
@@ -22,10 +26,10 @@ function Sparkline({
   width = 200,
   height = 40,
 }: {
-  data: MetricDataPoint[]
-  color: string
-  width?: number
-  height?: number
+  data: MetricDataPoint[];
+  color: string;
+  width?: number;
+  height?: number;
 }) {
   if (!data || data.length === 0) {
     return (
@@ -35,10 +39,10 @@ function Sparkline({
       >
         Collecting data...
       </div>
-    )
+    );
   }
 
-  const values = data.map((point) => point.value || 0)
+  const values = data.map((point) => point.value || 0);
 
   if (values.every((v) => v === 0)) {
     return (
@@ -48,32 +52,41 @@ function Sparkline({
       >
         No activity
       </div>
-    )
+    );
   }
 
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  const range = max - min || 1
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
 
   if (data.length === 1) {
-    const x = width / 2
-    const y = height - ((values[0] - min) / range) * height
-    const cy = Math.max(4, Math.min(height - 4, y))
+    const x = width / 2;
+    const y = height - ((values[0] - min) / range) * height;
+    const cy = Math.max(4, Math.min(height - 4, y));
     return (
       <svg width={width} height={height} className="overflow-visible">
-        <line x1={0} y1={cy} x2={width} y2={cy} stroke={color} strokeWidth="1" strokeDasharray="4 3" opacity="0.4" />
+        <line
+          x1={0}
+          y1={cy}
+          x2={width}
+          y2={cy}
+          stroke={color}
+          strokeWidth="1"
+          strokeDasharray="4 3"
+          opacity="0.4"
+        />
         <circle cx={x} cy={cy} r="4" fill={color} opacity="0.9" />
       </svg>
-    )
+    );
   }
 
   const points = values
     .map((value, index) => {
-      const x = (index / (values.length - 1)) * width
-      const y = height - ((value - min) / range) * height
-      return `${x},${y}`
+      const x = (index / (values.length - 1)) * width;
+      const y = height - ((value - min) / range) * height;
+      return `${x},${y}`;
     })
-    .join(' ')
+    .join(" ");
 
   return (
     <svg width={width} height={height} className="overflow-visible">
@@ -86,7 +99,7 @@ function Sparkline({
         strokeLinejoin="round"
       />
     </svg>
-  )
+  );
 }
 
 export default function MetricsPage({
@@ -114,15 +127,15 @@ export default function MetricsPage({
   rateTotalBytes,
 }: UseMetricsReturn) {
   if (isLoading) {
-    return <PageLoading text="Loading metrics..." />
+    return <PageLoading text="Loading metrics..." />;
   }
 
   if (error) {
-    return <PageError message={getErrorMessage(error)} onRetry={refetch} />
+    return <PageError message={getErrorMessage(error)} onRetry={refetch} />;
   }
 
   return (
-    <div className="p-4 md:p-8">
+    <div className="p-4 md:p-6 lg:p-8">
       <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-2xl font-bold md:text-3xl">Real-time Metrics</h1>
@@ -148,8 +161,8 @@ export default function MetricsPage({
             aria-pressed={autoRefresh}
             className={`btn-secondary inline-flex shrink-0 items-center gap-2 ${
               autoRefresh
-                ? 'border-primary-500/40 bg-primary-500/15 text-primary-300'
-                : ''
+                ? "border-primary-500/40 bg-primary-500/15 text-primary-300"
+                : ""
             }`}
           >
             {autoRefresh ? (
@@ -176,7 +189,9 @@ export default function MetricsPage({
               <MessageSquare className="h-5 w-5 text-primary-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{formatNumber(totalMessages)}</p>
+              <p className="text-2xl font-bold">
+                {formatNumber(totalMessages)}
+              </p>
               <p className="text-xs text-dark-muted">Total Messages</p>
             </div>
           </div>
@@ -209,7 +224,9 @@ export default function MetricsPage({
               <Zap className="h-5 w-5 text-green-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{formatNumber(rateTotalMessages)}</p>
+              <p className="text-2xl font-bold">
+                {formatNumber(rateTotalMessages)}
+              </p>
               <p className="text-xs text-dark-muted">Messages in Rate Window</p>
             </div>
           </div>
@@ -223,7 +240,7 @@ export default function MetricsPage({
             <p className="text-xs text-dark-muted">
               {systemMetrics?.timestamp
                 ? new Date(systemMetrics.timestamp * 1000).toLocaleTimeString()
-                : 'N/A'}
+                : "N/A"}
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
@@ -237,7 +254,7 @@ export default function MetricsPage({
                   ? `${systemMetrics.memory.usage || 0}% of ${formatBytes(systemMetrics.memory.max)}`
                   : systemMetrics?.memory?.usage !== undefined
                     ? `${systemMetrics.memory.usage}% — Unlimited`
-                    : 'Unlimited'}
+                    : "Unlimited"}
               </p>
             </div>
             <div className="rounded-xl bg-dark-bg/50 p-4">
@@ -250,7 +267,7 @@ export default function MetricsPage({
                   ? `${systemMetrics.storage.usage || 0}% of ${formatBytes(systemMetrics.storage.max)}`
                   : systemMetrics?.storage?.usage !== undefined
                     ? `${systemMetrics.storage.usage}% — Unlimited`
-                    : 'Unlimited'}
+                    : "Unlimited"}
               </p>
             </div>
             <div className="rounded-xl bg-dark-bg/50 p-4">
@@ -259,7 +276,7 @@ export default function MetricsPage({
                 {systemMetrics?.connections || 0}
               </p>
               <p className="text-xs text-dark-muted">
-                {systemMetrics?.streams || 0} streams ·{' '}
+                {systemMetrics?.streams || 0} streams ·{" "}
                 {systemMetrics?.consumers || 0} consumers
               </p>
             </div>
@@ -285,14 +302,11 @@ export default function MetricsPage({
           {rateStreams.length > 0 ? (
             <div className="overflow-y-auto scrollbar-thin flex-1 p-4 space-y-3">
               {rateStreams.map((stream: any) => (
-                <div
-                  key={stream.name}
-                  className="rounded-xl bg-dark-bg/50 p-4"
-                >
+                <div key={stream.name} className="rounded-xl bg-dark-bg/50 p-4">
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-mono text-sm truncate">{stream.name}</p>
                     <p className="text-xs text-dark-muted whitespace-nowrap">
-                      {formatNumber(stream.messages || 0)} msgs ·{' '}
+                      {formatNumber(stream.messages || 0)} msgs ·{" "}
                       {formatBytes(stream.bytes || 0)}
                     </p>
                   </div>
@@ -307,7 +321,7 @@ export default function MetricsPage({
             </div>
           )}
           <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
-            {rateStreams.length} stream{rateStreams.length !== 1 ? 's' : ''}
+            {rateStreams.length} stream{rateStreams.length !== 1 ? "s" : ""}
           </div>
         </div>
       </div>
@@ -316,8 +330,12 @@ export default function MetricsPage({
         <div className="card overflow-hidden flex flex-col max-h-[800px]">
           <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
             <select
-              value={selectedStream || 'all'}
-              onChange={(e) => setSelectedStream(e.target.value === 'all' ? null : e.target.value)}
+              value={selectedStream || "all"}
+              onChange={(e) =>
+                setSelectedStream(
+                  e.target.value === "all" ? null : e.target.value,
+                )
+              }
               className="input w-full"
             >
               <option value="all">All Streams</option>
@@ -332,11 +350,15 @@ export default function MetricsPage({
           <div className="overflow-y-auto scrollbar-thin flex-1 p-4">
             <div className="grid gap-6 lg:grid-cols-2">
               {streamNames.map((streamName) => {
-                const messageSeries = getSeries(metrics, streamName, 'messages')
-                const bytesSeries = getSeries(metrics, streamName, 'bytes')
-                const messages = getLatestValue(messageSeries)
-                const bytes = getLatestValue(bytesSeries)
-                const messageTrend = getTrend(messageSeries)
+                const messageSeries = getSeries(
+                  metrics,
+                  streamName,
+                  "messages",
+                );
+                const bytesSeries = getSeries(metrics, streamName, "bytes");
+                const messages = getLatestValue(messageSeries);
+                const bytes = getLatestValue(bytesSeries);
+                const messageTrend = getTrend(messageSeries);
 
                 return (
                   <div key={streamName} className="card">
@@ -349,7 +371,9 @@ export default function MetricsPage({
                         {messageTrend !== 0 && (
                           <span
                             className={`flex items-center gap-1 ${
-                              messageTrend > 0 ? 'text-green-400' : 'text-red-400'
+                              messageTrend > 0
+                                ? "text-green-400"
+                                : "text-red-400"
                             }`}
                           >
                             <TrendingUp className="h-3 w-3" />
@@ -359,38 +383,52 @@ export default function MetricsPage({
                       </div>
                     </div>
 
-                      <div key={`${streamName}-messages`} className="rounded-xl bg-dark-bg/50 p-4">
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <span className="text-sm text-dark-muted whitespace-nowrap">Messages</span>
-                          <span className="font-medium tabular-nums whitespace-nowrap">{formatNumber(messages)}</span>
-                        </div>
-                        <Sparkline
-                          data={messageSeries?.data || []}
-                          color="rgb(59, 130, 246)"
-                          width={280}
-                          height={48}
-                        />
+                    <div
+                      key={`${streamName}-messages`}
+                      className="rounded-xl bg-dark-bg/50 p-4"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-sm text-dark-muted whitespace-nowrap">
+                          Messages
+                        </span>
+                        <span className="font-medium tabular-nums whitespace-nowrap">
+                          {formatNumber(messages)}
+                        </span>
                       </div>
+                      <Sparkline
+                        data={messageSeries?.data || []}
+                        color="rgb(59, 130, 246)"
+                        width={280}
+                        height={48}
+                      />
+                    </div>
 
-                      <div key={`${streamName}-bytes`} className="rounded-xl bg-dark-bg/50 p-4">
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <span className="text-sm text-dark-muted whitespace-nowrap">Storage</span>
-                          <span className="font-medium tabular-nums whitespace-nowrap">{formatBytes(bytes)}</span>
-                        </div>
-                        <Sparkline
-                          data={bytesSeries?.data || []}
-                          color="rgb(16, 185, 129)"
-                          width={280}
-                          height={48}
-                        />
+                    <div
+                      key={`${streamName}-bytes`}
+                      className="rounded-xl bg-dark-bg/50 p-4"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-sm text-dark-muted whitespace-nowrap">
+                          Storage
+                        </span>
+                        <span className="font-medium tabular-nums whitespace-nowrap">
+                          {formatBytes(bytes)}
+                        </span>
                       </div>
+                      <Sparkline
+                        data={bytesSeries?.data || []}
+                        color="rgb(16, 185, 129)"
+                        width={280}
+                        height={48}
+                      />
+                    </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
           <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
-            {streamNames.length} stream{streamNames.length !== 1 ? 's' : ''}
+            {streamNames.length} stream{streamNames.length !== 1 ? "s" : ""}
           </div>
         </div>
       </div>
@@ -405,5 +443,5 @@ export default function MetricsPage({
         </div>
       )}
     </div>
-  )
+  );
 }

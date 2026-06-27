@@ -1,70 +1,7 @@
-import type {
-  internal_handlers_Alert,
-  internal_handlers_AlertCondition,
-  internal_handlers_AlertSeverity,
-  internal_handlers_AlertTrigger,
-  internal_handlers_ConnectionConfig,
-  internal_handlers_MetricDataPoint,
-  internal_handlers_MetricSeries,
-  internal_handlers_MetricsResponse,
-  internal_handlers_User,
-  internal_handlers_UserPermissions,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterConnectedServer,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterHealthResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterInfoPeerResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterInfoResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterJetStreamHealth,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterJetStreamInfo,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterNodeResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterNodesResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterPlacementResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterStreamClusterResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterStreamReplicaResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterStreamSource,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVBucketCreateResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVBucketDeleteResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVBucketInfo,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyDeleteResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyEntry,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyHistoryEntry,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyPutResponse,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_KVPurgeResponse,
-  time_Duration,
-} from '../generated/api-client.ts'
+// Export all from the generated API client
+export * from '../generated/index'
 
-type RequiredAlertCondition = Required<internal_handlers_AlertCondition> & {
-  type: string
-  operator: string
-  threshold: number
-}
-
-export type Alert = Omit<Required<internal_handlers_Alert>, 'cooldown' | 'condition'> & {
-  channels: string[]
-  condition: RequiredAlertCondition
-  cooldown: number
-  enabled: boolean
-  trigger_count: number
-}
-export type AlertCondition = internal_handlers_AlertCondition
-export type AlertSeverity = internal_handlers_AlertSeverity
-export type AlertTrigger = Required<internal_handlers_AlertTrigger> & {
-  acked: boolean
-  severity: AlertSeverity
-  triggered_at: string
-}
-export type ClusterConnectedServer = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterConnectedServer
-export type ClusterHealthResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterHealthResponse
-export type ClusterInfoPeerResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterInfoPeerResponse
-export type ClusterInfoResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterInfoResponse
-export type ClusterJetStreamHealth = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterJetStreamHealth
-export type ClusterJetStreamInfo = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterJetStreamInfo
-export type ClusterNodeResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterNodeResponse
-export type ClusterNodesResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterNodesResponse
-export type ClusterPlacementResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterPlacementResponse
-export type ClusterStreamClusterResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterStreamClusterResponse
-export type ClusterStreamReplicaResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterStreamReplicaResponse
-export type ClusterStreamSource = github_com_amir_baghshahy_nats_horizon_internal_dto_ClusterStreamSource
-export type ConnectionConfig = internal_handlers_ConnectionConfig
+// Add custom types that were previously defined
 export type ConnectionStatus = {
   id: string
   name: string
@@ -74,19 +11,3 @@ export type ConnectionStatus = {
   error?: string
   last_checked: string
 }
-export type KVBucketCreateResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_KVBucketCreateResponse
-export type KVBucketDeleteResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_KVBucketDeleteResponse
-export type KVBucketInfo = github_com_amir_baghshahy_nats_horizon_internal_dto_KVBucketInfo
-export type KVKeyDeleteResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyDeleteResponse
-export type KVKeyEntry = github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyEntry
-export type KVKeyHistoryEntry = github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyHistoryEntry
-export type KVKeyPutResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_KVKeyPutResponse
-export type KVPurgeResponse = github_com_amir_baghshahy_nats_horizon_internal_dto_KVPurgeResponse
-export type MetricDataPoint = internal_handlers_MetricDataPoint
-export type MetricSeries = internal_handlers_MetricSeries
-export type MetricsResponse = internal_handlers_MetricsResponse
-export type User = internal_handlers_User
-export type UserPermissions = internal_handlers_UserPermissions
-export type Duration = time_Duration
-
-export * from '../generated/api-client.ts/index'

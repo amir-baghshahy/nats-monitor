@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   CoreNatsService,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageRequest,
-  github_com_amir_baghshahy_nats_horizon_internal_dto_RequestMessageRequest,
+  PublishMessageRequest,
+  RequestMessageRequest,
 } from "../types";
 import {
   MessageList,
@@ -133,7 +133,7 @@ export function CoreMessagingContent() {
 
   const handlePublish = async () => {
     try {
-      const request: github_com_amir_baghshahy_nats_horizon_internal_dto_PublishMessageRequest = {
+      const request: PublishMessageRequest = {
         subject: publishForm.subject,
         payload: publishForm.payload,
         headers: parseHeaders(publishForm.headers),
@@ -152,7 +152,7 @@ export function CoreMessagingContent() {
 
   const handleRequest = async () => {
     try {
-      const request: github_com_amir_baghshahy_nats_horizon_internal_dto_RequestMessageRequest = {
+      const request: RequestMessageRequest = {
         subject: requestForm.subject,
         payload: requestForm.payload,
         timeout: requestForm.timeout,
