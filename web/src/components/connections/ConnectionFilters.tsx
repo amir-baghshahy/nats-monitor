@@ -1,4 +1,4 @@
-import { Filter, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface ConnectionFiltersProps {
@@ -47,10 +47,6 @@ export default function ConnectionFilters({
                 </option>
               ))}
           </select>
-          <button className="btn-secondary inline-flex shrink-0 items-center gap-2">
-            <Filter className="h-4 w-4" />
-            {t('connections.moreFilters')}
-          </button>
         </div>
       </div>
     </div>
