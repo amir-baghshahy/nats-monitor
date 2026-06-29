@@ -18,12 +18,34 @@ import Metrics from "./pages/Metrics";
 import History from "./pages/History";
 import Tenancy from "./pages/Tenancy";
 import VisualStreamGraph from "./pages/VisualStreamGraph";
+import SetupWizard from "./pages/setup/SetupWizard";
 
 function App() {
   useDirection();
   const location = useLocation();
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [setupCompleted, setSetupCompleted] = useState<boolean | null>(null);
   const prevLocationRef = useRef(location);
+
+  // Check setup status on mount
+  useEffect(() => {
+    const checkSetup = async () => {
+      try {
+        const res = await fetch("/api/config/setup");
+        if (res.ok) {
+          const data = await res.json();
+          setSetupCompleted(data.setup_completed);
+        } else {
+          // If endpoint doesn't exist, assume setup is completed (backward compat)
+          setSetupCompleted(true);
+        }
+      } catch {
+        // If can't reach API, assume setup is completed
+        setSetupCompleted(true);
+      }
+    };
+    checkSetup();
+  }, []);
 
   useEffect(() => {
     if (prevLocationRef.current !== location) {
@@ -33,6 +55,20 @@ function App() {
       return () => clearTimeout(timeout);
     }
   }, [location]);
+
+  // Show loading while checking setup
+  if (setupCompleted === null) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Show setup wizard if not completed
+  if (!setupCompleted) {
+    return <SetupWizard />;
+  }
 
   return (
     <Layout>

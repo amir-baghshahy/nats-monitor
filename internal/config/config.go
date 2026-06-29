@@ -1,150 +1,175 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
-	"math/rand"
-	"net"
 	"os"
-	"strconv"
-	"time"
-
-	"github.com/joho/godotenv"
+	"path/filepath"
+	"sync"
 )
 
-type Config struct {
-	// Server
-	ServerPort   string
-	ResolvedPort int
-	GinMode      string
+// AppConfig holds all application settings
+type AppConfig struct {
+	mu sync.RWMutex `json:"-"`
 
-	// NATS
-	NATSURL string
+	// Server settings
+	ServerPort int    `json:"server_port"`
+	GinMode    string `json:"gin_mode"`
 
-	// CORS
-	CORSAllowedOrigins string
+	// NATS settings
+	NATSURL string `json:"nats_url"`
 
-	// Pagination
-	DefaultPageSize int
-	MaxPageSize     int
+	// SMTP settings for email alerts
+	SMTPHost     string `json:"smtp_host"`
+	SMTPPort     int    `json:"smtp_port"`
+	SMTPUsername string `json:"smtp_username"`
+	SMTPPassword string `json:"smtp_password"`
+	SMTPFrom     string `json:"smtp_from"`
 
-	// Port selection behavior
-	PortRangeStart int
-	PortRangeEnd   int
-	AutoPort       bool
+	// CORS settings
+	CORSAllowedOrigins string `json:"cors_allowed_origins"`
+
+	// First run flag
+	SetupCompleted bool `json:"setup_completed"`
 }
 
-func Load() (*Config, error) {
-	if err := godotenv.Load(); err != nil {
-		log.Printf("Warning: .env file not found or could not be loaded: %v", err)
+var (
+	instance *AppConfig
+	once     sync.Once
+)
+
+// Get returns the singleton config instance
+func Get() *AppConfig {
+	once.Do(func() {
+		instance = &AppConfig{
+			ServerPort:         3000,
+			GinMode:            "release",
+			NATSURL:            "nats://localhost:4222",
+			SMTPPort:           587,
+			CORSAllowedOrigins: "*",
+		}
+		instance.load()
+	})
+	return instance
+}
+
+// configPath returns the path to the config file
+func configPath() string {
+	// Use the project directory for config (next to the binary)
+	execPath, err := os.Executable()
+	if err == nil {
+		execDir := filepath.Dir(execPath)
+		return filepath.Join(execDir, "nats-horizon.json")
 	}
-
-	cfg := &Config{
-		// Server
-		ServerPort:     getEnv("PORT", getEnv("SERVER_PORT", "3000")),
-		GinMode:        getEnv("GIN_MODE", "debug"),
-		PortRangeStart: getEnvInt("PORT_RANGE_START", 3001),
-		PortRangeEnd:   getEnvInt("PORT_RANGE_END", 3020),
-		AutoPort:       getEnvBool("AUTO_PORT", true),
-
-		// NATS
-		NATSURL: getEnv("NATS_URL", "nats://localhost:4222"),
-
-		// CORS
-		CORSAllowedOrigins: getEnv("CORS_ALLOWED_ORIGINS", "*"),
-
-		// Pagination
-		DefaultPageSize: getEnvInt("DEFAULT_PAGE_SIZE", 25),
-		MaxPageSize:     getEnvInt("MAX_PAGE_SIZE", 100),
+	
+	// Fallback to current directory
+	if cwd, err := os.Getwd(); err == nil {
+		return filepath.Join(cwd, "nats-horizon.json")
 	}
+	
+	return "nats-horizon.json"
+}
 
-	port, err := ResolvePort(cfg)
+// ensureDir ensures the config directory exists
+func ensureDir() error {
+	path := filepath.Dir(configPath())
+	return os.MkdirAll(path, 0755)
+}
+
+// load reads config from file
+func (c *AppConfig) load() error {
+	path := configPath()
+	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		if os.IsNotExist(err) {
+			// Config doesn't exist yet, use defaults
+			return nil
+		}
+		return fmt.Errorf("failed to read config: %w", err)
 	}
-	cfg.ResolvedPort = port
 
-	if cfg.NATSURL == "" {
-		return nil, fmt.Errorf("NATS_URL is required")
-	}
-
-	return cfg, nil
+	return json.Unmarshal(data, c)
 }
 
-// ResolvePort finds an available port starting from the configured default.
-// Behavior:
-//  1. If AUTO_PORT=false, use the exact SERVER_PORT value.
-//  2. Try the default port (e.g. 3000).
-//  3. If busy, sweep sequentially through [PORT_RANGE_START, PORT_RANGE_END).
-//  4. If still nothing, pick a random port in [PORT_RANGE_START, 10000).
-func ResolvePort(cfg *Config) (int, error) {
-	if !cfg.AutoPort {
-		p, err := strconv.Atoi(cfg.ServerPort)
-		if err != nil {
-			return 0, fmt.Errorf("invalid SERVER_PORT: %w", err)
-		}
-		return p, nil
+// Save writes config to file
+func (c *AppConfig) Save() error {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	if err := ensureDir(); err != nil {
+		return fmt.Errorf("failed to create config dir: %w", err)
 	}
 
-	defaultPort, err := strconv.Atoi(cfg.ServerPort)
+	data, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
-		return 0, fmt.Errorf("invalid SERVER_PORT %q: %w", cfg.ServerPort, err)
+		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	// Try default first
-	if isPortFree(defaultPort) {
-		return defaultPort, nil
+	path := configPath()
+	if err := os.WriteFile(path, data, 0600); err != nil {
+		return fmt.Errorf("failed to write config: %w", err)
 	}
 
-	// Sequential sweep through configured range
-	for p := cfg.PortRangeStart; p < cfg.PortRangeEnd; p++ {
-		if isPortFree(p) {
-			return p, nil
-		}
-	}
-
-	// Fallback: random from a wider pool
-	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
-	for i := 0; i < 50; i++ {
-		p := rng.Intn(10000-cfg.PortRangeStart) + cfg.PortRangeStart
-		if isPortFree(p) {
-			return p, nil
-		}
-	}
-
-	return 0, fmt.Errorf("no available port found in range %d-%d", cfg.PortRangeStart, cfg.PortRangeEnd)
+	return nil
 }
 
-func isPortFree(port int) bool {
-	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+// Update updates config fields and saves
+func (c *AppConfig) Update(updates map[string]interface{}) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	data, err := json.Marshal(updates)
 	if err != nil {
-		return false
+		return err
 	}
-	ln.Close()
-	return true
+
+	if err := json.Unmarshal(data, c); err != nil {
+		return err
+	}
+
+	return c.save()
 }
 
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
+// save writes config to file (without lock)
+func (c *AppConfig) save() error {
+	if err := ensureDir(); err != nil {
+		return fmt.Errorf("failed to create config dir: %w", err)
 	}
-	return defaultValue
+
+	data, err := json.MarshalIndent(c, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal config: %w", err)
+	}
+
+	path := configPath()
+	return os.WriteFile(path, data, 0600)
 }
 
-func getEnvInt(key string, defaultValue int) int {
-	if value := os.Getenv(key); value != "" {
-		if intVal, err := strconv.Atoi(value); err == nil {
-			return intVal
-		}
-	}
-	return defaultValue
+// GetNATSURL returns the NATS URL
+func (c *AppConfig) GetNATSURL() string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.NATSURL
 }
 
-func getEnvBool(key string, defaultValue bool) bool {
-	if value := os.Getenv(key); value != "" {
-		if boolVal, err := strconv.ParseBool(value); err == nil {
-			return boolVal
-		}
-	}
-	return defaultValue
+// GetServerPort returns the server port
+func (c *AppConfig) GetServerPort() int {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.ServerPort
+}
+
+// IsSetupCompleted returns whether setup has been completed
+func (c *AppConfig) IsSetupCompleted() bool {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.SetupCompleted
+}
+
+// MarkSetupCompleted marks setup as completed
+func (c *AppConfig) MarkSetupCompleted() error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.SetupCompleted = true
+	return c.save()
 }

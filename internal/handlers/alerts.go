@@ -14,6 +14,7 @@ import (
 )
 
 // AlertSeverity represents the severity level of an alert
+//
 //	@Description	Severity level for alerts (info, warning, critical)
 //	@Type			string
 type AlertSeverity string
@@ -35,7 +36,7 @@ type Alert struct {
 	Condition       AlertCondition `json:"condition"`
 	Severity        AlertSeverity  `json:"severity"`
 	Enabled         bool           `json:"enabled"`
-	Channels        []string       `json:"channels"` // Notification channels: "email", "webhook", "slack"
+	Channels        []string       `json:"channels"`          // Notification channels: "email", "webhook", "slack"
 	EmailAddress    string         `json:"email_address"`     // Email address for email notifications
 	WebhookURL      string         `json:"webhook_url"`       // Webhook URL for webhook notifications
 	SlackWebhookURL string         `json:"slack_webhook_url"` // Slack webhook URL for Slack notifications
@@ -64,6 +65,7 @@ type AlertsHandler struct {
 	nc              *nats.Conn
 	js              nats.JetStreamContext
 	notificationSvc *services.NotificationService
+	alertStore      *services.AlertStore
 	alerts          map[string]*Alert
 	triggers        []*AlertTrigger
 	mu              sync.RWMutex
@@ -77,15 +79,67 @@ func NewAlertsHandler(nc *nats.Conn, js nats.JetStreamContext, notificationSvc *
 		nc:              nc,
 		js:              js,
 		notificationSvc: notificationSvc,
+		alertStore:      services.GetAlertStore(),
 		alerts:          make(map[string]*Alert),
 		triggers:        make([]*AlertTrigger, 0),
 		stopChan:        make(chan struct{}),
 	}
 
+	// Load alerts from store into memory
+	h.loadAlertsFromStore()
+
 	// Start alert checking goroutine
 	h.startChecker()
 
 	return h
+}
+
+// loadAlertsFromStore loads persisted alerts into memory
+func (h *AlertsHandler) loadAlertsFromStore() {
+	persistedAlerts := h.alertStore.GetAll()
+	for _, pa := range persistedAlerts {
+		h.alerts[pa.ID] = &Alert{
+			ID:              pa.ID,
+			Name:            pa.Name,
+			Description:     pa.Description,
+			Condition:       AlertCondition(pa.Condition),
+			Severity:        AlertSeverity(pa.Severity),
+			Enabled:         pa.Enabled,
+			Channels:        pa.Channels,
+			EmailAddress:    pa.EmailAddress,
+			WebhookURL:      pa.WebhookURL,
+			SlackWebhookURL: pa.SlackWebhookURL,
+			Cooldown:        pa.Cooldown,
+			LastTrigger:     pa.LastTrigger,
+			TriggerCount:    pa.TriggerCount,
+			CreatedAt:       pa.CreatedAt,
+			UpdatedAt:       pa.UpdatedAt,
+		}
+	}
+}
+
+// persistAlert saves an alert to the store
+func (h *AlertsHandler) persistAlert(alert *Alert) {
+	pa := services.PersistedAlert{
+		ID:              alert.ID,
+		Name:            alert.Name,
+		Description:     alert.Description,
+		Condition:       services.AlertCondition(alert.Condition),
+		Severity:        string(alert.Severity),
+		Enabled:         alert.Enabled,
+		Channels:        alert.Channels,
+		EmailAddress:    alert.EmailAddress,
+		WebhookURL:      alert.WebhookURL,
+		SlackWebhookURL: alert.SlackWebhookURL,
+		Cooldown:        alert.Cooldown,
+		LastTrigger:     alert.LastTrigger,
+		TriggerCount:    alert.TriggerCount,
+		CreatedAt:       alert.CreatedAt,
+		UpdatedAt:       alert.UpdatedAt,
+	}
+	if err := h.alertStore.SaveOrUpdate(pa); err != nil {
+		log.Printf("Failed to persist alert: %v", err)
+	}
 }
 
 // Stop stops the alert checker
@@ -410,20 +464,12 @@ func (h *AlertsHandler) CreateAlert(c *gin.Context) {
 		alert.Cooldown = 5 * time.Minute
 	}
 
-	// Store SMTP settings in environment for email notifications
-	if alert.EmailAddress != "" {
-		log.Printf("Alert %s configured with email notifications to: %s", alert.ID, alert.EmailAddress)
-	}
-	if alert.WebhookURL != "" {
-		log.Printf("Alert %s configured with webhook notifications: %s", alert.ID, alert.WebhookURL)
-	}
-	if alert.SlackWebhookURL != "" {
-		log.Printf("Alert %s configured with Slack notifications", alert.ID)
-	}
-
 	h.mu.Lock()
 	h.alerts[alert.ID] = &alert
 	h.mu.Unlock()
+
+	// Persist to JSON store
+	h.persistAlert(&alert)
 
 	c.JSON(http.StatusCreated, alert)
 }
@@ -497,6 +543,9 @@ func (h *AlertsHandler) UpdateAlert(c *gin.Context) {
 	alert.Cooldown = updates.Cooldown
 	alert.UpdatedAt = time.Now()
 
+	// Persist to JSON store
+	h.persistAlert(alert)
+
 	c.JSON(http.StatusOK, alert)
 }
 
@@ -531,6 +580,11 @@ func (h *AlertsHandler) DeleteAlert(c *gin.Context) {
 		}
 	}
 	h.triggers = filtered
+
+	// Delete from JSON store
+	if err := h.alertStore.Delete(id); err != nil {
+		log.Printf("Failed to delete alert from store: %v", err)
+	}
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{Message: "alert deleted"})
 }

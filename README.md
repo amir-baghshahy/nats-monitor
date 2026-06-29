@@ -39,6 +39,7 @@ NATS is fast. NATS scales well. But managing a production NATS JetStream cluster
 - **Debug everything** — Message inspector, header viewer, JSON formatter, subject explorer, and audit logs
 - **Alert on everything** — Get notified when consumer lag spikes, storage fills up, or any threshold is breached
 - **Deploy anywhere** — Native desktop app for Windows, macOS, and Linux. Single binary, zero dependencies.
+- **Zero config** — No `.env` files, no complex setup. Just run and configure via the built-in wizard.
 
 ### Why we built this
 

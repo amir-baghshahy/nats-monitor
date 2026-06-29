@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -127,10 +126,8 @@ func CORSMiddleware(allowedOrigins string) gin.HandlerFunc {
 }
 
 func main() {
-	cfg, err := config.Load()
-	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
-	}
+	// Load config from JSON file (persistent settings)
+	cfg := config.Get()
 
 	gin.SetMode(cfg.GinMode)
 
@@ -139,8 +136,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to NATS: %v\n\n"+
 			"Please ensure:\n"+
-			"1. NATS_URL is set correctly in .env or environment\n"+
-			"2. NATS server is running and accessible\n"+
+			"1. NATS server is running and accessible\n"+
+			"2. Run setup wizard first (no config file found)\n"+
 			"3. Any required authentication is configured", err)
 	}
 	log.Println("Connected to NATS")
@@ -175,15 +172,16 @@ func main() {
 	coreNATSHandler := handlers.NewCoreNATShandler(natsConn.nc)
 	kvHandler := handlers.NewKVHandler(natsConn.nc, natsConn.js)
 	clusterHandler := handlers.NewClusterHandler(natsConn.nc, natsConn.js)
-	alertsHandler := handlers.NewAlertsHandler(natsConn.nc, natsConn.js, notificationService)
-	metricsHandler := handlers.NewMetricsHandler(natsConn.nc, natsConn.js)
-	exportHandler := handlers.NewExportHandler(natsConn.nc, natsConn.js)
-	securityHandler := handlers.NewSecurityHandler(natsConn.nc, natsConn.js, auditService)
-	historyHandler := handlers.NewHistoryHandler(natsConn.nc, natsConn.js)
-	defer metricsHandler.Stop()
-	tenancyHandler := handlers.NewTenancyHandler(cfg.NATSURL, natsConn.nc)
-	defer historyHandler.Stop()
-	defer alertsHandler.Stop()
+  alertsHandler := handlers.NewAlertsHandler(natsConn.nc, natsConn.js, notificationService)
+  metricsHandler := handlers.NewMetricsHandler(natsConn.nc, natsConn.js)
+  exportHandler := handlers.NewExportHandler(natsConn.nc, natsConn.js)
+  securityHandler := handlers.NewSecurityHandler(natsConn.nc, natsConn.js, auditService)
+  historyHandler := handlers.NewHistoryHandler(natsConn.nc, natsConn.js)
+  configHandler := handlers.NewConfigHandler()
+  defer metricsHandler.Stop()
+  tenancyHandler := handlers.NewTenancyHandler(cfg.NATSURL, natsConn.nc)
+  defer historyHandler.Stop()
+  defer alertsHandler.Stop()
 
 	sseHub := handlers.NewSSEHub(natsConn.nc)
 	go sseHub.MonitorStreams()
@@ -288,6 +286,12 @@ func main() {
 		apiGroup.GET("/alerts/triggers", alertsHandler.ListTriggers)
 		apiGroup.POST("/alerts/triggers/:id/ack", alertsHandler.AckTrigger)
 
+		// Config routes (for setup wizard)
+		apiGroup.GET("/config", configHandler.GetConfig)
+		apiGroup.PUT("/config", configHandler.UpdateConfig)
+		apiGroup.GET("/config/setup", configHandler.CheckSetup)
+		apiGroup.POST("/config/setup/complete", configHandler.CompleteSetup)
+
 		// Export routes
 		apiGroup.GET("/export/streams", exportHandler.ExportAllStreams)
 		apiGroup.GET("/export/streams/:name", exportHandler.ExportStream)
@@ -324,14 +328,11 @@ func main() {
 	})
 
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", cfg.ResolvedPort),
+		Addr:    fmt.Sprintf(":%d", cfg.ServerPort),
 		Handler: r,
 	}
 
-	if cfg.ServerPort != strconv.Itoa(cfg.ResolvedPort) {
-		log.Printf("Port %s was busy, using random port %d instead", cfg.ServerPort, cfg.ResolvedPort)
-	}
-	log.Printf("Server starting on http://localhost:%d", cfg.ResolvedPort)
+	log.Printf("Server starting on http://localhost:%d", cfg.ServerPort)
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {

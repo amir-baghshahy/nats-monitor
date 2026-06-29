@@ -8,8 +8,9 @@ import (
 	"log"
 	"net/http"
 	"net/smtp"
-	"os"
 	"time"
+
+	"github.com/amir-baghshahy/nats-horizon/internal/config"
 )
 
 // NotificationChannel represents a notification destination
@@ -48,6 +49,20 @@ type EmailConfig struct {
 	Subject  string `json:"subject"`
 	UseTLS   bool   `json:"use_tls"`
 }
+
+// AlertTrigger represents the trigger data for notifications
+type AlertTrigger struct {
+	AlertID     string                 `json:"alert_id"`
+	AlertName   string                 `json:"alert_name"`
+	Severity    AlertSeverity          `json:"severity"`
+	Message     string                 `json:"message"`
+	Data        map[string]interface{} `json:"data"`
+	TriggeredAt time.Time              `json:"triggered_at"`
+	Acked       bool                   `json:"acked"`
+}
+
+// AlertSeverity represents the severity level
+type AlertSeverity string
 
 // NotificationService handles sending notifications to various channels
 type NotificationService struct {
@@ -270,12 +285,14 @@ func (s *NotificationService) sendWebhookNotification(channel NotificationChanne
 
 // sendEmailNotification sends an email notification
 func (s *NotificationService) sendEmailNotification(channel NotificationChannel, trigger AlertTrigger) error {
+	cfg := config.Get()
+	
 	config := EmailConfig{
-		SMTPHost: getStringConfig(channel.Config, "smtp_host", getEnv("SMTP_HOST", "localhost")),
-		SMTPPort: getIntConfig(channel.Config, "smtp_port", getEnvInt("SMTP_PORT", 587)),
-		Username: getStringConfig(channel.Config, "username", getEnv("SMTP_USERNAME", "")),
-		Password: getStringConfig(channel.Config, "password", getEnv("SMTP_PASSWORD", "")),
-		From:     getStringConfig(channel.Config, "from", getEnv("SMTP_FROM", "nats-horizon@example.com")),
+		SMTPHost: getStringConfig(channel.Config, "smtp_host", cfg.SMTPHost),
+		SMTPPort: getIntConfig(channel.Config, "smtp_port", cfg.SMTPPort),
+		Username: getStringConfig(channel.Config, "username", cfg.SMTPUsername),
+		Password: getStringConfig(channel.Config, "password", cfg.SMTPPassword),
+		From:     getStringConfig(channel.Config, "from", cfg.SMTPFrom),
 		To:       getStringConfig(channel.Config, "to", ""),
 		Subject:  getStringConfig(channel.Config, "subject", fmt.Sprintf("Alert: %s", trigger.AlertName)),
 		UseTLS:   getBoolConfig(channel.Config, "use_tls", true),
@@ -352,38 +369,6 @@ body { font-family: Arial, sans-serif; margin: 20px; }
 	log.Printf("Email notification sent to %s for alert %s", config.To, trigger.AlertName)
 	return nil
 }
-
-// Helper functions for environment variables
-func getEnv(key, defaultValue string) string {
-	if val := os.Getenv(key); val != "" {
-		return val
-	}
-	return defaultValue
-}
-
-func getEnvInt(key string, defaultValue int) int {
-	if val := os.Getenv(key); val != "" {
-		var result int
-		if _, err := fmt.Sscanf(val, "%d", &result); err == nil {
-			return result
-		}
-	}
-	return defaultValue
-}
-
-// AlertTrigger represents the trigger data for notifications
-type AlertTrigger struct {
-	AlertID     string                 `json:"alert_id"`
-	AlertName   string                 `json:"alert_name"`
-	Severity    AlertSeverity          `json:"severity"`
-	Message     string                 `json:"message"`
-	Data        map[string]interface{} `json:"data"`
-	TriggeredAt time.Time              `json:"triggered_at"`
-	Acked       bool                   `json:"acked"`
-}
-
-// AlertSeverity represents the severity level
-type AlertSeverity string
 
 // Helper functions for config extraction
 func getStringConfig(config map[string]interface{}, key, defaultValue string) string {
