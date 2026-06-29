@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Loader2 } from "lucide-react";
 import { createPortal } from "react-dom";
 import type { ConsumerEditForm } from "../hooks/useConsumerDetail";
 import { ModalWrapper } from "../../../components/ui/Modal";
 import Select from "../../../components/ui/Select";
+import Button from "../../../components/ui/Button";
 
 interface EditConsumerModalProps {
   name: string;
@@ -82,11 +82,12 @@ export default function EditConsumerModal({
           </div>
         </div>
         <div className="flex justify-end gap-3 pt-6">
-          <button onClick={onClose} className="btn-secondary">{t("common.cancel")}</button>
-          <button onClick={onSave} disabled={updatePending} className="btn-primary flex items-center gap-2">
-            {updatePending && <Loader2 className="w-4 h-4 animate-spin" />}
+          <Button onClick={onClose} variant="secondary">
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={onSave} disabled={updatePending} variant="primary" loading={updatePending}>
             {t("common.save")}
-          </button>
+          </Button>
         </div>
       </div>
       </div>

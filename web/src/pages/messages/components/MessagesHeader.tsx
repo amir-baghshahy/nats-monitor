@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Download, Trash2, Send } from "lucide-react";
+import Button from "../../../components/ui/Button";
 
 interface MessagesHeaderProps {
   title: string;
@@ -33,30 +34,31 @@ export default function MessagesHeader({
       <div className="flex items-center gap-3">
         {selectedCount > 0 && (
           <>
-            <button
+            <Button
               onClick={onExport}
-              className="btn-secondary flex items-center gap-2"
+              variant="secondary"
+              icon={<Download className="w-4 h-4" />}
             >
-              <Download className="w-4 h-4" />
               {t('messages.exportCount', { count: selectedCount })}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={onDelete}
               disabled={isDeletePending}
-              className="btn-secondary flex items-center gap-2 text-status-error"
+              variant="secondary"
+              icon={<Trash2 className="w-4 h-4" />}
+              className="text-status-error"
             >
-              <Trash2 className="w-4 h-4" />
               {t('messages.deleteCount', { count: selectedCount })}
-            </button>
+            </Button>
           </>
         )}
-        <button
+        <Button
           onClick={onPublish}
-          className="btn-primary flex items-center gap-2"
+          variant="primary"
+          icon={<Send className="w-4 h-4" />}
         >
-          <Send className="w-4 h-4" />
           {t('messages.publishMessage')}
-        </button>
+        </Button>
         {rightElement}
       </div>
     </div>

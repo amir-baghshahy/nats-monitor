@@ -3,6 +3,7 @@ import { Filter, Search } from "lucide-react";
 
 import type { ConsumerFilterStatus } from "../hooks/useConsumersPage";
 import Select from "../../../components/ui/Select";
+import Button from "../../../components/ui/Button";
 
 interface ConsumersFiltersProps {
   searchQuery: string;
@@ -109,19 +110,23 @@ export default function ConsumersFilters({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button
+            <Button
               onClick={onClear}
               disabled={activeFilterCount === 0}
-              className="btn-secondary"
+              variant="secondary"
             >
               {t("consumers.clearFilters")}
-            </button>
-            <button onClick={onShowMoreFiltersToggle} className="btn-secondary">
-              <Filter className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={onShowMoreFiltersToggle}
+              variant="secondary"
+              icon={<Filter className="h-4 w-4" />}
+              iconPosition="left"
+            >
               {showMoreFilters
                 ? t("consumers.lessFilters")
                 : t("consumers.moreFilters")}
-            </button>
+            </Button>
           </div>
         </div>
 

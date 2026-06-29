@@ -187,38 +187,131 @@ See `.env.example` for the full list.
 
 ## ✨ Features
 
-### 🔍 Observability
-| | |
-|---|---|
-| 🔴 **Real-time Dashboard** | Stream stats, consumer health, active connections, instant overview |
-| 📈 **System Metrics** | Memory, connections, bandwidth, messages/sec (live streaming via SSE) |
-| 🔌 **Cluster Topology** | Node map, cluster health, server info at a glance |
-| 📊 **History & Reports** | Usage trends, min/max/avg analysis, 1h/6h/24h/7d windows |
+### 🎯 Core Features
 
-### 🛠️ Management
-| | |
-|---|---|
-| 🛠️ **Stream CRUD** | Create, edit, delete, and purge JetStream streams |
-| 👥 **Consumer CRUD** | Full lifecycle: create, update, delete, replay, pause/resume, lag reset |
-| 📨 **Message Operations** | Publish, request/reply, browse messages with JSON formatting, export to JSON/CSV |
-| 🔑 **KV Store Browser** | Browse buckets, keys, revision history, purge |
+#### 📊 **Dashboard & Monitoring**
+| Feature | Description |
+|---------|-------------|
+| **Real-time Dashboard** | Live stream stats, consumer health, active connections, memory usage, and instant system overview |
+| **System Metrics** | Memory, storage, connections, bandwidth, messages/sec with live streaming via SSE |
+| **Performance Charts** | Time-series visualizations using Recharts with customizable time windows (15m, 1h, 6h, 24h) |
+| **Cluster Topology** | Visual node map, cluster health status, server information at a glance |
+| **History & Reports** | Usage trends, min/max/avg analysis, historical data across 1h/6h/24h/7d windows |
+| **Visual Stream Graph** | Interactive topology visualization showing streams, consumers, message flows, and health indicators using React Flow |
 
-### 🚨 Operations
-| | |
-|---|---|
-| 🚨 **Alerting** | Consumer lag, storage thresholds, custom checks. Slack, webhook, PagerDuty ready |
-| 📝 **Audit Logs** | Full audit trail of all management actions |
-| 🔒 **Security Dashboard** | Users, connections, permissions, compliance status |
-| 📤 **Export** | Streams, consumers, messages — all exportable |
+#### 🛠️ **Stream Management**
+| Feature | Description |
+|---------|-------------|
+| **Stream CRUD** | Create, edit, delete, and purge JetStream streams with full configuration support |
+| **Stream Filtering** | Filter by storage type (File/Memory), health status, and name with real-time updates |
+| **Stream Details** | View stream configuration, subjects, consumers, messages, bytes, and retention policies |
+| **Stream Replication** | View and manage stream replication factors and cluster placement |
 
-### 💻 Developer Experience
-| | |
-|---|---|
-| 🏢 **Multi-tenancy** | Save and switch between multiple NATS connections |
-| 📡 **Live Subject Monitor** | Subscribe to subjects, watch traffic in real-time (SSE) |
-| 🎯 **Service Discovery** | Active subscriptions, services, core NATS traffic monitor |
-| ⚡ **SSE-powered** | Real-time updates without WebSocket overhead |
-| 🌍 **Internationalization (i18n)** | 6 languages: English, Persian (فارسی), French (Français), German (Deutsch), Turkish (Türkçe), Arabic (العربية) with RTL support |
+#### 👥 **Consumer Management**
+| Feature | Description |
+|---------|-------------|
+| **Consumer CRUD** | Full lifecycle: create, update, delete, clone, and manage consumers |
+| **Consumer Operations** | Replay, pause/resume, lag reset, and next message delivery |
+| **Consumer Filtering** | Filter by stream, status (Active/Idle/Stuck), and name with active filters display |
+| **Consumer Details** | View ack policy, delivery policy, replay policy, max deliveries, and current lag |
+| **Consumer Clone** | Clone existing consumers with modified configurations |
+
+#### 📨 **Messaging & Operations**
+| Feature | Description |
+|---------|-------------|
+| **Message Browser** | Browse, search, and paginate through stream messages with JSON formatting |
+| **Message Publishing** | Publish messages to any subject with JSON payload support and stream selection |
+| **Request/Reply** | Send requests and receive replies with timeout handling |
+| **Message Export** | Export messages to JSON or CSV formats |
+| **Subject Explorer** | Explore active subjects, view message rates, and monitor traffic patterns |
+| **Service Discovery** | View active services, subscriptions, and core NATS traffic monitoring |
+
+#### 🔑 **KV Store & Object Store**
+| Feature | Description |
+|---------|-------------|
+| **KV Store Browser** | Browse buckets, keys, values, and revision history |
+| **KV Operations** | Create, read, update, delete keys with full CRUD support |
+| **Bucket Management** | View bucket configuration, history, TTL, and purge operations |
+| **Revision History** | Track key changes with timestamps and revision numbers |
+
+#### 🚨 **Alerting & Security**
+| Feature | Description |
+|---------|-------------|
+| **Alerting Engine** | Configure alerts for consumer lag, storage usage, message counts, and custom thresholds |
+| **Multi-channel Alerts** | Support for Email, Webhook, and Slack notifications with customizable channels |
+| **Alert Configuration** | Set severity levels (Info/Warning/Critical), conditions, operators, and cooldowns |
+| **Audit Logs** | Full audit trail of all management actions with timestamps and user tracking |
+| **Security Dashboard** | View users, connections, permissions, and compliance status |
+| **Connection Management** | Monitor active connections with authentication info and subscriptions |
+
+#### 📁 **Data Management**
+| Feature | Description |
+|---------|-------------|
+| **Export Streams** | Export stream configurations, messages, and metadata |
+| **Export Consumers** | Export consumer configurations and states |
+| **Export Messages** | Export messages with filtering and formatting options |
+| **Data Formats** | Support for JSON and CSV export formats |
+
+#### 🏢 **Multi-tenancy**
+| Feature | Description |
+|---------|-------------|
+| **Connection Management** | Save and switch between multiple NATS server connections |
+| **Connection Profiles** | Store connection details with names, URLs, and authentication |
+| **Quick Switching** | Easily switch between different NATS environments |
+
+#### 🌍 **User Experience**
+| Feature | Description |
+|---------|-------------|
+| **Internationalization (i18n)** | Full support for 6 languages: English, Persian (فارسی), French (Français), German (Deutsch), Turkish (Türkçe), Arabic (العربية) |
+| **RTL Support** | Complete Right-to-Left layout support for Persian and Arabic with proper text alignment and component mirroring |
+| **Custom Select Components** | RTL-aware dropdown menus with Portal rendering for proper z-index handling |
+| **Responsive Design** | Fully responsive UI that works on desktop, tablet, and mobile devices |
+| **Dark Theme** | Modern dark theme optimized for long monitoring sessions |
+| **Loading States** | Skeleton loaders and spinners for better perceived performance |
+| **Error Handling** | Comprehensive error boundaries and user-friendly error messages |
+
+#### ⚡ **Real-time Features**
+| Feature | Description |
+|---------|-------------|
+| **SSE-powered Updates** | Server-Sent Events for real-time metrics and status updates without WebSocket overhead |
+| **Auto-reconnect** | Automatic reconnection handling for dropped SSE connections |
+| **Live Subject Monitor** | Subscribe to subjects and watch traffic in real-time |
+| **Traffic Monitor** | Core NATS traffic monitoring with message flow visualization |
+
+#### 🔧 **Technical Features**
+| Feature | Description |
+|---------|-------------|
+| **React Query Caching** | Intelligent data caching and background refetching for optimal performance |
+| **TypeScript** | Full type safety throughout the application with comprehensive type definitions |
+| **React Flow Integration** | Interactive graph visualization for stream topology and message flows |
+| **TailwindCSS Styling** | Modern, consistent styling with RTL utility classes |
+| **Lucide Icons** | Comprehensive icon set with RTL-aware directional icons |
+
+---
+
+### 🎨 **UI Components Library**
+
+#### Custom Components
+- **Select Component** - RTL-aware with Portal rendering for dropdowns
+- **Toggle Button** - Custom toggle switches for settings
+- **Modal System** - Reusable modal components with accessibility
+- **Toast Notifications** - Success, error, and info notifications
+- **Loading States** - Skeleton loaders and spinners
+- **Empty States** - User-friendly empty state displays
+- **Status Badges** - Color-coded status indicators
+- **Stat Cards** - Metric display cards with trends
+
+#### Form Components
+- **Filter Toolbar** - Advanced filtering with active filter chips
+- **Pagination** - Custom pagination with page size selection
+- **Search Bar** - Real-time search with debouncing
+- **Bulk Actions** - Multi-select operations with confirmation
+
+#### Data Visualization
+- **Metrics Graph** - Time-series charts with zoom and pan
+- **Sparklines** - Miniature trend indicators
+- **Health Indicators** - Visual health status with color coding
+- **Progress Bars** - Storage and capacity indicators
 
 ---
 
@@ -230,21 +323,37 @@ See `.env.example` for the full list.
 
 ![Dashboard](docs/images/dashboard.png)
 
+**Real-time monitoring dashboard** showing stream statistics, consumer health, active connections, memory usage, and system metrics at a glance.
+
 ### Stream Management
 
 ![Streams](docs/images/stream.png)
+
+**Complete stream management** with filtering by storage type and health status, view stream details, messages, bytes, and consumer counts.
+
+### Visual Stream Graph
+
+![Visual Stream Graph](docs/images/visual-stream-graph.png)
+
+**Interactive topology visualization** showing streams, consumers, and message flows with React Flow. View health indicators, message counts, and relationships in real-time.
 
 ### Message Browser
 
 ![Messages](docs/images/message.png)
 
+**Powerful message browser** with search, pagination, JSON formatting, and export capabilities.
+
 ### Cluster Topology
 
 ![Cluster](docs/images/cluster.png)
 
+**Cluster health overview** showing node status, connections, and server information.
+
 ### Multi-tenancy
 
 ![Tenancy](docs/images/tenancy.png)
+
+**Multi-connection management** - save and switch between multiple NATS server connections easily.
 
 ---
 
@@ -377,12 +486,14 @@ Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark
 | **Backend** | Go 1.25 + Gin | Single binary, minimal memory (~15MB), fast compile |
 | **Frontend** | React 18 + Vite + TailwindCSS | Fast dev, small bundle, modern DX |
 | **Charts** | Recharts | Responsive, composable, no bloat |
+| **Graph Visualization** | React Flow | Interactive node-based graphs for stream topology |
 | **Data Fetching** | TanStack Query (v5) | Caching, refetch, optimistic updates |
 | **Real-time** | Server-Sent Events (SSE) | Simpler than WebSocket, auto-reconnect, perfect for server→client streams |
 | **Icons** | Lucide React | Tree-shakeable, consistent design |
 | **API Docs** | Swagger / OpenAPI | Auto-generated, interactive |
 | **Docker** | Multi-stage | Frontend builds inside backend builder; final image is ~28MB Alpine |
 | **i18n** | react-i18next | 6 languages with RTL support (Persian, Arabic) |
+| **UI Components** | Custom components + Portal rendering | RTL-aware dropdowns |
 
 ### Why Go + SSE?
 
@@ -436,23 +547,10 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 
 ---
 
-## 🚧 Roadmap
 
-- [x] Real-time dashboard with SSE
-- [x] Stream/consumer management (CRUD)
-- [x] Consumer replay, pause, resume, lag reset
-- [x] KV Store browser with history
-- [x] Alerting engine
-- [x] Audit logs & security dashboard
-- [x] Multi-tenancy (multiple saved connections)
-- [x] Export streams, consumers, messages
-- [x] History & usage analysis
-- [x] Cluster topology
-- [x] Native desktop app (Wails v2)
-- [x] Internationalization (i18n) with 6 languages
-- [x] RTL support for Persian and Arabic
+
+### In Progress 🚧
 - [ ] Consumer-based message inspection deep-dive
-- [x] Kubernetes Helm chart
 - [ ] Object Store browser
 
 ---

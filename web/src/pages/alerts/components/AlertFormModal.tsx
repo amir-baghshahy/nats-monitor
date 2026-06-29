@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Mail, Webhook, Hash } from "lucide-react";
 import Select from "../../../components/ui/Select";
+import Button from "../../../components/ui/Button";
 import { useState } from "react";
 
 interface AlertFormModalProps {
@@ -293,15 +294,21 @@ export default function AlertFormModal({
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 p-5 border-t border-dark-border flex-shrink-0">
-          <button type="button" onClick={onClose} className="btn-secondary">
+          <Button type="button" onClick={onClose} variant="secondary">
             {t("common.cancel")}
-          </button>
-          <button type="submit" disabled={isPending} className="btn-primary" onClick={(e) => {
-            const form = (e.target as HTMLElement).closest('.card')?.querySelector('form');
-            if (form) form.requestSubmit();
-          }}>
+          </Button>
+          <Button
+            type="submit"
+            disabled={isPending}
+            variant="primary"
+            loading={isPending}
+            onClick={(e) => {
+              const form = (e.target as HTMLElement).closest('.card')?.querySelector('form');
+              if (form) form.requestSubmit();
+            }}
+          >
             {alert ? t("alerts.update") : t("alerts.create")} Alert
-          </button>
+          </Button>
         </div>
       </div>
     </div>,

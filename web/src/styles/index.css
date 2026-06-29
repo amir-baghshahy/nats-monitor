@@ -49,7 +49,7 @@
 
   .btn-primary,
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 focus:ring-offset-dark-bg disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 focus:ring-offset-dark-bg disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none transition-all duration-200;
   }
 
   .btn-primary {
@@ -58,6 +58,14 @@
 
   .btn-secondary {
     @apply border border-dark-border/70 bg-dark-card/70 text-dark-text hover:border-primary-500/40 hover:bg-dark-border/70 active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white shadow-lg shadow-red-500/20 hover:bg-red-500 hover:shadow-red-500/30 active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-dark-text hover:bg-dark-bg/50 active:scale-[0.98];
   }
 
   .input {

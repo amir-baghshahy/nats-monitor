@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { ConsumerStats } from "../hooks/useConsumersPage";
 import { useTranslation } from "react-i18next";
+import Button from "../../../components/ui/Button";
 
 interface ConsumersHeaderProps {
   sseConnected: boolean;
@@ -64,39 +65,45 @@ export default function ConsumersHeader({
 
         {selectedCount > 0 && (
           <>
-            <button
+            <Button
               onClick={onBulkResume}
               disabled={pauseResumePending}
-              className="btn-secondary flex items-center gap-2"
+              variant="secondary"
+              icon={<Play className="w-4 h-4" />}
             >
-              <Play className="w-4 h-4" />
               {t('consumers.resume', { count: selectedCount })}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={onBulkPause}
               disabled={pauseResumePending}
-              className="btn-secondary flex items-center gap-2"
+              variant="secondary"
+              icon={<Pause className="w-4 h-4" />}
             >
-              <Pause className="w-4 h-4" />
               {t('consumers.pause', { count: selectedCount })}
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={onBulkDelete}
               disabled={deletePending}
-              className="btn-secondary flex items-center gap-2 text-status-error"
+              variant="secondary"
+              icon={<Trash2 className="w-4 h-4" />}
+              className="text-status-error"
             >
-              <Trash2 className="w-4 h-4" />
               {t('consumers.deleteSelected', { count: selectedCount })}
-            </button>
+            </Button>
           </>
         )}
-        <button onClick={onRefetch} className="btn-secondary">
-          <RefreshCw className="w-4 h-4" />
-        </button>
-        <button onClick={onNavigateStreams} className="btn-primary flex items-center gap-2">
-          <Plus className="w-4 h-4" />
+        <Button
+          onClick={onRefetch}
+          variant="secondary"
+          icon={<RefreshCw className="w-4 h-4" />}
+        />
+        <Button
+          onClick={onNavigateStreams}
+          variant="primary"
+          icon={<Plus className="w-4 h-4" />}
+        >
           {t('consumers.createConsumer')}
-        </button>
+        </Button>
       </div>
     </div>
   );

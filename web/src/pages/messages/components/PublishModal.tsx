@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { ModalWrapper } from "../../../components/ui/Modal";
 import { useState } from "react";
 import Select from "../../../components/ui/Select";
+import Button from "../../../components/ui/Button";
 
 interface PublishModalProps {
   streams: any[];
@@ -88,21 +89,22 @@ export default function PublishModal({
             </div>
 
             <div className="flex items-center gap-3 pt-4">
-              <button
+              <Button
                 type="button"
                 onClick={onClose}
-                className="btn-secondary"
+                variant="secondary"
               >
                 {t('common.cancel')}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={isPending}
-                className="btn-primary flex items-center gap-2"
+                variant="primary"
+                loading={isPending}
+                icon={<Send className="w-4 h-4" />}
               >
-                <Send className="w-4 h-4" />
                 {isPending ? t('messages.publishing') : t('messages.publish')}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

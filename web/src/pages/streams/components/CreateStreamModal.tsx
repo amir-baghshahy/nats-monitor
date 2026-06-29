@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import type { CreateStreamRequest } from "../../../types";
 import { ModalWrapper } from "../../../components/ui/Modal";
 import Select from "../../../components/ui/Select";
+import Button from "../../../components/ui/Button";
 
 interface CreateStreamModalProps {
   onClose: () => void;
@@ -97,12 +98,12 @@ export default function CreateStreamModal({
               />
             </div>
             <div className="flex items-center gap-3 pt-4">
-               <button type="button" onClick={onClose} className="btn-secondary">
+               <Button type="button" onClick={onClose} variant="secondary">
                  {t("common.cancel")}
-               </button>
-               <button type="submit" disabled={isPending} className="btn-primary">
+               </Button>
+               <Button type="submit" disabled={isPending} variant="primary" loading={isPending}>
                  {isPending ? t("streams.creating") : t("streams.createStream")}
-               </button>
+               </Button>
             </div>
           </form>
         </div>
