@@ -1,5 +1,6 @@
 import { RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Select from "../../../components/ui/Select";
 
 interface MessagesPaginationProps {
   currentPage: number;
@@ -28,16 +29,17 @@ export default function MessagesPagination({
           <span className="text-sm text-dark-muted">
             {t('common.showing', { start: (currentPage - 1) * messagesPerPage + 1, end: Math.min(currentPage * messagesPerPage, totalMessages), total: totalMessages.toLocaleString() })}
           </span>
-          <select
-            value={messagesPerPage}
-            onChange={(e) => onPerPageChange(parseInt(e.target.value))}
-            className="input py-1 text-sm w-24"
+          <Select
+            value={messagesPerPage.toString()}
+            onChange={(value) => onPerPageChange(parseInt(value))}
+            options={[
+              { value: "25", label: t('messages.perPage', { count: 25 }) },
+              { value: "50", label: t('messages.perPage', { count: 50 }) },
+              { value: "100", label: t('messages.perPage', { count: 100 }) },
+            ]}
+            className="py-1 text-sm w-24"
             aria-label={t('messages.perPage', { count: messagesPerPage })}
-          >
-            <option value="25">{t('messages.perPage', { count: 25 })}</option>
-            <option value="50">{t('messages.perPage', { count: 50 })}</option>
-            <option value="100">{t('messages.perPage', { count: 100 })}</option>
-          </select>
+          />
         </div>
         <div className="flex items-center gap-2">
           <button

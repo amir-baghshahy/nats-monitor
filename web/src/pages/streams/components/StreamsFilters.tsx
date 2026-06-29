@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { SearchBar } from "../../../components/common";
+import Select from "../../../components/ui/Select";
 import type { StreamFilters } from "../hooks/useStreamsPage";
 
 interface StreamsFiltersProps {
@@ -29,26 +30,28 @@ export default function StreamsFilters({
           />
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:w-[420px] xl:flex-none">
-            <select
+            <Select
               value={filters.storage}
-              onChange={(event) => updateFilter("storage", event.target.value as StreamFilters["storage"])}
-              className="input"
-            >
-               <option value="all">{t("streams.allStorage")}</option>
-               <option value="file">{t("streams.file")}</option>
-               <option value="memory">{t("streams.memory")}</option>
-            </select>
+              onChange={(value) => updateFilter("storage", value as StreamFilters["storage"])}
+              options={[
+                { value: "all", label: t("streams.allStorage") },
+                { value: "file", label: t("streams.file") },
+                { value: "memory", label: t("streams.memory") },
+              ]}
+              aria-label={t("streams.storage")}
+            />
 
-            <select
+            <Select
               value={filters.status}
-              onChange={(event) => updateFilter("status", event.target.value as StreamFilters["status"])}
-              className="input"
-            >
-               <option value="all">{t("streams.allStatus")}</option>
-               <option value="healthy">{t("streams.healthy")}</option>
-               <option value="warning">{t("streams.warning")}</option>
-               <option value="critical">{t("streams.critical")}</option>
-            </select>
+              onChange={(value) => updateFilter("status", value as StreamFilters["status"])}
+              options={[
+                { value: "all", label: t("streams.allStatus") },
+                { value: "healthy", label: t("streams.healthy") },
+                { value: "warning", label: t("streams.warning") },
+                { value: "critical", label: t("streams.critical") },
+              ]}
+              aria-label={t("streams.status")}
+            />
           </div>
         </div>
 

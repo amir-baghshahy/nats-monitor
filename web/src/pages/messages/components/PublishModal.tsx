@@ -2,6 +2,8 @@ import { Send } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
 import { ModalWrapper } from "../../../components/ui/Modal";
+import { useState } from "react";
+import Select from "../../../components/ui/Select";
 
 interface PublishModalProps {
   streams: any[];
@@ -19,12 +21,14 @@ export default function PublishModal({
   onSubmit,
 }: PublishModalProps) {
   const { t } = useTranslation();
+  const [selectedStream, setSelectedStream] = useState(defaultStream);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
     onSubmit({
-      stream: (formData.get("stream") as string) || defaultStream,
+      stream: selectedStream || (formData.get("stream") as string) || defaultStream,
       subject: formData.get("subject") as string,
       data: formData.get("payload") as string,
     });
@@ -47,20 +51,17 @@ export default function PublishModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">{t('messages.stream')}</label>
-              <select
-                name="stream"
-                className="input w-full"
-                defaultValue={defaultStream}
-              >
-                {streams?.map((stream: any) => (
-                  <option
-                    key={stream.config?.name || ""}
-                    value={stream.config?.name || ""}
-                  >
-                    {stream.config?.name || ""}
-                  </option>
-                ))}
-              </select>
+              <Select
+                value={selectedStream}
+                onChange={setSelectedStream}
+                options={streams?.map((stream: any) => ({
+                  value: stream.config?.name || "",
+                  label: stream.config?.name || ""
+                })) || []}
+                placeholder={t('messages.selectStream')}
+                className="w-full"
+                aria-label={t('messages.stream')}
+              />
             </div>
 
             <div>

@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { createPortal } from "react-dom";
 import type { ConsumerEditForm } from "../hooks/useConsumerDetail";
 import { ModalWrapper } from "../../../components/ui/Modal";
+import Select from "../../../components/ui/Select";
 
 interface EditConsumerModalProps {
   name: string;
@@ -36,26 +37,44 @@ export default function EditConsumerModal({
         <div className="space-y-4">
           <div>
             <label className="block text-sm text-dark-muted mb-1">{t("consumers.ackPolicy")}</label>
-            <select className="input w-full" value={editForm.ack_policy} onChange={(e) => setEditForm({ ...editForm, ack_policy: e.target.value })}>
-              <option value="explicit">{t("consumers.explicit")}</option>
-              <option value="all">{t("common.all")}</option>
-              <option value="none">{t("common.none")}</option>
-            </select>
+            <Select
+              value={editForm.ack_policy}
+              onChange={(value) => setEditForm({ ...editForm, ack_policy: value })}
+              options={[
+                { value: "explicit", label: t("consumers.explicit") },
+                { value: "all", label: t("common.all") },
+                { value: "none", label: t("common.none") },
+              ]}
+              className="w-full"
+              aria-label={t("consumers.ackPolicy")}
+            />
           </div>
           <div>
             <label className="block text-sm text-dark-muted mb-1">{t("consumers.deliveryPolicy")}</label>
-            <select className="input w-full" value={editForm.deliver_policy} onChange={(e) => setEditForm({ ...editForm, deliver_policy: e.target.value })}>
-              <option value="all">{t("common.all")}</option>
-              <option value="last">{t("consumers.last")}</option>
-              <option value="new">{t("consumers.new")}</option>
-            </select>
+            <Select
+              value={editForm.deliver_policy}
+              onChange={(value) => setEditForm({ ...editForm, deliver_policy: value })}
+              options={[
+                { value: "all", label: t("common.all") },
+                { value: "last", label: t("consumers.last") },
+                { value: "new", label: t("consumers.new") },
+              ]}
+              className="w-full"
+              aria-label={t("consumers.deliveryPolicy")}
+            />
           </div>
           <div>
             <label className="block text-sm text-dark-muted mb-1">{t("consumers.replayPolicy")}</label>
-            <select className="input w-full" value={editForm.replay_policy} onChange={(e) => setEditForm({ ...editForm, replay_policy: e.target.value })}>
-              <option value="instant">{t("consumers.instant")}</option>
-              <option value="original">{t("consumers.original")}</option>
-            </select>
+            <Select
+              value={editForm.replay_policy}
+              onChange={(value) => setEditForm({ ...editForm, replay_policy: value })}
+              options={[
+                { value: "instant", label: t("consumers.instant") },
+                { value: "original", label: t("consumers.original") },
+              ]}
+              className="w-full"
+              aria-label={t("consumers.replayPolicy")}
+            />
           </div>
           <div>
             <label className="block text-sm text-dark-muted mb-1">{t("consumers.maxDeliverLabel")}</label>

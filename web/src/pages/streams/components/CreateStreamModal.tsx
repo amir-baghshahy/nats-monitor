@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import type { CreateStreamRequest } from "../../../types";
 import { ModalWrapper } from "../../../components/ui/Modal";
+import Select from "../../../components/ui/Select";
 
 interface CreateStreamModalProps {
   onClose: () => void;
@@ -73,16 +74,16 @@ export default function CreateStreamModal({
             </div>
             <div>
                <label className="block text-sm font-medium mb-2">{t("streams.storage")}</label>
-              <select
+              <Select
                 value={storage}
-                onChange={(event) =>
-                  setStorage(event.target.value as "file" | "memory")
-                }
-                className="input w-full"
-              >
-                 <option value="file">{t("streams.file")}</option>
-                 <option value="memory">{t("streams.memory")}</option>
-              </select>
+                onChange={(value) => setStorage(value as "file" | "memory")}
+                options={[
+                  { value: "file", label: t("streams.file") },
+                  { value: "memory", label: t("streams.memory") },
+                ]}
+                className="w-full"
+                aria-label={t("streams.storage")}
+              />
             </div>
             <div>
                <label className="block text-sm font-medium mb-2">{t("streams.replicas")}</label>

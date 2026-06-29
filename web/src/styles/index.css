@@ -254,6 +254,32 @@
   transform: scaleX(-1);
 }
 
+/* Custom Select RTL Styles */
+[dir="rtl"] select.input {
+  background-position: left 0.75rem center;
+}
+
+[dir="rtl"] .input[type="search"],
+[dir="rtl"] input[type="text"],
+[dir="rtl"] textarea {
+  text-align: right;
+}
+
+/* Custom Select Component RTL Enhancement */
+[dir="rtl"] .select-wrapper button {
+  text-align: right;
+}
+
+[dir="rtl"] .select-dropdown {
+  right: 0;
+  left: auto;
+}
+
+[dir="ltr"] .select-dropdown {
+  left: 0;
+  right: auto;
+}
+
 .recharts-tooltip-wrapper {
   outline: none !important;
 }

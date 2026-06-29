@@ -14,6 +14,7 @@ import type { MetricDataPoint } from "../../types";
 import { formatBytes, formatNumber } from "../../utils/formatters";
 import { PageError, PageLoading } from "../../components/ui/PageState";
 import { t } from "i18next";
+import Select from "../../components/ui/Select";
 
 const durations = [
   { label: "last15Minutes", value: "15m" },
@@ -147,17 +148,16 @@ export default function MetricsPage({
           <p className="mt-1 text-dark-muted">{t("metrics.subtitle")}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <select
+          <Select
             value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            className="input w-full shrink-0 sm:w-auto"
-          >
-            {durations.map((item) => (
-              <option key={item.value} value={item.value}>
-                {t(`metrics.${item.label}`)}
-              </option>
-            ))}
-          </select>
+            onChange={setDuration}
+            options={durations.map((item) => ({
+              value: item.value,
+              label: t(`metrics.${item.label}`)
+            }))}
+            className="w-full shrink-0 sm:w-auto"
+            aria-label={t('metrics.duration')}
+          />
           <button
             type="button"
             onClick={() => setAutoRefresh(!autoRefresh)}
@@ -351,22 +351,19 @@ export default function MetricsPage({
       <div className="mb-4 mt-8">
         <div className="card overflow-hidden flex flex-col max-h-[800px]">
           <div className="p-4 border-b border-dark-border bg-dark-bg/50 flex-shrink-0">
-            <select
+            <Select
               value={selectedStream || "all"}
-              onChange={(e) =>
+              onChange={(value) =>
                 setSelectedStream(
-                  e.target.value === "all" ? null : e.target.value,
+                  value === "all" ? null : value,
                 )
               }
-              className="input w-full"
-            >
-              <option value="all">{t("metrics.allStreams")}</option>
-              {streamNames.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
+              options={[
+                { value: "all", label: t("metrics.allStreams") },
+                ...streamNames.map((name) => ({ value: name, label: name }))
+              ]}
+              aria-label={t('metrics.selectStream')}
+            />
           </div>
 
           <div className="overflow-y-auto scrollbar-thin flex-1 p-4">

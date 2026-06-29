@@ -1,5 +1,6 @@
 import { Search, Filter, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Select from "../../../components/ui/Select";
 
 interface StreamSelectorProps {
   streams: any[];
@@ -28,21 +29,16 @@ export default function StreamSelector({
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1">
           <label className="block text-sm text-dark-muted mb-2">{t('messages.selectStream')}</label>
-          <select
+          <Select
             value={selectedStream}
-            onChange={(e) => onStreamChange(e.target.value)}
-            className="input w-full"
-          >
-            {streams?.map((stream: any) => (
-              <option
-                key={stream.config?.name || stream.name}
-                value={stream.config?.name || stream.name}
-              >
-                {stream.config?.name || stream.name} (
-                {stream.state?.messages?.toLocaleString()} messages)
-              </option>
-            ))}
-          </select>
+            onChange={onStreamChange}
+            options={streams?.map((stream: any) => ({
+              value: stream.config?.name || stream.name,
+              label: `${stream.config?.name || stream.name} (${stream.state?.messages?.toLocaleString()} messages)`
+            })) || []}
+            placeholder={t('messages.selectStream')}
+            className="w-full"
+          />
         </div>
         <div className="flex-1 relative">
           <label className="block text-sm text-dark-muted mb-2">{t('messages.searchMessages')}</label>

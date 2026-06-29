@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Filter, Search } from "lucide-react";
+
 import type { ConsumerFilterStatus } from "../hooks/useConsumersPage";
+import Select from "../../../components/ui/Select";
 
 interface ConsumersFiltersProps {
   searchQuery: string;
@@ -51,37 +53,37 @@ export default function ConsumersFilters({
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:w-[420px] xl:flex-none">
-            <select
+            <Select
               value={selectedStream}
-              onChange={(event) => onStreamChange(event.target.value)}
-              className="input"
-            >
-              <option value="all">{t("consumers.allStreams")}</option>
-              {streamOptions.map((streamName) => (
-                <option key={streamName} value={streamName}>
-                  {streamName}
-                </option>
-              ))}
-            </select>
+              onChange={onStreamChange}
+              options={[
+                { value: "all", label: t("consumers.allStreams") },
+                ...streamOptions.map((name) => ({ value: name, label: name })),
+              ]}
+              aria-label={t("consumers.allStreams")}
+            />
 
-            <select
+            <Select
               value={filterStatus}
-              onChange={(event) =>
-                onStatusChange(event.target.value as ConsumerFilterStatus)
+              onChange={(value) =>
+                onStatusChange(value as ConsumerFilterStatus)
               }
-              className="input"
-            >
-              <option value="all">{t("consumers.allStatus")}</option>
-              <option value="active">{t("consumers.active")}</option>
-              <option value="stuck">{t("consumers.stuck")}</option>
-              <option value="idle">{t("consumers.idle")}</option>
-            </select>
+              options={[
+                { value: "all", label: t("consumers.allStatus") },
+                { value: "active", label: t("consumers.active") },
+                { value: "stuck", label: t("consumers.stuck") },
+                { value: "idle", label: t("consumers.idle") },
+              ]}
+              aria-label={t("consumers.allStatus")}
+            />
           </div>
         </div>
 
         <div className="flex flex-col gap-3 border-t border-dark-border/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-medium text-dark-muted">{t("common.filters")}</span>
+            <span className="text-xs font-medium text-dark-muted">
+              {t("common.filters")}
+            </span>
             {activeFilterCount === 0 ? (
               <span className="rounded-full bg-dark-bg px-3 py-1 text-xs text-dark-muted">
                 {t("consumers.showingAllConsumers")}
@@ -99,7 +101,9 @@ export default function ConsumersFilters({
             ) : null}
             {filterStatus !== "all" ? (
               <span className="rounded-full bg-primary-500/15 px-3 py-1 text-xs text-primary-300 ring-1 ring-primary-500/30">
-                {t("consumers.statusFilter", { value: getStatusLabel(filterStatus) })}
+                {t("consumers.statusFilter", {
+                  value: getStatusLabel(filterStatus),
+                })}
               </span>
             ) : null}
           </div>
@@ -114,7 +118,9 @@ export default function ConsumersFilters({
             </button>
             <button onClick={onShowMoreFiltersToggle} className="btn-secondary">
               <Filter className="h-4 w-4" />
-              {showMoreFilters ? t("consumers.lessFilters") : t("consumers.moreFilters")}
+              {showMoreFilters
+                ? t("consumers.lessFilters")
+                : t("consumers.moreFilters")}
             </button>
           </div>
         </div>
@@ -122,7 +128,9 @@ export default function ConsumersFilters({
         {showMoreFilters && (
           <div className="grid grid-cols-1 gap-4 rounded-2xl border border-dark-border/50 bg-dark-bg/40 p-4 md:grid-cols-3">
             <div>
-              <p className="text-xs font-medium text-dark-muted">{t("consumers.quickStatus")}</p>
+              <p className="text-xs font-medium text-dark-muted">
+                {t("consumers.quickStatus")}
+              </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {statusOptions.map((status) => (
                   <button
@@ -134,30 +142,37 @@ export default function ConsumersFilters({
                         : "bg-dark-card text-dark-muted ring-dark-border hover:bg-dark-border hover:text-dark-text"
                     }`}
                   >
-                    {status === "all" ? t("common.all") : getStatusLabel(status)}
+                    {status === "all"
+                      ? t("common.all")
+                      : getStatusLabel(status)}
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <p className="text-xs font-medium text-dark-muted">{t("consumers.stream")}</p>
-              <select
+              <p className="text-xs font-medium text-dark-muted">
+                {t("consumers.stream")}
+              </p>
+              <Select
                 value={selectedStream}
-                onChange={(event) => onStreamChange(event.target.value)}
-                className="input mt-3"
-              >
-                <option value="all">{t("consumers.allStreams")}</option>
-                {streamOptions.map((streamName) => (
-                  <option key={streamName} value={streamName}>
-                    {streamName}
-                  </option>
-                ))}
-              </select>
+                onChange={onStreamChange}
+                options={[
+                  { value: "all", label: t("consumers.allStreams") },
+                  ...streamOptions.map((name) => ({
+                    value: name,
+                    label: name,
+                  })),
+                ]}
+                className="mt-3"
+                aria-label={t("consumers.stream")}
+              />
             </div>
 
             <div>
-              <p className="text-xs font-medium text-dark-muted">{t("common.search").replace("...", "")}</p>
+              <p className="text-xs font-medium text-dark-muted">
+                {t("common.search").replace("...", "")}
+              </p>
               <input
                 type="text"
                 value={searchQuery}

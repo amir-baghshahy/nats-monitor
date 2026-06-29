@@ -2,6 +2,8 @@ import type { Alert } from "../../../types";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Mail, Webhook, Hash } from "lucide-react";
+import Select from "../../../components/ui/Select";
+import { useState } from "react";
 
 interface AlertFormModalProps {
   isOpen: boolean;
@@ -19,6 +21,10 @@ export default function AlertFormModal({
   onSubmit,
 }: AlertFormModalProps) {
   const { t } = useTranslation();
+  const [conditionType, setConditionType] = useState(alert?.condition?.type || "lag");
+  const [operator, setOperator] = useState(alert?.condition?.operator || ">");
+  const [severity, setSeverity] = useState(alert?.severity || "warning");
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,14 +39,14 @@ export default function AlertFormModal({
     const data: Partial<Alert> = {
       name: formData.get("name") as string,
       description: formData.get("description") as string,
-      severity: formData.get("severity") as Alert["severity"],
+      severity: severity as Alert["severity"],
       enabled: formData.get("enabled") === "true",
       condition: {
-        type: formData.get("condition_type") as string,
+        type: conditionType as string,
         stream: formData.get("stream") as string,
         consumer: formData.get("consumer") as string,
         threshold: parseInt(formData.get("threshold") as string),
-        operator: formData.get("operator") as string,
+        operator: operator as string,
       },
       channels,
       emailAddress: formData.get("email_address") as string,
@@ -113,28 +119,32 @@ export default function AlertFormModal({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
                   <label className="block text-xs text-dark-muted mb-1">Type</label>
-                  <select
-                    name="condition_type"
-                    defaultValue={alert?.condition?.type || "lag"}
-                    className="input w-full"
-                  >
-                    <option value="lag">{t("alerts.consumerLag")}</option>
-                    <option value="storage">{t("alerts.storageUsage")}</option>
-                    <option value="messages">{t("alerts.messageCount")}</option>
-                  </select>
+                  <Select
+                    value={conditionType}
+                    onChange={setConditionType}
+                    options={[
+                      { value: "lag", label: t("alerts.consumerLag") },
+                      { value: "storage", label: t("alerts.storageUsage") },
+                      { value: "messages", label: t("alerts.messageCount") },
+                    ]}
+                    className="w-full"
+                    aria-label={t("alerts.conditionType")}
+                  />
                 </div>
                 <div>
                   <label className="block text-xs text-dark-muted mb-1">Operator</label>
-                  <select
-                    name="operator"
-                    defaultValue={alert?.condition?.operator || ">"}
-                    className="input w-full"
-                  >
-                    <option value=">">&gt;</option>
-                    <option value="<">&lt;</option>
-                    <option value=">=">&ge;</option>
-                    <option value="<=">&le;</option>
-                  </select>
+                  <Select
+                    value={operator}
+                    onChange={setOperator}
+                    options={[
+                      { value: ">", label: ">" },
+                      { value: "<", label: "<" },
+                      { value: ">=", label: ">=" },
+                      { value: "<=", label: "<=" },
+                    ]}
+                    className="w-full"
+                    aria-label={t("alerts.operator")}
+                  />
                 </div>
                 <div>
                   <label className="block text-xs text-dark-muted mb-1">Threshold</label>
@@ -148,15 +158,17 @@ export default function AlertFormModal({
                 </div>
                 <div>
                   <label className="block text-xs text-dark-muted mb-1">Severity</label>
-                  <select
-                    name="severity"
-                    defaultValue={alert?.severity || "warning"}
-                    className="input w-full"
-                  >
-                    <option value="info">{t("alerts.info")}</option>
-                    <option value="warning">{t("alerts.warning")}</option>
-                    <option value="critical">{t("alerts.critical")}</option>
-                  </select>
+                  <Select
+                    value={severity}
+                    onChange={setSeverity}
+                    options={[
+                      { value: "info", label: t("alerts.info") },
+                      { value: "warning", label: t("alerts.warning") },
+                      { value: "critical", label: t("alerts.critical") },
+                    ]}
+                    className="w-full"
+                    aria-label={t("alerts.severity")}
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">

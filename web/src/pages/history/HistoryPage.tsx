@@ -2,6 +2,7 @@ import { UseHistoryReturn } from "./hooks/useHistory";
 import { useTranslation } from "react-i18next";
 import { BarChart3, History as HistoryIcon, RefreshCw } from "lucide-react";
 import EmptyState from "../../components/ui/EmptyState";
+import Select from "../../components/ui/Select";
 
 const durations = ["1h", "6h", "24h", "7d"];
 
@@ -26,17 +27,16 @@ export default function HistoryPage({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <select
+          <Select
             value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            className="input w-full sm:w-auto"
-          >
-            {durations.map((item) => (
-              <option key={item} value={item}>
-                {t('history.lastDuration', { duration: item })}
-              </option>
-            ))}
-          </select>
+            onChange={setDuration}
+            options={durations.map((item) => ({
+              value: item,
+              label: t('history.lastDuration', { duration: item })
+            }))}
+            className="w-full sm:w-auto"
+            aria-label={t('history.duration')}
+          />
           <button onClick={() => refetch()} className="btn-secondary">
             <RefreshCw className="h-4 w-4" />
             {t('common.refresh')}
@@ -46,18 +46,15 @@ export default function HistoryPage({
 
       <div className="mb-4 card">
         <label className="mb-2 block text-sm text-dark-muted">{t('history.stream')}</label>
-        <select
+        <Select
           value={selectedStream}
-          onChange={(e) => setSelectedStream(e.target.value)}
-          className="input"
-        >
-          <option value="all">{t('history.allStreams')}</option>
-          {streamOptions.map((name: any, index: number) => (
-            <option key={name || `stream-${index}`} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
+          onChange={setSelectedStream}
+          options={[
+            { value: "all", label: t('history.allStreams') },
+            ...streamOptions.map((name: any) => ({ value: name, label: name }))
+          ]}
+          aria-label={t('history.stream')}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
