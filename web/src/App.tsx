@@ -17,6 +17,7 @@ import Alerts from "./pages/Alerts";
 import Metrics from "./pages/Metrics";
 import History from "./pages/History";
 import Tenancy from "./pages/Tenancy";
+import VisualStreamGraph from "./pages/VisualStreamGraph";
 
 function App() {
   useDirection();
@@ -60,6 +61,7 @@ function App() {
           <Route path="/cluster" element={<Cluster />} />
           <Route path="/alerts" element={<Alerts />} />
           <Route path="/metrics" element={<Metrics />} />
+          <Route path="/visual-stream-graph" element={<VisualStreamGraph />} />
           <Route path="/history" element={<History />} />
           <Route path="/security" element={<Security />} />
           <Route path="/tenancy" element={<Tenancy />} />

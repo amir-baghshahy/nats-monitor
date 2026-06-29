@@ -97,6 +97,7 @@
     "cluster": "Cluster",
     "alerts": "Alertes",
     "metrics": "Métriques",
+    "visualStreamGraph": "Graphe Visuel des Flux",
     "history": "Historique",
     "security": "Sécurité",
     "tenancy": "Location"
@@ -626,6 +627,25 @@
     "storage": "Stockage",
     "noMetricsAvailable": "Aucune métrique disponible",
     "noMetricsAvailableDescription": "Les métriques apparaîtront ici une fois les flux créés et échantillonnés."
+  },
+  "visualStreamGraph": {
+    "title": "Graphe Visuel des Flux",
+    "subtitle": "Topologie interactive des flux et consommateurs NATS",
+    "loading": "Chargement du graphe...",
+    "noStreams": "Aucun flux trouvé",
+    "noConsumers": "Aucun consommateur trouvé",
+    "nodeDetails": "Détails du nœud",
+    "streamDetails": "Détails du flux",
+    "consumerDetails": "Détails du consommateur",
+    "health": "État de santé",
+    "messages": "Messages",
+    "lag": "Retard consommateur",
+    "ackRate": "Taux d'acquittement",
+    "subjects": "Sujets",
+    "subscriptions": "Abonnements actifs",
+    "healthy": "sain",
+    "warning": "avertissement",
+    "critical": "critique"
   },
   "kvStore": {
     "title": "Stockage clé-valeur",

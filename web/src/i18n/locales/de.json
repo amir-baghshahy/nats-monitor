@@ -97,6 +97,7 @@
     "cluster": "Cluster",
     "alerts": "Warnungen",
     "metrics": "Metriken",
+    "visualStreamGraph": "Visueller Stromgraph",
     "history": "Verlauf",
     "security": "Sicherheit",
     "tenancy": "Multi-Tenancy"
@@ -627,6 +628,25 @@
     "storage": "Speicher",
     "noMetricsAvailable": "Keine Metriken verfügbar",
     "noMetricsAvailableDescription": "Metriken werden hier angezeigt, sobald Streams erstellt und gesammelt wurden."
+  },
+  "visualStreamGraph": {
+    "title": "Visueller Stromgraph",
+    "subtitle": "Interaktive Topologie von NATS-Streams und Consumern",
+    "loading": "Stromgraph wird geladen...",
+    "noStreams": "Keine Streams gefunden",
+    "noConsumers": "Keine Consumer gefunden",
+    "nodeDetails": "Knotendetails",
+    "streamDetails": "Stream-Details",
+    "consumerDetails": "Consumer-Details",
+    "health": "Gesundheitsstatus",
+    "messages": "Nachrichten",
+    "lag": "Consumer-Verzögerung",
+    "ackRate": "Bestätigungsrate",
+    "subjects": "Subjects",
+    "subscriptions": "Aktive Abonnements",
+    "healthy": "gesund",
+    "warning": "Warnung",
+    "critical": "kritisch"
   },
   "kvStore": {
     "title": "Schlüssel-Wert-Speicher",

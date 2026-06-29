@@ -490,3 +490,79 @@
 .transition-fast {
   @apply transition-all duration-150 ease-out;
 }
+
+/* React Flow Custom Styles */
+.react-flow__node {
+  cursor: pointer;
+}
+
+.react-flow__node.selected {
+  border: 2px solid rgb(59, 130, 246);
+}
+
+.react-flow__edge-path {
+  stroke: rgb(100, 116, 139);
+  stroke-width: 2;
+}
+
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 5;
+  animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background: #64748b;
+  border: 2px solid #475569;
+}
+
+.react-flow__handle:hover {
+  background: #3b82f6;
+}
+
+.react-flow__controls {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+}
+
+.react-flow__controls-button {
+  background: transparent;
+  border-color: rgba(51, 65, 85, 0.7);
+  color: #e2e8f0;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.react-flow__minimap {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+}
+
+.react-flow__background {
+  background-color: #0f172a;
+}
+
+.react-flow__edge animated .react-flow__edge-path {
+  stroke-dasharray: 8;
+  animation: flowAnimation 1s linear infinite;
+}
+
+@keyframes flowAnimation {
+  from {
+    stroke-dashoffset: 16;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+

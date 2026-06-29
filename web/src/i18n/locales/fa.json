@@ -97,6 +97,7 @@
     "cluster": "خوشه",
     "alerts": "هشدارها",
     "metrics": "معیارها",
+    "visualStreamGraph": "گراف بصری استریم‌ها",
     "history": "تاریخچه",
     "security": "امنیت",
     "tenancy": "اجاره‌دهی"
@@ -624,6 +625,25 @@
     "storage": "ذخیره‌سازی",
     "noMetricsAvailable": "معیاری در دسترس نیست",
     "noMetricsAvailableDescription": "معیارها پس از ایجاد و نمونه‌برداری استریم‌ها نمایش داده می‌شوند."
+  },
+  "visualStreamGraph": {
+    "title": "گراف بصری استریم‌ها",
+    "subtitle": "توپولوژی تعاملی استریم‌ها و مصرف‌کننده‌های NATS",
+    "loading": "در حال بارگذاری گراف استریم...",
+    "noStreams": "هیچ استریمی یافت نشد",
+    "noConsumers": "هیچ مصرف‌کننده‌ای یافت نشد",
+    "nodeDetails": "جزئیات گره",
+    "streamDetails": "جزئیات استریم",
+    "consumerDetails": "جزئیات مصرف‌کننده",
+    "health": "وضعیت سلامتی",
+    "messages": "پیام‌ها",
+    "lag": "تأخیر مصرف‌کننده",
+    "ackRate": "نرخ تأیید",
+    "subjects": "موضوع‌ها",
+    "subscriptions": "اشتراک‌های فعال",
+    "healthy": "سالم",
+    "warning": "هشدار",
+    "critical": "بحرانی"
   },
   "kvStore": {
     "title": "ذخیره‌سازی کلید-مقدار",

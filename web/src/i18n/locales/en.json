@@ -97,6 +97,7 @@
     "cluster": "Cluster",
     "alerts": "Alerts",
     "metrics": "Metrics",
+    "visualStreamGraph": "Visual Stream Graph",
     "history": "History",
     "security": "Security",
     "tenancy": "Tenancy"
@@ -626,6 +627,25 @@
     "storage": "Storage",
     "noMetricsAvailable": "No Metrics Available",
     "noMetricsAvailableDescription": "Metrics will appear here once streams are created and sampled."
+  },
+  "visualStreamGraph": {
+    "title": "Visual Stream Graph",
+    "subtitle": "Interactive topology of NATS streams and consumers",
+    "loading": "Loading stream graph...",
+    "noStreams": "No streams found",
+    "noConsumers": "No consumers found",
+    "nodeDetails": "Node Details",
+    "streamDetails": "Stream Details",
+    "consumerDetails": "Consumer Details",
+    "health": "Health Status",
+    "messages": "Messages",
+    "lag": "Consumer Lag",
+    "ackRate": "Ack Rate",
+    "subjects": "Subjects",
+    "subscriptions": "Active Subscriptions",
+    "healthy": "healthy",
+    "warning": "warning",
+    "critical": "critical"
   },
   "kvStore": {
     "title": "Key-Value Store",

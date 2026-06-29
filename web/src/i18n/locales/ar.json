@@ -97,6 +97,7 @@
     "cluster": "العنقود",
     "alerts": "التنبيهات",
     "metrics": "المقاييس",
+    "visualStreamGraph": "رسم التدفقات البصري",
     "history": "السجل",
     "security": "الأمان",
     "tenancy": "الإيجار"
@@ -625,6 +626,25 @@
     "storage": "التخزين",
     "noMetricsAvailable": "لا توجد مقاييس متاحة",
     "noMetricsAvailableDescription": "ستظهر المقاييس هنا بمجرد إنشاء التدفقات وأخذ العينات."
+  },
+  "visualStreamGraph": {
+    "title": "رسم التدفقات البصري",
+    "subtitle": "الهيكل التفاعلي للتي تدفقات ومستهلكي NATS",
+    "loading": "جاري تحميل الرسم البياني...",
+    "noStreams": "لم يتم العثور على تدفقات",
+    "noConsumers": "لم يتم العثور على مستهلكين",
+    "nodeDetails": "تفاصيل العقدة",
+    "streamDetails": "تفاصيل التدفق",
+    "consumerDetails": "تفاصيل المستهلك",
+    "health": "حالة الصحة",
+    "messages": "الرسائل",
+    "lag": "تأخير المستهلك",
+    "ackRate": "معدل الاعتراف",
+    "subjects": "المواضيع",
+    "subscriptions": "الاشتراكات النشطة",
+    "healthy": "سليم",
+    "warning": "تحذير",
+    "critical": "حرج"
   },
   "kvStore": {
     "title": "مخزن المفاتيح والقيم",

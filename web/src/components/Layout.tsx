@@ -21,6 +21,7 @@ import {
   History,
   Menu,
   X,
+  Network,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -34,6 +35,7 @@ const NAV_ITEMS = [
   { key: "cluster", href: "/cluster", icon: Activity },
   { key: "alerts", href: "/alerts", icon: Bell },
   { key: "metrics", href: "/metrics", icon: BarChart3 },
+  { key: "visualStreamGraph", href: "/visual-stream-graph", icon: Network },
   { key: "history", href: "/history", icon: History },
   { key: "security", href: "/security", icon: Shield },
   { key: "tenancy", href: "/tenancy", icon: Globe },

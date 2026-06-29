@@ -97,6 +97,7 @@
     "cluster": "Küme",
     "alerts": "Uyarılar",
     "metrics": "Metrikler",
+    "visualStreamGraph": "Görsel Akış Grafiği",
     "history": "Geçmiş",
     "security": "Güvenlik",
     "tenancy": "Kiralama"
@@ -620,6 +621,25 @@
     "storage": "Depolama",
     "noMetricsAvailable": "Metrik Yok",
     "noMetricsAvailableDescription": "Metrikler, akışlar oluşturulduktan ve örneklendikten sonra burada görünecek."
+  },
+  "visualStreamGraph": {
+    "title": "Görsel Akış Grafiği",
+    "subtitle": "NATS akışları ve tüketicilerinin interaktif topolojisi",
+    "loading": "Akış grafiği yükleniyor...",
+    "noStreams": "Akış bulunamadı",
+    "noConsumers": "Tüketici bulunamadı",
+    "nodeDetails": "Düğüm Detayları",
+    "streamDetails": "Akış Detayları",
+    "consumerDetails": "Tüketici Detayları",
+    "health": "Sağlık Durumu",
+    "messages": "Mesajlar",
+    "lag": "Tüketici Gecikmesi",
+    "ackRate": "Onaylama Oranı",
+    "subjects": "Konular",
+    "subscriptions": "Aktif Abonelikler",
+    "healthy": "sağlıklı",
+    "warning": "uyarı",
+    "critical": "kritik"
   },
   "kvStore": {
     "title": "Anahtar-Değer Deposu",
