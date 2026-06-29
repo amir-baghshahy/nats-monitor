@@ -15,12 +15,7 @@ import {
   resetConsumerLag,
   setConsumerState,
 } from "../../../utils/natsOperations";
-import {
-  Activity,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-} from "lucide-react";
+import { Activity, AlertCircle, CheckCircle, Clock } from "lucide-react";
 
 export type ConsumerFilterStatus = "all" | "active" | "stuck" | "idle";
 
@@ -139,8 +134,9 @@ export function useConsumersPage(): UseConsumersPageReturn {
   const stats = useMemo<ConsumerStats>(
     () => ({
       total: filteredConsumers.length,
-      active: filteredConsumers.filter((consumer) => consumer.status === "active")
-        .length,
+      active: filteredConsumers.filter(
+        (consumer) => consumer.status === "active",
+      ).length,
       stuck: filteredConsumers.filter((consumer) => consumer.status === "stuck")
         .length,
       idle: filteredConsumers.filter((consumer) => consumer.status === "idle")
@@ -154,7 +150,9 @@ export function useConsumersPage(): UseConsumersPageReturn {
           ? filteredConsumers.reduce(
               (acc, consumer) =>
                 acc +
-                parseFloat(String(consumer.ack_rate || "0").replace(/[^0-9.]/g, "")) || 0,
+                  parseFloat(
+                    String(consumer.ack_rate || "0").replace(/[^0-9.]/g, ""),
+                  ) || 0,
               0,
             ) / filteredConsumers.length
           : 0,
@@ -202,7 +200,9 @@ export function useConsumersPage(): UseConsumersPageReturn {
   const handleBulkResume = async () => {
     const ok = await confirm({
       title: t("consumers.resumeConsumers"),
-      message: t("consumers.resumeConsumersConfirm", { count: selectedConsumers.size }),
+      message: t("consumers.resumeConsumersConfirm", {
+        count: selectedConsumers.size,
+      }),
       confirmLabel: t("consumers.resumeConsumers").split(" ")[0],
       variant: "info",
     });
@@ -223,7 +223,9 @@ export function useConsumersPage(): UseConsumersPageReturn {
   const handleBulkPause = async () => {
     const ok = await confirm({
       title: t("consumers.pauseConsumers"),
-      message: t("consumers.pauseConsumersConfirm", { count: selectedConsumers.size }),
+      message: t("consumers.pauseConsumersConfirm", {
+        count: selectedConsumers.size,
+      }),
       confirmLabel: t("consumers.pauseConsumers").split(" ")[0],
       variant: "warning",
     });
@@ -244,7 +246,9 @@ export function useConsumersPage(): UseConsumersPageReturn {
   const handleBulkDelete = async () => {
     const ok = await confirm({
       title: t("consumers.deleteConsumers"),
-      message: t("consumers.deleteConsumersConfirm", { count: selectedConsumers.size }),
+      message: t("consumers.deleteConsumersConfirm", {
+        count: selectedConsumers.size,
+      }),
       confirmLabel: t("common.delete"),
       variant: "danger",
     });
@@ -252,7 +256,10 @@ export function useConsumersPage(): UseConsumersPageReturn {
       filteredConsumers.forEach((consumer) => {
         if (!consumer.name || !consumer.stream) return;
         if (selectedConsumers.has(consumer.name)) {
-          deleteMutation.mutate({ stream: consumer.stream, name: consumer.name });
+          deleteMutation.mutate({
+            stream: consumer.stream,
+            name: consumer.name,
+          });
         }
       });
     }

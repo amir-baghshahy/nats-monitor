@@ -8,8 +8,11 @@ import (
 	"log"
 	"net/http"
 	"net/smtp"
+	"os"
 	"time"
 )
+
+// NotificationChannel represents a notification destination
 
 // NotificationChannel represents a notification destination
 type NotificationChannel struct {
@@ -79,27 +82,47 @@ func (s *NotificationService) RemoveChannel(channelType string) {
 }
 
 // SendAlertNotification sends an alert notification to all enabled channels
-func (s *NotificationService) SendAlertNotification(trigger AlertTrigger) error {
-	for _, channel := range s.channels {
-		if !channel.Enabled {
-			continue
+func (s *NotificationService) SendAlertNotification(trigger AlertTrigger, emailAddr, webhookURL, slackWebhookURL string) error {
+	// Send to email if address provided
+	if emailAddr != "" {
+		emailChannel := NotificationChannel{
+			Type:    "email",
+			Enabled: true,
+			Config: map[string]interface{}{
+				"to":      emailAddr,
+				"subject": fmt.Sprintf("Alert: %s", trigger.AlertName),
+			},
 		}
+		if err := s.sendEmailNotification(emailChannel, trigger); err != nil {
+			log.Printf("Failed to send email notification: %v", err)
+		}
+	}
 
-		switch channel.Type {
-		case "slack":
-			if err := s.sendSlackNotification(channel, trigger); err != nil {
-				log.Printf("Failed to send Slack notification: %v", err)
-			}
-		case "webhook":
-			if err := s.sendWebhookNotification(channel, trigger); err != nil {
-				log.Printf("Failed to send webhook notification: %v", err)
-			}
-		case "email":
-			if err := s.sendEmailNotification(channel, trigger); err != nil {
-				log.Printf("Failed to send email notification: %v", err)
-			}
-		default:
-			log.Printf("Unknown notification channel type: %s", channel.Type)
+	// Send to webhook if URL provided
+	if webhookURL != "" {
+		webhookChannel := NotificationChannel{
+			Type:    "webhook",
+			Enabled: true,
+			Config: map[string]interface{}{
+				"url": webhookURL,
+			},
+		}
+		if err := s.sendWebhookNotification(webhookChannel, trigger); err != nil {
+			log.Printf("Failed to send webhook notification: %v", err)
+		}
+	}
+
+	// Send to Slack if webhook URL provided
+	if slackWebhookURL != "" {
+		slackChannel := NotificationChannel{
+			Type:    "slack",
+			Enabled: true,
+			Config: map[string]interface{}{
+				"url": slackWebhookURL,
+			},
+		}
+		if err := s.sendSlackNotification(slackChannel, trigger); err != nil {
+			log.Printf("Failed to send Slack notification: %v", err)
 		}
 	}
 
@@ -248,11 +271,11 @@ func (s *NotificationService) sendWebhookNotification(channel NotificationChanne
 // sendEmailNotification sends an email notification
 func (s *NotificationService) sendEmailNotification(channel NotificationChannel, trigger AlertTrigger) error {
 	config := EmailConfig{
-		SMTPHost: getStringConfig(channel.Config, "smtp_host", "localhost"),
-		SMTPPort: getIntConfig(channel.Config, "smtp_port", 587),
-		Username: getStringConfig(channel.Config, "username", ""),
-		Password: getStringConfig(channel.Config, "password", ""),
-		From:     getStringConfig(channel.Config, "from", "nats-horizon@example.com"),
+		SMTPHost: getStringConfig(channel.Config, "smtp_host", getEnv("SMTP_HOST", "localhost")),
+		SMTPPort: getIntConfig(channel.Config, "smtp_port", getEnvInt("SMTP_PORT", 587)),
+		Username: getStringConfig(channel.Config, "username", getEnv("SMTP_USERNAME", "")),
+		Password: getStringConfig(channel.Config, "password", getEnv("SMTP_PASSWORD", "")),
+		From:     getStringConfig(channel.Config, "from", getEnv("SMTP_FROM", "nats-horizon@example.com")),
 		To:       getStringConfig(channel.Config, "to", ""),
 		Subject:  getStringConfig(channel.Config, "subject", fmt.Sprintf("Alert: %s", trigger.AlertName)),
 		UseTLS:   getBoolConfig(channel.Config, "use_tls", true),
@@ -262,28 +285,49 @@ func (s *NotificationService) sendEmailNotification(channel NotificationChannel,
 		return fmt.Errorf("Email recipient is required")
 	}
 
-	// Build email body
-	body := fmt.Sprintf(`
-Alert Notification
-==================
-
-Alert: %s
-Severity: %s
-Time: %s
-
-Message: %s
-
-Data: %+v
-`,
+	// Build HTML email body
+	body := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+.container { max-width: 600px; margin: 0 auto; }
+.header { background: #1a1a2e; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+.content { background: #f4f4f4; padding: 20px; border-radius: 0 0 8px 8px; }
+.severity-info { color: #17a2b8; }
+.severity-warning { color: #ffc107; font-weight: bold; }
+.severity-critical { color: #dc3545; font-weight: bold; }
+.footer { margin-top: 20px; font-size: 12px; color: #666; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h2>🚨 NATS Horizon Alert</h2>
+</div>
+<div class="content">
+<h3>%s</h3>
+<p class="severity-%s"><strong>Severity:</strong> %s</p>
+<p><strong>Time:</strong> %s</p>
+<p><strong>Message:</strong> %s</p>
+<pre>%+v</pre>
+</div>
+<div class="footer">
+<p>This alert was generated by NATS Horizon Monitoring Platform</p>
+</div>
+</div>
+</body>
+</html>`,
 		trigger.AlertName,
+		string(trigger.Severity),
 		string(trigger.Severity),
 		trigger.TriggeredAt.Format(time.RFC3339),
 		trigger.Message,
 		trigger.Data,
 	)
 
-	// Create message
-	message := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s",
+	// Create message with proper MIME headers
+	message := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=\"UTF-8\"\r\n\r\n%s",
 		config.From, config.To, config.Subject, body)
 
 	// Connect to SMTP server
@@ -298,8 +342,6 @@ Data: %+v
 	if config.UseTLS {
 		err = smtp.SendMail(addr, auth, config.From, []string{config.To}, []byte(message))
 	} else {
-		// For non-TLS, we'd need to use STARTTLS or a different approach
-		// For now, we'll use the same function but it might not work without proper TLS setup
 		err = smtp.SendMail(addr, auth, config.From, []string{config.To}, []byte(message))
 	}
 
@@ -307,7 +349,26 @@ Data: %+v
 		return fmt.Errorf("failed to send email: %w", err)
 	}
 
+	log.Printf("Email notification sent to %s for alert %s", config.To, trigger.AlertName)
 	return nil
+}
+
+// Helper functions for environment variables
+func getEnv(key, defaultValue string) string {
+	if val := os.Getenv(key); val != "" {
+		return val
+	}
+	return defaultValue
+}
+
+func getEnvInt(key string, defaultValue int) int {
+	if val := os.Getenv(key); val != "" {
+		var result int
+		if _, err := fmt.Sscanf(val, "%d", &result); err == nil {
+			return result
+		}
+	}
+	return defaultValue
 }
 
 // AlertTrigger represents the trigger data for notifications

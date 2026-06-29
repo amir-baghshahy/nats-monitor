@@ -10,6 +10,18 @@ export type Alert = {
      * Notification channels: "email", "webhook", "slack"
      */
     channels?: Array<string>;
+    /**
+     * Email address for email notifications
+     */
+    emailAddress?: string;
+    /**
+     * Webhook URL for webhook notifications
+     */
+    webhookUrl?: string;
+    /**
+     * Slack webhook URL for Slack notifications
+     */
+    slackWebhookUrl?: string;
     condition?: AlertCondition;
     cooldown?: Duration;
     created_at?: string;

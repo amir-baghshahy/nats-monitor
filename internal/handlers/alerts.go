@@ -29,18 +29,21 @@ type AlertCondition struct {
 
 // Alert represents an alert configuration
 type Alert struct {
-	ID           string         `json:"id"`
-	Name         string         `json:"name"`
-	Description  string         `json:"description"`
-	Condition    AlertCondition `json:"condition"`
-	Severity     AlertSeverity  `json:"severity"`
-	Enabled      bool           `json:"enabled"`
-	Channels     []string       `json:"channels"` // Notification channels: "email", "webhook", "slack"
-	Cooldown     time.Duration  `json:"cooldown"`
-	LastTrigger  time.Time      `json:"last_trigger"`
-	TriggerCount int            `json:"trigger_count"`
-	CreatedAt    time.Time      `json:"created_at"`
-	UpdatedAt    time.Time      `json:"updated_at"`
+	ID              string         `json:"id"`
+	Name            string         `json:"name"`
+	Description     string         `json:"description"`
+	Condition       AlertCondition `json:"condition"`
+	Severity        AlertSeverity  `json:"severity"`
+	Enabled         bool           `json:"enabled"`
+	Channels        []string       `json:"channels"` // Notification channels: "email", "webhook", "slack"
+	EmailAddress    string         `json:"email_address"`     // Email address for email notifications
+	WebhookURL      string         `json:"webhook_url"`       // Webhook URL for webhook notifications
+	SlackWebhookURL string         `json:"slack_webhook_url"` // Slack webhook URL for Slack notifications
+	Cooldown        time.Duration  `json:"cooldown"`
+	LastTrigger     time.Time      `json:"last_trigger"`
+	TriggerCount    int            `json:"trigger_count"`
+	CreatedAt       time.Time      `json:"created_at"`
+	UpdatedAt       time.Time      `json:"updated_at"`
 }
 
 // AlertTrigger represents a triggered alert instance
@@ -254,11 +257,11 @@ func (h *AlertsHandler) triggerAlert(alert *Alert, message string, data map[stri
 		h.triggers = h.triggers[len(h.triggers)-1000:]
 	}
 
-	h.sendNotifications(trigger, alert.Channels)
+	h.sendNotifications(trigger, alert)
 }
 
 // sendNotifications sends alert notifications using the notification service
-func (h *AlertsHandler) sendNotifications(trigger *AlertTrigger, channels []string) {
+func (h *AlertsHandler) sendNotifications(trigger *AlertTrigger, alert *Alert) {
 	if h.notificationSvc == nil {
 		log.Printf("Notification service not configured, skipping notifications")
 		return
@@ -275,7 +278,7 @@ func (h *AlertsHandler) sendNotifications(trigger *AlertTrigger, channels []stri
 		Acked:       trigger.Acked,
 	}
 
-	if err := h.notificationSvc.SendAlertNotification(svcTrigger); err != nil {
+	if err := h.notificationSvc.SendAlertNotification(svcTrigger, alert.EmailAddress, alert.WebhookURL, alert.SlackWebhookURL); err != nil {
 		log.Printf("Failed to send alert notifications: %v", err)
 	}
 }
@@ -407,6 +410,17 @@ func (h *AlertsHandler) CreateAlert(c *gin.Context) {
 		alert.Cooldown = 5 * time.Minute
 	}
 
+	// Store SMTP settings in environment for email notifications
+	if alert.EmailAddress != "" {
+		log.Printf("Alert %s configured with email notifications to: %s", alert.ID, alert.EmailAddress)
+	}
+	if alert.WebhookURL != "" {
+		log.Printf("Alert %s configured with webhook notifications: %s", alert.ID, alert.WebhookURL)
+	}
+	if alert.SlackWebhookURL != "" {
+		log.Printf("Alert %s configured with Slack notifications", alert.ID)
+	}
+
 	h.mu.Lock()
 	h.alerts[alert.ID] = &alert
 	h.mu.Unlock()
@@ -477,6 +491,9 @@ func (h *AlertsHandler) UpdateAlert(c *gin.Context) {
 	alert.Severity = updates.Severity
 	alert.Enabled = updates.Enabled
 	alert.Channels = updates.Channels
+	alert.EmailAddress = updates.EmailAddress
+	alert.WebhookURL = updates.WebhookURL
+	alert.SlackWebhookURL = updates.SlackWebhookURL
 	alert.Cooldown = updates.Cooldown
 	alert.UpdatedAt = time.Now()
 

@@ -114,8 +114,35 @@ desktop-build:
 
 desktop-build-linux-amd64:
 	@echo "Building desktop app for Linux amd64..."
-	@wails build -platform linux/amd64
+	@wails build -platform linux/amd64 -o build/nats-horizon-linux-amd64
 
 desktop-build-linux-arm64:
 	@echo "Building desktop app for Linux arm64..."
-	@wails build -platform linux/arm64
+	@wails build -platform linux/arm64 -o build/nats-horizon-linux-arm64
+
+desktop-build-windows-amd64:
+	@echo "Building desktop app for Windows amd64..."
+	@wails build -platform windows/amd64 -o build/nats-horizon-windows-amd64.exe
+
+desktop-build-windows-arm64:
+	@echo "Building desktop app for Windows arm64..."
+	@wails build -platform windows/arm64 -o build/nats-horizon-windows-arm64.exe
+
+desktop-build-darwin-amd64:
+	@echo "Building desktop app for macOS amd64..."
+	@wails build -platform darwin/amd64 -o build/nats-horizon-darwin-amd64
+
+desktop-build-darwin-arm64:
+	@echo "Building desktop app for macOS arm64..."
+	@wails build -platform darwin/arm64 -o build/nats-horizon-darwin-arm64
+
+desktop-build-all: desktop-build-linux-amd64 desktop-build-linux-arm64 desktop-build-windows-amd64 desktop-build-windows-arm64 desktop-build-darwin-amd64 desktop-build-darwin-arm64
+	@echo "Building all platforms..."
+	@mkdir -p dist
+	@cd build && zip -r ../dist/nats-horizon-linux-amd64.zip nats-horizon-linux-amd64
+	@cd build && zip -r ../dist/nats-horizon-linux-arm64.zip nats-horizon-linux-arm64
+	@cd build && zip -r ../dist/nats-horizon-windows-amd64.zip nats-horizon-windows-amd64.exe
+	@cd build && zip -r ../dist/nats-horizon-windows-arm64.zip nats-horizon-windows-arm64.exe
+	@cd build && zip -r ../dist/nats-horizon-darwin-amd64.zip nats-horizon-darwin-amd64
+	@cd build && zip -r ../dist/nats-horizon-darwin-arm64.zip nats-horizon-darwin-arm64
+	@echo "All builds complete in dist/"

@@ -192,9 +192,7 @@ export default function MetricsPage({
               <MessageSquare className="h-5 w-5 text-primary-400" />
             </div>
             <div>
-              <p className="text-xl font-bold">
-                {formatNumber(totalMessages)}
-              </p>
+              <p className="text-xl font-bold">{formatNumber(totalMessages)}</p>
               <p className="text-xs text-dark-muted">
                 {t("metrics.totalMessages")}
               </p>
