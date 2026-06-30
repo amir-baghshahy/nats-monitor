@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { BarChart3, History as HistoryIcon, RefreshCw } from "lucide-react";
 import EmptyState from "../../components/ui/EmptyState";
 import Select from "../../components/ui/Select";
-import { PanelCard } from "../../components/ui";
+import { PageHeader, PanelCard } from "../../components/ui";
 import { Button } from "../../components/ui";
 
 const durations = ["1h", "6h", "24h", "7d"];
@@ -20,30 +20,29 @@ export default function HistoryPage({
 }: UseHistoryReturn) {
   const { t } = useTranslation();
   return (
-    <div className="p-2 md:p-3 lg:p-4">
-      <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-xl font-bold md:text-2xl">{t('history.title')}</h1>
-          <p className="mt-1 text-dark-muted">
-            {t('history.subtitle')}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Select
-            value={duration}
-            onChange={setDuration}
-            options={durations.map((item) => ({
-              value: item,
-              label: t('history.lastDuration', { duration: item })
-            }))}
-            className="w-full sm:w-auto"
-            aria-label={t('history.duration')}
-          />
-          <Button variant="secondary" onClick={() => refetch()} icon={<RefreshCw className="h-4 w-4" />}>
-            {t('common.refresh')}
-          </Button>
-        </div>
-      </div>
+    <div className="p-2">
+      <PageHeader
+        title={t('history.title')}
+        subtitle={t('history.subtitle')}
+        icon={HistoryIcon}
+        actions={
+          <>
+            <Select
+              value={duration}
+              onChange={setDuration}
+              options={durations.map((item) => ({
+                value: item,
+                label: t('history.lastDuration', { duration: item })
+              }))}
+              className="w-full sm:w-auto"
+              aria-label={t('history.duration')}
+            />
+            <Button variant="secondary" onClick={() => refetch()} icon={<RefreshCw className="h-4 w-4" />}>
+              {t('common.refresh')}
+            </Button>
+          </>
+        }
+      />
 
       <div className="mb-4 card">
         <label className="mb-2 block text-sm text-dark-muted">{t('history.stream')}</label>

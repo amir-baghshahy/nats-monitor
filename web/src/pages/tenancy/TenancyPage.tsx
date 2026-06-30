@@ -6,7 +6,7 @@ import {
   RefreshCw, Play, Globe, Star
 } from 'lucide-react'
 import { PageError, PageLoading } from '../../components/ui/PageState'
-import { StatCard, PanelCard } from '../../components/ui'
+import { PageHeader, StatCard, PanelCard } from '../../components/ui'
 import { ModalWrapper } from "../../components/ui/Modal";
 import { Button } from "../../components/ui";
 
@@ -62,30 +62,26 @@ export default function TenancyPage({
   }
 
   return (
-    <div className="p-2 md:p-3 lg:p-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
-        <div>
-          <h1 className="text-xl md:text-xl font-bold flex items-center gap-3">
-            <Globe className="w-8 h-8 text-primary-400" />
-            {t('tenancy.title')}
-          </h1>
-          <p className="text-dark-muted mt-1">
-            {t('tenancy.subtitle')}
-          </p>
-        </div>
-        <Button
-          variant="primary"
-          icon={<Plus className="w-4 h-4" />}
-          onClick={() => {
-            setEditingConnection(null)
+    <div className="p-2">
+      <PageHeader
+        title={t('tenancy.title')}
+        subtitle={t('tenancy.subtitle')}
+        icon={Globe}
+        actions={
+          <Button
+            variant="primary"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => {
+              setEditingConnection(null)
             setShowModal(true)
           }}
         >
           {t('tenancy.addConnection')}
         </Button>
-      </div>
+      }
+      />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
         <StatCard
           icon={Server}
           value={stats.total}

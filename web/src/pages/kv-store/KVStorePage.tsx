@@ -190,7 +190,7 @@ export default function KVStorePage() {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
             <div className="card max-w-md w-full">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">{t('kvStore.createBucket')}</h2>
+              <h2 className="text-sm font-bold">{t('kvStore.createBucket')}</h2>
               <button onClick={() => store.setShowCreateModal(false)} className="p-2 hover:bg-dark-bg rounded-lg"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); const formData = new FormData(e.target as HTMLFormElement); store.handleCreateBucket({ name: formData.get("name"), history: parseInt(formData.get("history") as string) || 1, storage: "file", max_bytes: parseInt(formData.get("max_bytes") as string) || 0, compression: formData.get("compression") === "true" }); }} className="space-y-4">
@@ -214,7 +214,7 @@ export default function KVStorePage() {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
             <div className="card max-w-lg w-full">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">{store.modalMode === "create" ? t('kvStore.addKey') : t('kvStore.editKey')}</h2>
+              <h2 className="text-sm font-bold">{store.modalMode === "create" ? t('kvStore.addKey') : t('kvStore.editKey')}</h2>
               <button onClick={() => store.setShowKeyModal(false)} className="p-2 hover:bg-dark-bg rounded-lg"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={(e) => { e.preventDefault(); const formData = new FormData(e.target as HTMLFormElement); store.handlePutKey({ key: formData.get("key") as string, value: formData.get("value") as string }); }} className="space-y-4">
@@ -236,7 +236,7 @@ export default function KVStorePage() {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
             <div className="card max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <div><h2 className="text-xl font-bold">{t('kvStore.keyDetail')}</h2><p className="text-sm text-dark-muted font-mono">{store.selectedKeyResult.key || store.selectedKey || "unknown-key"}</p></div>
+              <div><h2 className="text-sm font-bold">{t('kvStore.keyDetail')}</h2><p className="text-xs text-dark-muted font-mono">{store.selectedKeyResult.key || store.selectedKey || "unknown-key"}</p></div>
               <button onClick={() => store.setSelectedKeyResult(null)} className="p-2 hover:bg-dark-bg rounded-lg"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3 overflow-y-auto">
@@ -257,7 +257,7 @@ export default function KVStorePage() {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
             <div className="card max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between mb-4">
-              <div><h2 className="text-xl font-bold">{t('kvStore.keyHistory')}</h2><p className="text-sm text-dark-muted font-mono">{store.selectedKey}</p></div>
+              <div><h2 className="text-sm font-bold">{t('kvStore.keyHistory')}</h2><p className="text-xs text-dark-muted font-mono">{store.selectedKey}</p></div>
               <button onClick={() => store.setShowHistoryModal(false)} className="p-2 hover:bg-dark-bg rounded-lg"><X className="w-5 h-5" /></button>
             </div>
             <div className="flex-1 overflow-y-auto space-y-2">

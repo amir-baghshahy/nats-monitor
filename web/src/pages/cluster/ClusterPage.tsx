@@ -6,7 +6,7 @@ import {
   Zap, Globe
 } from 'lucide-react'
 import { PageError, PageLoading } from '../../components/ui/PageState'
-import { PanelCard } from '../../components/ui'
+import { PageHeader, PanelCard } from '../../components/ui'
 import { Button } from '../../components/ui';
 
 export default function ClusterPage({
@@ -55,20 +55,18 @@ export default function ClusterPage({
   }
 
   return (
-    <div className="p-2 md:p-3 lg:p-4">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold">{t('cluster.title')}</h1>
-          <p className="text-dark-muted mt-1">
-            {clusterInfo?.is_clustered
-              ? t('cluster.cluster', { name: clusterInfo?.cluster_name || t('cluster.notClustered') })
-              : t('cluster.standaloneMode')}
-          </p>
-        </div>
-         <Button variant="secondary" icon={<RefreshCw className="w-4 h-4" />} onClick={refreshAll}>
-           {t('common.refresh')}
-         </Button>
-      </div>
+    <div className="p-2">
+      <PageHeader
+        title={t('cluster.title')}
+        subtitle={clusterInfo?.is_clustered
+          ? t('cluster.cluster', { name: clusterInfo?.cluster_name || t('cluster.notClustered') })
+          : t('cluster.standaloneMode')}
+        actions={
+          <Button variant="secondary" icon={<RefreshCw className="w-4 h-4" />} onClick={refreshAll}>
+            {t('common.refresh')}
+          </Button>
+        }
+      />
 
       <div className={`card mb-4 border-l-4 ${
         clusterHealth?.connected

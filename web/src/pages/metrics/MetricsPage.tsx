@@ -15,7 +15,7 @@ import { formatBytes, formatNumber } from "../../utils/formatters";
 import { PageError, PageLoading } from "../../components/ui/PageState";
 import { t } from "i18next";
 import Select from "../../components/ui/Select";
-import { StatCard, PanelCard, EmptyState } from "../../components/ui";
+import { PageHeader, StatCard, PanelCard, EmptyState } from "../../components/ui";
 import { Button } from "../../components/ui";
 
 const durations = [
@@ -140,43 +140,43 @@ export default function MetricsPage({
   }
 
   return (
-    <div className="p-2 md:p-3 lg:p-4">
-      <div className="mb-4 flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
-        <div>
-          <h1 className="text-xl font-bold md:text-3xl">
-            {t("metrics.title")}
-          </h1>
-          <p className="mt-1 text-dark-muted">{t("metrics.subtitle")}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Select
-            value={duration}
-            onChange={setDuration}
-            options={durations.map((item) => ({
-              value: item.value,
-              label: t(`metrics.${item.label}`),
-            }))}
-            className="shrink-0"
-            aria-label={t("metrics.duration")}
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            aria-pressed={autoRefresh}
-            className={autoRefresh ? "border-primary-500/40 bg-primary-500/15 text-primary-300" : ""}
-            icon={autoRefresh ? <Activity className="h-4 w-4 text-green-400" /> : <Clock className="h-4 w-4" />}
-          >
-            {t("metrics.autoRefresh")}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => refetch()}
-            icon={<RefreshCw className="h-4 w-4" />}
-          />
-        </div>
-      </div>
+    <div className="p-2">
+      <PageHeader
+        title={t("metrics.title")}
+        subtitle={t("metrics.subtitle")}
+        actions={
+          <>
+            <Select
+              value={duration}
+              onChange={setDuration}
+              options={durations.map((item) => ({
+                value: item.value,
+                label: t(`metrics.${item.label}`),
+              }))}
+              className="shrink-0"
+              aria-label={t("metrics.duration")}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setAutoRefresh(!autoRefresh)}
+              aria-pressed={autoRefresh}
+              className={autoRefresh ? "border-primary-500/40 bg-primary-500/15 text-primary-300" : ""}
+              icon={autoRefresh ? <Activity className="h-3 w-3 text-green-400" /> : <Clock className="h-3 w-3" />}
+            >
+              {t("metrics.autoRefresh")}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => refetch()}
+              icon={<RefreshCw className="h-3 w-3" />}
+            />
+          </>
+        }
+      />
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <StatCard

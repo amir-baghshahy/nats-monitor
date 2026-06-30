@@ -5,7 +5,7 @@ import {
   Clock, FileText, Server, Activity, ToggleLeft, ToggleRight
 } from 'lucide-react'
 import { PageError, PageLoading } from '../../components/ui/PageState'
-import { PanelCard, ModalWrapper, Tabs } from '../../components/ui'
+import { PageHeader, PanelCard, ModalWrapper, Tabs } from '../../components/ui'
 import { Button } from '../../components/ui';
 
 export default function SecurityPage({
@@ -58,25 +58,21 @@ export default function SecurityPage({
   }
 
   return (
-    <div className="p-2 md:p-3 lg:p-4">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-            <Shield className="w-8 h-8 text-primary-400" />
-            {t('security.title')}
-          </h1>
-          <p className="text-dark-muted mt-1">
-            {t('security.subtitle')}
-          </p>
-        </div>
-        <Button
-          variant="primary"
-          icon={<Plus className="w-4 h-4" />}
-          onClick={() => setShowUserModal(true)}
-        >
-          {t('security.newUser')}
-        </Button>
-      </div>
+    <div className="p-2">
+      <PageHeader
+        title={t('security.title')}
+        subtitle={t('security.subtitle')}
+        icon={Shield}
+        actions={
+          <Button
+            variant="primary"
+            icon={<Plus className="w-4 h-4" />}
+            onClick={() => setShowUserModal(true)}
+          >
+            {t('security.newUser')}
+          </Button>
+        }
+      />
 
       <Tabs
         tabs={[
@@ -314,7 +310,7 @@ export default function SecurityPage({
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
             <div className="card max-w-md w-full">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">{selectedUser ? t('security.editUser') : t('security.createUser')}</h2>
+              <h2 className="text-sm font-bold">{selectedUser ? t('security.editUser') : t('security.createUser')}</h2>
               <button
                 onClick={() => {
                   setShowUserModal(false)

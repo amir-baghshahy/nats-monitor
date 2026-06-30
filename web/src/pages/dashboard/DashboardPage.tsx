@@ -24,7 +24,7 @@ export default function DashboardPage({
 
   if (isLoading) {
     return (
-      <div className="p-2 md:p-3 lg:p-4">
+      <div className="p-2">
         <DashboardHeader
           sseConnected={sseConnected}
           onRefresh={() => refetch()}
@@ -36,7 +36,7 @@ export default function DashboardPage({
 
   if (isError) {
     return (
-      <div className="p-2 md:p-3 lg:p-4">
+      <div className="p-2">
         <DashboardHeader
           sseConnected={sseConnected}
           onRefresh={() => refetch()}
@@ -47,7 +47,7 @@ export default function DashboardPage({
   }
 
   return (
-    <div className="p-2 md:p-3 lg:p-4 animate-fade-in">
+    <div className="p-2 animate-fade-in">
       <DashboardHeader
         sseConnected={sseConnected}
         onRefresh={() => refetch()}
@@ -55,8 +55,8 @@ export default function DashboardPage({
 
       <StatsGrid stats={stats} />
 
-      <div className="mb-4 mt-6 animate-slide-up animate-delay-100">
-        <h2 className="text-lg font-semibold mb-4">{t('dashboard.realTimeMetrics')}</h2>
+      <div className="mb-3 mt-3 animate-slide-up animate-delay-100">
+        <h2 className="text-xs font-semibold mb-2">{t('dashboard.realTimeMetrics')}</h2>
         <SystemMetrics />
       </div>
 
