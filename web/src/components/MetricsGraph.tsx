@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
 import { HealthService, MetricsService } from '../types'
-import { TrendingUp, Activity, HardDrive, Cpu } from 'lucide-react'
+import { TrendingUp, TrendingDown, Activity, HardDrive, Cpu } from 'lucide-react'
 
 interface DataPoint {
   timestamp: number
@@ -26,10 +26,9 @@ export function MetricsGraph({
   queryKey,
   queryFn,
   getValue,
-  maxPoints = 60,
+  maxPoints = 30,
 }: MetricsGraphProps) {
   const { t } = useTranslation()
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [dataPoints, setDataPoints] = useState<DataPoint[]>([])
 
   const { data } = useQuery({
@@ -53,119 +52,108 @@ export function MetricsGraph({
     }
   }, [data, getValue, maxPoints])
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const rect = canvas.getBoundingClientRect()
-    canvas.width = rect.width * window.devicePixelRatio
-    canvas.height = rect.height * window.devicePixelRatio
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
-
-    ctx.clearRect(0, 0, rect.width, rect.height)
-
-    if (dataPoints.length < 2) return
-
-    const values = dataPoints.map(p => p.value)
-    const minValue = Math.min(...values, 0)
-    const maxValue = Math.max(...values, 1)
-    const valueRange = maxValue - minValue || 1
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'
-    ctx.lineWidth = 1
-    for (let i = 0; i <= 4; i++) {
-      const y = (rect.height / 4) * i
-      ctx.beginPath()
-      ctx.moveTo(0, y)
-      ctx.lineTo(rect.width, y)
-      ctx.stroke()
-    }
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, rect.height)
-    gradient.addColorStop(0, color.replace(')', ', 0.5)').replace('rgb', 'rgba'))
-    gradient.addColorStop(1, color.replace(')', ', 0)').replace('rgb', 'rgba'))
-
-    ctx.beginPath()
-    ctx.moveTo(0, rect.height)
-
-    const xStep = rect.width / (maxPoints - 1)
-
-    dataPoints.forEach((point, index) => {
-      const x = index * xStep
-      const y = rect.height - ((point.value - minValue) / valueRange) * rect.height
-
-      if (index === 0) {
-        ctx.moveTo(x, y)
-      } else {
-        ctx.lineTo(x, y)
-      }
-    })
-
-    const lastX = (dataPoints.length - 1) * xStep
-    ctx.lineTo(lastX, rect.height)
-    ctx.closePath()
-    ctx.fillStyle = gradient
-    ctx.fill()
-
-    ctx.beginPath()
-    dataPoints.forEach((point, index) => {
-      const x = index * xStep
-      const y = rect.height - ((point.value - minValue) / valueRange) * rect.height
-
-      if (index === 0) {
-        ctx.moveTo(x, y)
-      } else {
-        ctx.lineTo(x, y)
-      }
-    })
-    ctx.strokeStyle = color
-    ctx.lineWidth = 2
-    ctx.stroke()
-
-    if (dataPoints.length > 0) {
-      const lastPoint = dataPoints[dataPoints.length - 1]
-      const lastX = (dataPoints.length - 1) * xStep
-      const lastY = rect.height - ((lastPoint.value - minValue) / valueRange) * rect.height
-
-      ctx.beginPath()
-      ctx.arc(lastX, lastY, 4, 0, Math.PI * 2)
-      ctx.fillStyle = color
-      ctx.fill()
-      ctx.strokeStyle = 'white'
-      ctx.lineWidth = 2
-      ctx.stroke()
-    }
-  }, [dataPoints, color, maxPoints])
-
   const currentValue = dataPoints.length > 0 ? dataPoints[dataPoints.length - 1].value : 0
   const previousValue = dataPoints.length > 1 ? dataPoints[dataPoints.length - 2].value : currentValue
   const change = currentValue - previousValue
   const changePercent = previousValue > 0 ? ((change / previousValue) * 100) : 0
 
+  // Color logic based on metric type
+  const isGoodIncrease = title === t('messages.messagesLabel') || title === t('messages.messageRate')
+  const colorClass = change > 0
+    ? (isGoodIncrease ? 'text-green-400' : 'text-red-400')
+    : change < 0
+      ? (isGoodIncrease ? 'text-red-400' : 'text-green-400')
+      : 'text-gray-400'
+
+  // Generate SVG sparkline points
+  const sparklinePoints = dataPoints.length >= 2
+    ? dataPoints.map((point, index) => {
+        const x = (index / (maxPoints - 1)) * 100
+        const maxValue = Math.max(...dataPoints.map(p => p.value), 1)
+        const minValue = Math.min(...dataPoints.map(p => p.value), 0)
+        const range = maxValue - minValue || 1
+        const y = 90 - ((point.value - minValue) / range) * 70 // Keep within 10-90% height for padding
+        return `${x.toFixed(1)},${y.toFixed(1)}`
+      }).join(' ')
+    : ''
+
   return (
     <div className="card">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: color.replace(')', ', 0.2)').replace('rgb', 'rgba') }}>
             {icon}
           </div>
           <div>
-            <h3 className="font-semibold">{title}</h3>
-            <p className="text-2xl font-bold">{currentValue.toLocaleString()}</p>
+            <h3 className="font-semibold text-sm">{title}</h3>
+            <p className="text-xl font-bold">{currentValue.toLocaleString()}</p>
           </div>
         </div>
         <div className="text-right">
-          <p className={`text-sm font-medium ${change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-            {change >= 0 ? '+' : ''}{changePercent.toFixed(1)}%
-          </p>
+          <div className={`flex items-center justify-end gap-1 text-sm font-medium ${colorClass}`}>
+            {change > 0 && <TrendingUp className="w-3 h-3" />}
+            {change < 0 && <TrendingDown className="w-3 h-3" />}
+            <span>{change >= 0 ? '+' : ''}{changePercent.toFixed(1)}%</span>
+          </div>
           <p className="text-xs text-dark-muted">{t('common.vsLastPeriod')}</p>
         </div>
       </div>
-      <div className="relative h-24 bg-dark-bg rounded-lg overflow-hidden">
-        <canvas ref={canvasRef} className="w-full h-full" />
+
+      {/* Modern SVG Sparkline */}
+      <div className="relative h-20 bg-dark-bg rounded-lg overflow-hidden">
+        {dataPoints.length >= 2 ? (
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="w-full h-full"
+          >
+            {/* Subtle grid lines */}
+            <line x1="0" y1="25" x2="100" y2="25" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+            <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+            <line x1="0" y1="75" x2="100" y2="75" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+
+            {/* Area fill with gradient */}
+            <defs>
+              <linearGradient id={`gradient-${color.replace(/\D/g, '')}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor={color} stopOpacity="0.2" />
+                <stop offset="100%" stopColor={color} stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <polygon
+              points={`0,100 ${sparklinePoints} 100,100`}
+              fill={`url(#gradient-${color.replace(/\D/g, '')})`}
+            />
+
+            {/* Main sparkline */}
+            <polyline
+              points={sparklinePoints}
+              fill="none"
+              stroke={color}
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+
+            {/* End point dot */}
+            {dataPoints.length > 0 && (() => {
+              const points = sparklinePoints.split(' ')
+              const lastPoint = points[points.length - 1]?.split(',')
+              return lastPoint && lastPoint[1] ? (
+                <circle
+                  cx="100"
+                  cy={lastPoint[1]}
+                  r="2.5"
+                  fill={color}
+                />
+              ) : null
+            })()}
+          </svg>
+        ) : (
+          <div className="flex items-center justify-center h-full text-dark-muted text-xs">
+            Collecting data...
+          </div>
+        )}
       </div>
     </div>
   )
