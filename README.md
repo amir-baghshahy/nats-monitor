@@ -1,6 +1,6 @@
 <div align="center">
 
-# nats-horizon
+# NATS Horizon
 
 ### 🔵 Modern NATS Monitoring & Management Platform
 
@@ -12,7 +12,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg)](https://www.typescriptlang.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](Dockerfile)
 [![i18n](https://img.shields.io/badge/i18n-6%20languages-blue.svg)]()
-[![Stars](https://img.shields.io/github/stars/amir-baghshahy/nats-horizon?style=social)](https://github.com/amir-baghshahy/nats-horizon)
+
 
 A comprehensive, open-source monitoring and management platform for NATS JetStream infrastructure.
 
@@ -22,24 +22,24 @@ A comprehensive, open-source monitoring and management platform for NATS JetStre
 
 ---
 
-| [🚀 Quick Start](#-quick-start) | [📦 Installation](#-installation) | [📊 Features](#-features) | [🖼️ Screenshots](#️-screenshots) | [⚖️ Compare](#️-vs-others) | [🏗️ Architecture](#️-architecture) |
+| [🚀 Quick Start](#-quick-start) | [📦 Installation](#-installation) | [✨ Features](#-features) | [🖼️ Screenshots](#️-screenshots) | [⚖️ Comparison](#️-vs-others) | [🏗️ Architecture](#️-architecture) |
 
 </div>
 
 ---
 
-## What is nats-horizon?
+## What is NATS Horizon?
 
 NATS is fast. NATS scales well. But managing a production NATS JetStream cluster shouldn't require memorizing CLI flags or running five infrastructure services just to see what's happening.
 
-**nats-horizon** is a **native desktop application** that gives you full observability and control over your NATS JetStream infrastructure:
+**NATS Horizon** is a **native desktop application** that gives you full observability and control over your NATS JetStream infrastructure:
 
 - **See everything** — Real-time dashboard with live metrics for streams, consumers, KV stores, and cluster health
 - **Control everything** — Create, edit, delete, replay, and pause consumers directly from the UI
 - **Debug everything** — Message inspector, header viewer, JSON formatter, subject explorer, and audit logs
 - **Alert on everything** — Get notified when consumer lag spikes, storage fills up, or any threshold is breached
 - **Deploy anywhere** — Native desktop app for Windows, macOS, and Linux. Single binary, zero dependencies.
-- **Zero config** — No `.env` files, no complex setup. Just run and configure via the built-in wizard.
+- **Zero config** — JSON-based persistence with setup wizard. No `.env` files required.
 
 ### Why we built this
 
@@ -49,11 +49,9 @@ We run NATS JetStream in production. We tried every existing tool and hit the sa
 - **nats-nui** — Fast and popular, but it's a *browser*, not a *command center*. No alerts, no audit, no history.
 - **nats-dashboard** — Beautiful, but read-only. You can watch, but you can't act.
 
-So we built **nats-horizon** — a native desktop app that fits in a single binary with no external dependencies.
+So we built **NATS Horizon** — a native desktop app that fits in a single binary with no external dependencies.
 
 ---
-
-
 
 ## 🚀 Quick Start
 
@@ -70,17 +68,17 @@ cd nats-horizon
 make install
 
 # Run in development mode (with hot reload)
-make dev
+make desktop-dev
 
 # Or build for production
-make build
+make desktop-build
 ```
 
 The desktop app will open as a native window. No browser needed!
 
 ### Option 2: Download Pre-built Binary
 
-Download a pre-built binary for your platform from the [Releases](https://github.com/amir-baghshahy/nats-horizon/releases) page:
+Download a pre-built binary for your platform from the [Releases](https://github.com/amir-baghshahy/nats-horizon/releases/v1.0.0) page:
 
 - **Windows**: `nats-horizon-windows-amd64.exe`
 - **macOS**: `nats-horizon-darwin-amd64` (or `darwin-arm64` for Apple Silicon)
@@ -100,22 +98,20 @@ Open **http://localhost:3000**. Done.
 
 ---
 
-
-
 ## 📦 Installation
 
 ### Desktop App (Wails v2)
 
 | Platform | Command |
 |----------|---------|
-| **Development** | `make dev` |
-| **Build** | `make build` |
+| **Development** | `make desktop-dev` |
+| **Build** | `make desktop-build` |
 | **Run** | `./build/nats-horizon` |
 
 #### Requirements
 
 - **Go 1.25+**
-- **Node.js 18+** (for frontend build)
+- **Node.js 20+** (for frontend build)
 - **Wails CLI**: `go install github.com/wailsapp/wails/v2/cmd/wails@latest`
 
 #### Platform-specific dependencies
@@ -142,7 +138,7 @@ sudo dnf install gtk3-devel webkit2gtk3-devel
 | `docker compose up` | 30s | Production, staging, quick demo |
 | `helm install` | 1 min | Kubernetes clusters |
 | Binary download | 15s | No Docker, want native performance |
-| `make dev` | 2 min | Contributing, local changes |
+| `make desktop-dev` | 2 min | Contributing, local changes |
 
 #### Docker Image
 
@@ -168,126 +164,137 @@ helm install nats-horizon ./helm/nats-horizon \
   --set app.natsUrl="nats://nats.production.svc.cluster.local:4222"
 ```
 
-Full documentation in [`helm/README.md`](helm/README.md).
+Full documentation in [`helm/README.md`](helm/nats-horizon/README.md).
 
 ### Configuration
 
+Configuration is stored in `nats-horizon.json` next to the binary:
+
 | Variable | Default | Description |
 |---|---|---|
-| `NATS_URL` | `nats://localhost:4222` | NATS server address |
-| `PORT` | `3000` | Web server port (web mode only) |
-| `CORS_ALLOWED_ORIGINS` | `*` | Allowed CORS origins (web mode only) |
-| `GIN_MODE` | `release` | `debug` or `release` |
+| `nats_url` | `nats://localhost:4222` | NATS server address |
+| `server_port` | `3000` | Web server port (web mode only) |
+| `cors_allowed_origins` | `*` | Allowed CORS origins (web mode only) |
+| `gin_mode` | `release` | `debug` or `release` |
+| `smtp_host` | - | SMTP server for email alerts |
+| `smtp_port` | `587` | SMTP port |
+| `smtp_username` | - | SMTP username |
+| `smtp_password` | - | SMTP password |
+| `smtp_from` | - | From address for email alerts |
 
-See `.env.example` for the full list.
+On first run, a setup wizard will guide you through initial configuration.
 
 ---
-
-
 
 ## ✨ Features
 
 ### 🎯 Core Features
 
 #### 📊 **Dashboard & Monitoring**
-| Feature | Description |
-|---------|-------------|
-| **Real-time Dashboard** | Live stream stats, consumer health, active connections, memory usage, and instant system overview |
-| **System Metrics** | Memory, storage, connections, bandwidth, messages/sec with live streaming via SSE |
-| **Performance Charts** | Time-series visualizations using Recharts with customizable time windows (15m, 1h, 6h, 24h) |
-| **Cluster Topology** | Visual node map, cluster health status, server information at a glance |
-| **History & Reports** | Usage trends, min/max/avg analysis, historical data across 1h/6h/24h/7d windows |
-| **Visual Stream Graph** | Interactive topology visualization showing streams, consumers, message flows, and health indicators using React Flow |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Real-time Dashboard** | ✅ Stable | Live stream stats, consumer health, active connections, memory usage, and instant system overview |
+| **Enhanced System Metrics** | ✅ Stable | Memory, storage, connections, bandwidth, **goroutines**, **file descriptors**, **API errors** |
+| **Stream Performance Metrics** | ✅ Stable | Messages, bytes, **subject count**, **consumer count**, **first/last sequences**, **deleted messages**, **message age**, **replicas** |
+| **Throughput Rate Monitoring** | ✅ Stable | Real-time **messages/sec** and **bytes/sec** rate calculations with auto-calibration |
+| **Performance Charts** | ✅ Stable | Time-series visualizations using Recharts with customizable time windows (15m, 1h, 6h, 24h) |
+| **Cluster Topology** | ✅ Stable | Visual node map, cluster health status, server information at a glance |
+| **History & Reports** | ✅ Stable | Usage trends, min/max/avg analysis, historical data across 1h/6h/24h/7d windows |
+| **Visual Stream Graph** | ✅ Stable | Interactive topology visualization showing streams, consumers, message flows, and health indicators using React Flow |
 
 #### 🛠️ **Stream Management**
-| Feature | Description |
-|---------|-------------|
-| **Stream CRUD** | Create, edit, delete, and purge JetStream streams with full configuration support |
-| **Stream Filtering** | Filter by storage type (File/Memory), health status, and name with real-time updates |
-| **Stream Details** | View stream configuration, subjects, consumers, messages, bytes, and retention policies |
-| **Stream Replication** | View and manage stream replication factors and cluster placement |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Stream CRUD** | ✅ Stable | Create, edit, delete, and purge JetStream streams with full configuration support |
+| **Stream Filtering** | ✅ Stable | Filter by storage type (File/Memory), health status, and name with real-time updates |
+| **Stream Details** | ✅ Stable | View stream configuration, subjects, consumers, messages, bytes, and retention policies |
+| **Stream Replication** | ✅ Stable | View and manage stream replication factors and cluster placement |
 
 #### 👥 **Consumer Management**
-| Feature | Description |
-|---------|-------------|
-| **Consumer CRUD** | Full lifecycle: create, update, delete, clone, and manage consumers |
-| **Consumer Operations** | Replay, pause/resume, lag reset, and next message delivery |
-| **Consumer Filtering** | Filter by stream, status (Active/Idle/Stuck), and name with active filters display |
-| **Consumer Details** | View ack policy, delivery policy, replay policy, max deliveries, and current lag |
-| **Consumer Clone** | Clone existing consumers with modified configurations |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Consumer CRUD** | ✅ Stable | Full lifecycle: create, update, delete, clone, and manage consumers |
+| **Consumer Operations** | ✅ Stable | Replay, pause/resume, lag reset, and next message delivery |
+| **Consumer Filtering** | ✅ Stable | Filter by stream, status (Active/Idle/Stuck), and name with active filters display |
+| **Consumer Details** | ✅ Stable | View ack policy, delivery policy, replay policy, max deliveries, and current lag |
+| **Consumer Clone** | ✅ Stable | Clone existing consumers with modified configurations |
 
 #### 📨 **Messaging & Operations**
-| Feature | Description |
-|---------|-------------|
-| **Message Browser** | Browse, search, and paginate through stream messages with JSON formatting |
-| **Message Publishing** | Publish messages to any subject with JSON payload support and stream selection |
-| **Request/Reply** | Send requests and receive replies with timeout handling |
-| **Message Export** | Export messages to JSON or CSV formats |
-| **Subject Explorer** | Explore active subjects, view message rates, and monitor traffic patterns |
-| **Service Discovery** | View active services, subscriptions, and core NATS traffic monitoring |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Message Browser** | ✅ Stable | Browse, search, and paginate through stream messages with JSON formatting |
+| **Message Publishing** | ✅ Stable | Publish messages to any subject with JSON payload support and stream selection |
+| **Request/Reply** | ✅ Stable | Send requests and receive replies with timeout handling |
+| **Message Export** | ✅ Stable | Export messages to JSON or CSV formats |
+| **Subject Explorer** | ✅ Stable | Explore active subjects, view message rates, and monitor traffic patterns |
+| **Service Discovery** | ✅ Stable | View active services, subscriptions, and core NATS traffic monitoring |
+| **Live Subject Monitor** | ✅ Stable | Subscribe to subjects and watch traffic in real-time via SSE |
 
 #### 🔑 **KV Store & Object Store**
-| Feature | Description |
-|---------|-------------|
-| **KV Store Browser** | Browse buckets, keys, values, and revision history |
-| **KV Operations** | Create, read, update, delete keys with full CRUD support |
-| **Bucket Management** | View bucket configuration, history, TTL, and purge operations |
-| **Revision History** | Track key changes with timestamps and revision numbers |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **KV Store Browser** | ✅ Stable | Browse buckets, keys, values, and revision history |
+| **KV Operations** | ✅ Stable | Create, read, update, delete keys with full CRUD support |
+| **Bucket Management** | ✅ Stable | View bucket configuration, history, TTL, and purge operations |
+| **Revision History** | ✅ Stable | Track key changes with timestamps and revision numbers |
 
 #### 🚨 **Alerting & Security**
-| Feature | Description |
-|---------|-------------|
-| **Alerting Engine** | Configure alerts for consumer lag, storage usage, message counts, and custom thresholds |
-| **Multi-channel Alerts** | Support for Email, Webhook, and Slack notifications with customizable channels |
-| **Alert Configuration** | Set severity levels (Info/Warning/Critical), conditions, operators, and cooldowns |
-| **Audit Logs** | Full audit trail of all management actions with timestamps and user tracking |
-| **Security Dashboard** | View users, connections, permissions, and compliance status |
-| **Connection Management** | Monitor active connections with authentication info and subscriptions |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Alerting Engine** | ✅ Stable | Configure alerts for consumer lag, storage usage, message counts, and custom thresholds |
+| **Multi-channel Alerts** | ✅ Stable | Support for Email, Webhook, and Slack notifications with customizable channels |
+| **Alert Configuration** | ✅ Stable | Set severity levels (Info/Warning/Critical), conditions, operators, and cooldowns |
+| **Alert Triggers** | ✅ Stable | View triggered alerts with acknowledgment and history tracking |
+| **Audit Logs** | ✅ Stable | Full audit trail of all management actions with timestamps and user tracking |
+| **Security Dashboard** | ✅ Stable | View users, connections, permissions, and compliance status |
+| **Connection Management** | ✅ Stable | Monitor active connections with authentication info and subscriptions |
+| **User Management** | ✅ Stable | Create, edit, and delete users with permission tracking |
 
 #### 📁 **Data Management**
-| Feature | Description |
-|---------|-------------|
-| **Export Streams** | Export stream configurations, messages, and metadata |
-| **Export Consumers** | Export consumer configurations and states |
-| **Export Messages** | Export messages with filtering and formatting options |
-| **Data Formats** | Support for JSON and CSV export formats |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Export Streams** | ✅ Stable | Export stream configurations, messages, and metadata |
+| **Export Consumers** | ✅ Stable | Export consumer configurations and states |
+| **Export Messages** | ✅ Stable | Export messages with filtering and formatting options |
+| **Data Formats** | ✅ Stable | Support for JSON and CSV export formats |
 
 #### 🏢 **Multi-tenancy**
-| Feature | Description |
-|---------|-------------|
-| **Connection Management** | Save and switch between multiple NATS server connections |
-| **Connection Profiles** | Store connection details with names, URLs, and authentication |
-| **Quick Switching** | Easily switch between different NATS environments |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Connection Management** | ✅ Stable | Save and switch between multiple NATS server connections |
+| **Connection Profiles** | ✅ Stable | Store connection details with names, URLs, and authentication |
+| **Quick Switching** | ✅ Stable | Easily switch between different NATS environments |
+| **Default Connection** | ✅ Stable | Set a default connection for quick access |
+| **Connection Testing** | ✅ Stable | Test connections before saving |
 
 #### 🌍 **User Experience**
-| Feature | Description |
-|---------|-------------|
-| **Internationalization (i18n)** | Full support for 6 languages: English, Persian (فارسی), French (Français), German (Deutsch), Turkish (Türkçe), Arabic (العربية) |
-| **RTL Support** | Complete Right-to-Left layout support for Persian and Arabic with proper text alignment and component mirroring |
-| **Custom Select Components** | RTL-aware dropdown menus with Portal rendering for proper z-index handling |
-| **Responsive Design** | Fully responsive UI that works on desktop, tablet, and mobile devices |
-| **Dark Theme** | Modern dark theme optimized for long monitoring sessions |
-| **Loading States** | Skeleton loaders and spinners for better perceived performance |
-| **Error Handling** | Comprehensive error boundaries and user-friendly error messages |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Internationalization (i18n)** | ✅ Stable | Full support for 6 languages: English, Persian (فارسی), French (Français), German (Deutsch), Turkish (Türkçe), Arabic (العربية) |
+| **RTL Support** | ✅ Stable | Complete Right-to-Left layout support for Persian and Arabic with proper text alignment and component mirroring |
+| **Custom Select Components** | ✅ Stable | RTL-aware dropdown menus with Portal rendering for proper z-index handling |
+| **Responsive Design** | ✅ Stable | Fully responsive UI that works on desktop, tablet, and mobile devices |
+| **Dark Theme** | ✅ Stable | Modern dark theme optimized for long monitoring sessions |
+| **Loading States** | ✅ Stable | Skeleton loaders and spinners for better perceived performance |
+| **Error Handling** | ✅ Stable | Comprehensive error boundaries and user-friendly error messages |
 
 #### ⚡ **Real-time Features**
-| Feature | Description |
-|---------|-------------|
-| **SSE-powered Updates** | Server-Sent Events for real-time metrics and status updates without WebSocket overhead |
-| **Auto-reconnect** | Automatic reconnection handling for dropped SSE connections |
-| **Live Subject Monitor** | Subscribe to subjects and watch traffic in real-time |
-| **Traffic Monitor** | Core NATS traffic monitoring with message flow visualization |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **SSE-powered Updates** | ✅ Stable | Server-Sent Events for real-time metrics and status updates without WebSocket overhead |
+| **Auto-reconnect** | ✅ Stable | Automatic reconnection handling for dropped SSE connections |
+| **Live Metrics Streaming** | ✅ Stable | Real-time metric updates every 10 seconds with 100-point history |
+| **Traffic Monitor** | ✅ Stable | Core NATS traffic monitoring with message flow visualization |
 
 #### 🔧 **Technical Features**
-| Feature | Description |
-|---------|-------------|
-| **React Query Caching** | Intelligent data caching and background refetching for optimal performance |
-| **TypeScript** | Full type safety throughout the application with comprehensive type definitions |
-| **React Flow Integration** | Interactive graph visualization for stream topology and message flows |
-| **TailwindCSS Styling** | Modern, consistent styling with RTL utility classes |
-| **Lucide Icons** | Comprehensive icon set with RTL-aware directional icons |
-
----
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **React Query Caching** | ✅ Stable | Intelligent data caching and background refetching for optimal performance |
+| **TypeScript** | ✅ Stable | Full type safety throughout the application with comprehensive type definitions |
+| **React Flow Integration** | ✅ Stable | Interactive graph visualization for stream topology and message flows |
+| **TailwindCSS Styling** | ✅ Stable | Modern, consistent styling with RTL utility classes |
+| **Lucide Icons** | ✅ Stable | Comprehensive icon set with RTL-aware directional icons |
+| **OpenAPI/Swagger** | ✅ Stable | Auto-generated interactive API documentation |
 
 ### 🎨 **UI Components Library**
 
@@ -314,8 +321,6 @@ See `.env.example` for the full list.
 - **Progress Bars** - Storage and capacity indicators
 
 ---
-
-
 
 ## 🖼️ Screenshots
 
@@ -357,11 +362,9 @@ See `.env.example` for the full list.
 
 ---
 
-
-
 ## ⚖️ Vs. Others
 
-|  | nats-console | nats-nui | nats-dashboard | cobra-nats | **nats-horizon** |
+|  | nats-console | nats-nui | nats-dashboard | cobra-nats | **NATS Horizon** |
 |---|---|---|---|---|---|
 | **Backend** | Fastify/Node | Go | None (static) | Next.js | **Go + Gin** |
 | **Database** | Postgres + ClickHouse + Redis | None | None | None | **None** |
@@ -380,6 +383,10 @@ See `.env.example` for the full list.
 | **Multi-tenancy** | ✅ | ❌ | ❌ | ❌ | ✅ |
 | **Message Export** | ✅ | ❌ | ❌ | ✅ | ✅ |
 | **Cluster Topology** | ✅ | ❌ | ❌ | ❌ | ✅ |
+| **Enhanced Metrics** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Throughput Rates** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **i18n (6 languages)** | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Desktop App** | ❌ | ❌ | ❌ | ❌ | ✅ |
 | **License** | Apache-2.0 | Unlicense | MIT | — | **Apache-2.0** |
 
 ### How the competition stacks up
@@ -387,22 +394,22 @@ See `.env.example` for the full list.
 #### nats-console (KLogicHQ) — The "Enterprise" Choice
 Feature-complete with ClickHouse time-series, dashboard builder, Slack/PagerDuty alerts, and multi-cluster support. But you're managing **five services** — PostgreSQL, ClickHouse, Redis, Fastify, and Next.js. Great if you have a dedicated platform team. Overkill if you want one binary.
 
-**What nats-horizon does better**: Zero-database deployment. Same core alerting, multi-tenancy, and cluster topology — without the operational overhead.
+**What NATS Horizon does better**: Zero-database deployment. Same core alerting, multi-tenancy, and cluster topology — without the operational overhead.
 
 #### nats-nui (589 ⭐) — The "Popular" Choice
 Fast, clean, truly open-source (Unlicense). But it's fundamentally a **browser**, not a **command center**. Missing alerts, audit logs, security dashboards, history reports, consumer replay/pause, and multi-tenancy.
 
-**What nats-horizon does better**: Complete observability: alerts, audit trails, history, and security — everything needed for production operations.
+**What NATS Horizon does better**: Complete observability: alerts, audit trails, history, and security — everything needed for production operations.
 
 #### nats-dashboard (213 ⭐) — The "Monitor"
 Beautiful read-only monitoring surface. No backend, just a static app hitting the NATS monitoring endpoint. Can watch, but can't manage: no CRUD, no KV store, no consumer ops, no alerts.
 
-**What nats-horizon does better**: Not just watching — acting. Real-time metrics + full management plane in one cohesive tool.
+**What NATS Horizon does better**: Not just watching — acting. Real-time metrics + full management plane in one cohesive tool.
 
 #### cobra-nats — The "Newcomer"
 Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark mode. Only 1 ⭐, no alerting, no audit, requires Node.js.
 
-**What nats-horizon does better**: Go backend performance, mature feature depth, zero Node dependency.
+**What NATS Horizon does better**: Go backend performance, mature feature depth, zero Node dependency, native desktop experience.
 
 ---
 
@@ -412,7 +419,7 @@ Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                   nats-horizon Desktop App                  │
+│                   NATS Horizon Desktop App                  │
 │                   (Wails v2 + WebView2)                     │
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │              React Frontend (Vite + Tailwind)        │   │
@@ -435,8 +442,8 @@ Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark
                              │
                              ▼
 ┌──────────────────────────────────────────────────────────────┐
-│                    NATS Server                               │
-│                   (JetStream enabled)                        │
+│                    NATS Server                                  │
+│                   (JetStream enabled)                          │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -444,14 +451,14 @@ Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     User Browser                            │
-│                  http://localhost:3000                       │
+│                     User Browser                              │
+│                  http://localhost:3000                        │
 └──────────────────────────┬──────────────────────────────────┘
                            │  REST API  │  SSE (events)
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  nats-horizon Server                        │
-│                    (Go 1.25 + Gin)                          │
+│                  NATS Horizon Server                         │
+│                    (Go 1.25 + Gin)                            │
 │  ┌─────────────┐ ┌──────────────┐ ┌────────────────────┐  │
 │  │   REST      │ │   SSE Hub    │ │   Static Assets    │  │
 │  │   Handlers  │ │   (events)   │ │   (React build)    │  │
@@ -465,7 +472,7 @@ Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark
 │  │                 │                                         │
 │  │  ┌──────────────▼──────────────┐                          │
 │  │  │     NATS Go Client          │                          │
-│  │  │     (nats.go v1.x)          │                          │
+│  │  │     (nats.go v1.52.0)       │                          │
 │  │  └──────────────┬──────────────┘                          │
 │  └─────────────────┼─────────────────────────────────────────┘
 │                    │
@@ -473,8 +480,8 @@ Modern Next.js 16 + shadcn/ui stack. Object Store support, command palette, dark
                      │
                      ▼
 ┌──────────────────────────────────────────────────────────────┐
-│                    NATS Server                               │
-│                   (JetStream enabled)                        │
+│                    NATS Server                                │
+│                   (JetStream enabled)                         │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -510,9 +517,6 @@ We chose **SSE over WebSocket** because:
 
 ---
 
-
-
-
 ## 🔌 NATS Compatibility
 
 ### Supported NATS Versions
@@ -524,7 +528,7 @@ We chose **SSE over WebSocket** because:
 | 2.8.x | ⚠️ Partial | Basic monitoring works, some JetStream features may be limited |
 | < 2.8 | ❌ No | Not supported, missing critical JetStream APIs |
 
-**Minimum Required:** NATS Server 2.8.0 with JetStream enabled  
+**Minimum Required:** NATS Server 2.8.0 with JetStream enabled
 **Recommended:** NATS Server 2.10.x or later
 
 ### Client Libraries
@@ -547,15 +551,42 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 
 ---
 
+## 📅 Roadmap
 
+### ✅ Completed (v1.0.0)
 
-### In Progress 🚧
-- [ ] Consumer-based message inspection deep-dive
+- [x] Real-time dashboard with SSE
+- [x] Stream management (CRUD, filtering, details)
+- [x] Consumer management (CRUD, replay, pause/resume)
+- [x] Message browser with search and pagination
+- [x] KV store browser
+- [x] Alerting engine with multi-channel notifications
+- [x] Security dashboard with audit logs
+- [x] Multi-tenancy with connection profiles
+- [x] Visual stream graph with React Flow
+- [x] History and reports
+- [x] Core NATS messaging (publish, request/reply, subscribe)
+- [x] Export functionality
+- [x] 6-language i18n with RTL support
+- [x] Desktop app (Wails v2)
+- [x] Enhanced metrics (goroutines, file descriptors, API errors)
+- [x] Stream performance metrics (sequences, subject count, message age, replicas)
+- [x] Throughput rate monitoring (msg/sec, bytes/sec)
+
+### 🚧 In Progress
+
 - [ ] Object Store browser
+- [ ] Consumer-based message inspection deep-dive
+
+### 📅 Planned
+
+- [ ] Advanced alerting rules builder
+- [ ] Custom dashboard builder
+- [ ] Message replay to specific timestamp
+- [ ] Stream mirroring management
+- [ ] Performance analytics dashboard
 
 ---
-
-
 
 ## 🤝 Contributing
 
@@ -565,7 +596,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 git clone https://github.com/amir-baghshahy/nats-horizon.git
 cd nats-horizon
 make install
-make dev
+make desktop-dev
 ```
 
 We use:
@@ -573,17 +604,29 @@ We use:
 - **React 18 + Vite** — `npm run lint` and `npm run build` before PRs
 - **Conventional Commits** — `feat:`, `fix:`, `docs:`, etc.
 
+### Development Workflow
+
+1. **Fork and clone** the repository
+2. **Create a branch** for your feature or bugfix
+3. **Make changes** following the code style
+4. **Test locally** using `make desktop-dev` or `make dev`
+5. **Commit** using conventional commit format
+6. **Push** and create a pull request
+
+### Code Style
+
+- **Go**: Follow standard Go conventions, run `go fmt ./...`
+- **React/TypeScript**: Follow ESLint rules, run `npm run lint`
+- **Components**: Use functional components with hooks
+- **i18n**: Always use translation keys, no hardcoded strings
+
 ---
-
-
 
 ## 📄 License
 
 Apache 2.0 — see [LICENSE](LICENSE) for details.
 
 ---
-
-
 
 ## 🙏 Inspired By
 
@@ -594,3 +637,22 @@ These projects set the standard for what a messaging dashboard should look and f
 - [AKHQ](https://akhq.io/) — Comprehensive Kafka management, feature inspiration
 - [nats-nui](https://github.com/nats-nui/nui) — Fastest NATS UI, benchmark for performance
 - [nats-console](https://github.com/KLogicHQ/nats-console) — Most feature-rich, target to beat on simplicity
+
+---
+
+## 📞 Support
+
+- 📖 [Documentation](docs/)
+- 🐛 [Issue Tracker](https://github.com/amir-baghshahy/nats-horizon/issues)
+- 💬 [Discussions](https://github.com/amir-baghshahy/nats-horizon/discussions)
+- 📧 Email: baghshahyamyr@gmail.com
+
+---
+
+<div align="center">
+
+**Built with ❤️ for the NATS community**
+
+[⭐ Star us on GitHub](https://github.com/amir-baghshahy/nats-horizon) — it helps!
+
+</div>
