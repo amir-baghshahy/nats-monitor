@@ -131,62 +131,91 @@ func main() {
 
 	gin.SetMode(cfg.GinMode)
 
-	log.Printf("Connecting to NATS at %s...", cfg.NATSURL)
-	natsConn, err := NewNATSConnection(cfg.NATSURL)
-	if err != nil {
-		log.Fatalf("Failed to connect to NATS: %v\n\n"+
-			"Please ensure:\n"+
-			"1. NATS server is running and accessible\n"+
-			"2. Run setup wizard first (no config file found)\n"+
-			"3. Any required authentication is configured", err)
-	}
-	log.Println("Connected to NATS")
-	defer natsConn.Close()
+	var natsConn *NATSConnection
+	var err error
 
-	streamRepo := repositories.NewNATSStreamRepository(natsConn.nc, natsConn.js)
-	consumerRepo := repositories.NewNATSConsumerRepository(natsConn.nc, natsConn.js)
-	messageRepo := repositories.NewNATSMessageRepository(natsConn.nc, natsConn.js)
-
-	streamUseCase := servicespkg.NewStreamUseCase(streamRepo)
-	consumerUseCase := servicespkg.NewConsumerUseCase(consumerRepo)
-	messageUseCase := servicespkg.NewMessageUseCase(messageRepo)
-	serverUseCase := servicespkg.NewServerUseCase(natsConn.nc, natsConn.js)
-
-	// Initialize audit service
-	auditService := servicespkg.NewAuditService(natsConn.nc, natsConn.js)
-	if err := auditService.Initialize(); err != nil {
-		log.Printf("Failed to initialize audit service: %v", err)
-		// Continue anyway - audit logs won't be available but app should still work
+	// Only connect to NATS if setup has been completed
+	if cfg.SetupCompleted {
+		log.Printf("Connecting to NATS at %s...", cfg.NATSURL)
+		natsConn, err = NewNATSConnection(cfg.NATSURL)
+		if err != nil {
+			log.Fatalf("Failed to connect to NATS: %v\\n\\n" +
+				"Please ensure:\\n" +
+				"1. NATS server is running and accessible\\n" +
+				"2. Configuration is correct\\n" +
+				"Run setup again to reconfigure", err)
+		}
+		log.Println("Connected to NATS")
+		defer natsConn.Close()
+	} else {
+		log.Println("Setup not completed. Starting server in setup mode (no NATS connection required).")
+		natsConn = &NATSConnection{nc: nil, js: nil}
 	}
 
-	// Initialize notification service
+	// Initialize services that require NATS connection (only if connected)
+	var streamRepo *repositories.NATSStreamRepository
+	var consumerRepo *repositories.NATSConsumerRepository
+	var messageRepo *repositories.NATSMessageRepository
+	var streamUseCase *servicespkg.StreamUseCase
+	var consumerUseCase *servicespkg.ConsumerUseCase
+	var messageUseCase *servicespkg.MessageUseCase
+	var serverUseCase *servicespkg.ServerUseCase
+	var auditService *servicespkg.AuditService
+	var streamHandler *handlers.StreamHandler
+	var consumerHandler *handlers.ConsumerHandler
+	var serverHandler *handlers.ServerHandler
+	var coreNATSHandler *handlers.CoreNATShandler
+	var kvHandler *handlers.KVHandler
+	var clusterHandler *handlers.ClusterHandler
+	var alertsHandler *handlers.AlertsHandler
+	var metricsHandler *handlers.MetricsHandler
+	var exportHandler *handlers.ExportHandler
+	var securityHandler *handlers.SecurityHandler
+	var historyHandler *handlers.HistoryHandler
+	var sseHub *handlers.SSEHub
 	notificationService := servicespkg.NewNotificationService()
 
-	// Add default notification channels from environment or config
-	// This would typically be loaded from config file or environment variables
-	// For now, channels can be added via API
+	if natsConn != nil && natsConn.nc != nil {
+		streamRepo = repositories.NewNATSStreamRepository(natsConn.nc, natsConn.js)
+		consumerRepo = repositories.NewNATSConsumerRepository(natsConn.nc, natsConn.js)
+		messageRepo = repositories.NewNATSMessageRepository(natsConn.nc, natsConn.js)
 
-	streamHandler := handlers.NewStreamHandler(streamUseCase)
-	consumerHandler := handlers.NewConsumerHandler(consumerUseCase, messageUseCase, natsConn.nc, natsConn.js)
-	serverHandler := handlers.NewServerHandler(serverUseCase, messageUseCase, streamUseCase)
-	coreNATSHandler := handlers.NewCoreNATShandler(natsConn.nc)
-	kvHandler := handlers.NewKVHandler(natsConn.nc, natsConn.js)
-	clusterHandler := handlers.NewClusterHandler(natsConn.nc, natsConn.js)
-  alertsHandler := handlers.NewAlertsHandler(natsConn.nc, natsConn.js, notificationService)
-  metricsHandler := handlers.NewMetricsHandler(natsConn.nc, natsConn.js)
-  exportHandler := handlers.NewExportHandler(natsConn.nc, natsConn.js)
-  securityHandler := handlers.NewSecurityHandler(natsConn.nc, natsConn.js, auditService)
-  historyHandler := handlers.NewHistoryHandler(natsConn.nc, natsConn.js)
-  configHandler := handlers.NewConfigHandler()
-  defer metricsHandler.Stop()
-  tenancyHandler := handlers.NewTenancyHandler(cfg.NATSURL, natsConn.nc)
-  defer historyHandler.Stop()
-  defer alertsHandler.Stop()
+		streamUseCase = servicespkg.NewStreamUseCase(streamRepo)
+		consumerUseCase = servicespkg.NewConsumerUseCase(consumerRepo)
+		messageUseCase = servicespkg.NewMessageUseCase(messageRepo)
+		serverUseCase = servicespkg.NewServerUseCase(natsConn.nc, natsConn.js)
 
-	sseHub := handlers.NewSSEHub(natsConn.nc)
-	go sseHub.MonitorStreams()
-	go sseHub.MonitorConsumers()
-	defer sseHub.Close()
+		// Initialize audit service
+		auditService = servicespkg.NewAuditService(natsConn.nc, natsConn.js)
+		if err := auditService.Initialize(); err != nil {
+			log.Printf("Failed to initialize audit service: %v", err)
+		}
+
+		streamHandler = handlers.NewStreamHandler(streamUseCase)
+		consumerHandler = handlers.NewConsumerHandler(consumerUseCase, messageUseCase, natsConn.nc, natsConn.js)
+		serverHandler = handlers.NewServerHandler(serverUseCase, messageUseCase, streamUseCase)
+		coreNATSHandler = handlers.NewCoreNATShandler(natsConn.nc)
+		kvHandler = handlers.NewKVHandler(natsConn.nc, natsConn.js)
+		clusterHandler = handlers.NewClusterHandler(natsConn.nc, natsConn.js)
+		alertsHandler = handlers.NewAlertsHandler(natsConn.nc, natsConn.js, notificationService)
+		metricsHandler = handlers.NewMetricsHandler(natsConn.nc, natsConn.js)
+		exportHandler = handlers.NewExportHandler(natsConn.nc, natsConn.js)
+		securityHandler = handlers.NewSecurityHandler(natsConn.nc, natsConn.js, auditService)
+		historyHandler = handlers.NewHistoryHandler(natsConn.nc, natsConn.js)
+
+		sseHub = handlers.NewSSEHub(natsConn.nc)
+		go sseHub.MonitorStreams()
+		go sseHub.MonitorConsumers()
+		defer metricsHandler.Stop()
+		defer historyHandler.Stop()
+		defer alertsHandler.Stop()
+		defer sseHub.Close()
+	}
+
+	// Initialize config handler (works without NATS)
+	configHandler := handlers.NewConfigHandler()
+	tenancyHandler := handlers.NewTenancyHandler(cfg.NATSURL, natsConn.nc)
+
 
 	r := gin.New()
 	r.Use(gin.Logger())
