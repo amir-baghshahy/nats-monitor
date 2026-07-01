@@ -13,16 +13,7 @@ import {
   toHexString,
   formatJSON,
 } from "../../utils/formatters";
-
-export interface Message {
-  subject: string;
-  data: string;
-  data_base64: string;
-  reply?: string;
-  headers?: Record<string, string[]>;
-  timestamp: number;
-  size: number;
-}
+import type { Message } from "../../hooks/useMessageList";
 import { FORMAT_COLORS } from "../../utils/constants";
 
 interface MessageItemProps {

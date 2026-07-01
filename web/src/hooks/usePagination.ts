@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
 interface Pagination {
@@ -29,6 +29,7 @@ export function usePagination(
 ): UsePaginationReturn {
   const { perPage = 20, initialPage = 1, urlKey = 'page' } = options;
   const [searchParams, setSearchParams] = useSearchParams();
+  const itemsLengthRef = useRef(0);
 
   // Initialize page from URL or default to initialPage
   const [page, setPage] = useState(() => {
@@ -61,6 +62,7 @@ export function usePagination(
 
   const getPaginatedItems = useCallback(
     <T>(items: T[]): T[] => {
+      itemsLengthRef.current = items.length;
       const totalPages = Math.max(1, Math.ceil(items.length / perPage));
       const currentPage = Math.min(page, totalPages);
 
@@ -72,14 +74,15 @@ export function usePagination(
     [page, perPage],
   );
 
-  const totalPages = 0;
+  const total = itemsLengthRef.current;
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
   const isFirstPage = page === 1;
-  const isLastPage = page === totalPages;
+  const isLastPage = page >= totalPages;
 
   return {
     page,
     perPage,
-    total: 0,
+    total,
     totalPages,
     isFirstPage,
     isLastPage,

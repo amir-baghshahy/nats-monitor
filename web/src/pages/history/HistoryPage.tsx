@@ -5,18 +5,12 @@ import EmptyState from "../../components/ui/EmptyState";
 import Select from "../../components/ui/Select";
 import { PageHeader } from "../../components/ui";
 import { Button } from "../../components/ui";
+import { formatBytes } from "../../utils/formatters";
 import {
   AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 
 const DURATIONS = ["1h", "6h", "24h", "7d"];
-
-function formatBytes(b: number) {
-  if (b >= 1073741824) return (b / 1073741824).toFixed(1) + " GB";
-  if (b >= 1048576) return (b / 1048576).toFixed(1) + " MB";
-  if (b >= 1024) return (b / 1024).toFixed(1) + " KB";
-  return b + " B";
-}
 
 function formatTime(ts: number) {
   return new Date(ts * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });

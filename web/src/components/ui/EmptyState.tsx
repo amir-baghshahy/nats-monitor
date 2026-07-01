@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { Button } from "./Button";
+import { cn } from "../../utils/cn";
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -40,14 +41,17 @@ export default function EmptyState({
   };
 
   return (
-    <div className={`card text-center ${sizeClasses[size]}`}>
+    <div className={cn("card", "text-center", sizeClasses[size])}>
       {Icon && (
-        <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-dark-bg/60 ${iconClassName || "text-dark-muted"}`}>
-          <Icon className={`${iconSize[size]}`} />
+        <div className={cn(
+          "mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface-primary/50",
+          iconClassName || "text-content-tertiary"
+        )}>
+          <Icon className={iconSize[size]} />
         </div>
       )}
-      <h3 className={`${titleSize[size]} font-semibold text-dark-text`}>{title}</h3>
-      {description && <p className="mt-2 text-sm leading-6 text-dark-muted">{description}</p>}
+      <h3 className={cn(titleSize[size], "font-semibold text-content-primary")}>{title}</h3>
+      {description && <p className="mt-2 text-sm leading-6 text-content-secondary">{description}</p>}
       {action && (
         <Button variant="primary" onClick={action.onClick} className="mt-6">
           {action.label}

@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { formatNumber } from "../../utils/formatters";
+import { cn } from "../../utils/cn";
 
 interface StatCardProps {
   /**
@@ -73,13 +74,18 @@ export default function StatCard({
     <div className="card">
       <div className="flex items-center gap-2">
         <div
-          className={`${containerSize} rounded-lg ${iconBg} flex items-center justify-center shrink-0`}
+          className={cn(
+            containerSize,
+            "rounded-lg",
+            iconBg,
+            "flex items-center justify-center shrink-0"
+          )}
         >
-          <Icon className={`${iconSize} ${iconColor}`} />
+          <Icon className={cn(iconSize, iconColor)} />
         </div>
         <div className="min-w-0">
-          <p className={`${valueSize} font-bold leading-tight truncate`}>{displayValue}</p>
-          <p className={`${labelSize} text-dark-muted truncate`}>{label}</p>
+          <p className={cn(valueSize, "font-bold leading-tight truncate")}>{displayValue}</p>
+          <p className={cn(labelSize, "text-content-secondary truncate")}>{label}</p>
         </div>
       </div>
     </div>

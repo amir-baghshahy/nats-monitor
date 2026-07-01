@@ -110,7 +110,6 @@ export default function SetupWizard() {
       };
       pollHealth();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restarting]);
 
   if (restarting) {

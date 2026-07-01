@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import EmptyState from "../../../components/ui/EmptyState";
 import PanelCard from "../../../components/ui/PanelCard";
 import { Button } from "../../../components/ui";
+import { formatBytes } from "../../../utils/formatters";
 
 interface Message {
   sequence: number;
@@ -64,11 +65,6 @@ const formatTimestamp = (timestamp: string) => {
   if (hours > 0) return `${hours}h ago`;
   if (minutes > 0) return `${minutes}m ago`;
   return "Just now";
-};
-
-const formatBytes = (bytes: number) => {
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${bytes} B`;
 };
 
 export default function MessagesList({

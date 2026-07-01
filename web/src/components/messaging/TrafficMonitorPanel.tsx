@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Activity, Play, RefreshCw, StopCircle } from "lucide-react";
 import { Button } from "../ui";
+import { formatBytes } from "../../utils/formatters";
 
 interface MonitorEvent {
   type?: string;
@@ -30,13 +31,6 @@ interface TrafficMonitorPanelProps {
   events: MonitorEvent[];
   onStart: () => void;
   onStop: () => void;
-}
-
-function formatBytes(bytes = 0) {
-  if (bytes >= 1073741824) return `${(bytes / 1073741824).toFixed(1)} GB`;
-  if (bytes >= 1048576) return `${(bytes / 1048576).toFixed(1)} MB`;
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${bytes} B`;
 }
 
 function formatTimestamp(timestamp?: number | string) {

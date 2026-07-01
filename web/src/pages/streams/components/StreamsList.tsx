@@ -1,6 +1,7 @@
 import { Database, Download, RefreshCw, Trash2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { BulkActions, Pagination } from "../../../components/common";
+import BulkActions from "../../../components/common/BulkActions";
+import Pagination from "../../../components/common/Pagination";
 import { EmptyState } from "../../../components/ui";
 import type { StreamResponse as Stream } from "../../../types";
 import StreamRow from "./StreamRow";
@@ -60,12 +61,12 @@ export default function StreamsList({
   const { t } = useTranslation();
   const actions = [
     {
-      label: t('streams.exportAll'),
+      label: t("streams.exportAll"),
       icon: Download as LucideIcon,
       onClick: onExportAll,
     },
     {
-      label: t('streams.delete'),
+      label: t("streams.delete"),
       icon: Trash2 as LucideIcon,
       onClick: onBulkDelete,
       variant: "danger" as const,
@@ -84,11 +85,11 @@ export default function StreamsList({
     return (
       <EmptyState
         icon={Database}
-        title={t('streams.noStreamsFound')}
+        title={t("streams.noStreamsFound")}
         description={
           hasActiveFilters
-            ? t('streams.adjustFilters')
-            : t('streams.noStreamsDescription')
+            ? t("streams.adjustFilters")
+            : t("streams.noStreamsDescription")
         }
       />
     );
@@ -107,37 +108,38 @@ export default function StreamsList({
       <div className="card overflow-hidden flex flex-col max-h-[600px]">
         <div className="overflow-y-auto scrollbar-thin flex-1 divide-y divide-dark-border animate-fade-in">
           {streams.map((stream, index) => {
-          const streamName = getStreamName(stream);
-          const healthStatus = getStreamHealthStatus(stream);
-          const isItemSelected = isSelected(streamName);
-          const isItemExpanded = isExpanded(streamName);
-          const delayClass = index === 0 ? "" : `animate-delay-${Math.min(index * 50, 500)}`;
+            const streamName = getStreamName(stream);
+            const healthStatus = getStreamHealthStatus(stream);
+            const isItemSelected = isSelected(streamName);
+            const isItemExpanded = isExpanded(streamName);
+            const delayClass =
+              index === 0 ? "" : `animate-delay-${Math.min(index * 50, 500)}`;
 
-          return (
-            <div
-              key={streamName}
-              className={`animate-slide-in animate-duration-200 ${delayClass}`}
-            >
-              <StreamRow
-                stream={stream}
-                streamName={streamName}
-                healthStatus={healthStatus}
-                isItemSelected={isItemSelected}
-                isItemExpanded={isItemExpanded}
-                toggleSelection={toggleSelection}
-                toggleExpansion={toggleExpansion}
-                onViewDetails={onViewDetails}
-                onDelete={onDelete}
-                onPurge={onPurge}
-                onExportStream={onExportStream}
-                onExportMessages={onExportMessages}
-              />
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={streamName}
+                className={`animate-slide-in animate-duration-200 ${delayClass}`}
+              >
+                <StreamRow
+                  stream={stream}
+                  streamName={streamName}
+                  healthStatus={healthStatus}
+                  isItemSelected={isItemSelected}
+                  isItemExpanded={isItemExpanded}
+                  toggleSelection={toggleSelection}
+                  toggleExpansion={toggleExpansion}
+                  onViewDetails={onViewDetails}
+                  onDelete={onDelete}
+                  onPurge={onPurge}
+                  onExportStream={onExportStream}
+                  onExportMessages={onExportMessages}
+                />
+              </div>
+            );
+          })}
         </div>
         <div className="p-3 border-t border-dark-border bg-dark-bg/50 text-center text-sm text-dark-muted flex-shrink-0">
-          {t('streams.streamCount', { count: streams.length })}
+          {t("streams.streamCount", { count: streams.length })}
         </div>
       </div>
 

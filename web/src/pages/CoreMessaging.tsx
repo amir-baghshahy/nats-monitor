@@ -9,8 +9,6 @@ import {
 import {
   MessageList,
   SubscriptionBar,
-  PublishForm,
-  RequestForm,
   MessagingTabs,
   MessagingHeader,
   SubjectExplorer,
@@ -27,29 +25,13 @@ import {
 import { useSSE } from "../hooks/useSSE";
 import type { MessagingTab } from "../components/messaging/MessagingTabs";
 import type { ServiceInfo } from "../components/messaging/ServiceDiscoveryPanel";
-
-export interface Message {
-  subject: string;
-  data: string;
-  data_base64: string;
-  reply?: string;
-  headers?: Record<string, string[]>;
-  timestamp: number;
-  size: number;
-}
-
-export interface PublishForm {
-  subject: string;
-  payload: string;
-  replyTo: string;
-  headers: string;
-}
-
-export interface RequestForm {
-  subject: string;
-  payload: string;
-  timeout: number;
-}
+import type { Message } from "../hooks/useMessageList";
+import type { PublishForm as PublishFormType } from "../components/messaging/PublishForm";
+import type { RequestForm as RequestFormType } from "../components/messaging/RequestForm";
+import {
+  PublishForm,
+  RequestForm,
+} from "../components/messaging";
 
 export function CoreMessagingContent() {
   const { t } = useTranslation();
@@ -62,13 +44,13 @@ export function CoreMessagingContent() {
     "core:autoScroll",
     true,
   );
-  const [publishForm, setPublishForm] = useState<PublishForm>({
+  const [publishForm, setPublishForm] = useState<PublishFormType>({
     subject: "",
     payload: "",
     replyTo: "",
     headers: "{}",
   });
-  const [requestForm, setRequestForm] = useState<RequestForm>({
+  const [requestForm, setRequestForm] = useState<RequestFormType>({
     subject: "",
     payload: "",
     timeout: 5000,

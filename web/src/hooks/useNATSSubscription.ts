@@ -1,14 +1,5 @@
 import { useEffect, useRef, useCallback } from "react";
-
-export interface Message {
-  subject: string;
-  data: string;
-  data_base64: string;
-  reply?: string;
-  headers?: Record<string, string[]>;
-  timestamp: number;
-  size: number;
-}
+import type { Message } from "./useMessageList";
 
 interface UseNATSSubscriptionOptions {
   /**

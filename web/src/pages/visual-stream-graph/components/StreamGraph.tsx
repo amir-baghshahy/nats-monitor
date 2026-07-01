@@ -8,7 +8,7 @@ import ReactFlow, {
   BackgroundVariant,
   NodeTypes,
 } from 'reactflow'
-// @ts-ignore - CSS import for React Flow
+// CSS import for React Flow
 import 'reactflow/dist/style.css'
 import { StreamNode } from './nodes/StreamNode'
 import { ConsumerNode } from './nodes/ConsumerNode'
