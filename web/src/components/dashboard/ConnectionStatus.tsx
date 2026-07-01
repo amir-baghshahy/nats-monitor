@@ -1,168 +1,202 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Server, Radio, Clock, Download, Upload } from "lucide-react";
-import StatusBadge from "../ui/StatusBadge";
+import { ChevronDown, ChevronUp, Server, Radio, Clock, Download, Upload, Wifi, WifiOff } from "lucide-react";
 import type { ConnectionInfo } from "../../types";
 import { useTranslation } from "react-i18next";
-import { Button } from "../ui";
 
 interface ConnectionStatusProps {
   connected: boolean;
   connections: ConnectionInfo[];
 }
 
-const VISIBLE_CONNECTIONS = 3;
+const INITIAL_VISIBLE = 5;
 
-function formatNumber(value: number | undefined) {
-  return new Intl.NumberFormat().format(value || 0);
+function formatNumber(v: number | undefined) {
+  return new Intl.NumberFormat().format(v || 0);
 }
 
-export default function ConnectionStatus({
-  connected,
-  connections,
-}: ConnectionStatusProps) {
+export default function ConnectionStatus({ connected, connections }: ConnectionStatusProps) {
   const [expanded, setExpanded] = useState(false);
   const { t } = useTranslation();
 
-  if (!connections || connections.length === 0) {
-    return null;
-  }
+  const list = connections || [];
+  const visible = expanded ? list : list.slice(0, INITIAL_VISIBLE);
+  const hasMore = list.length > INITIAL_VISIBLE;
 
-  const visibleConnections = expanded
-    ? connections
-    : connections.slice(0, VISIBLE_CONNECTIONS);
-  const totalSubscriptions = connections.reduce(
-    (sum, conn) => sum + (conn.subs_count || 0),
-    0,
-  );
-  const totalPendingBytes = connections.reduce(
-    (sum, conn) => sum + (conn.pending_bytes || 0),
-    0,
-  );
-  const shouldExpand = connections.length > VISIBLE_CONNECTIONS;
+  const totalSubs = list.reduce((s, c) => s + (c.subs_count || 0), 0);
+  const totalPending = list.reduce((s, c) => s + (c.pending_bytes || 0), 0);
+  const serverCount = new Set(list.map(c => c.server || c.server_id || "unknown")).size;
 
   return (
-    <div className="card mb-4">
-      <div className="mb-3 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="rounded-xl bg-primary-500/20 p-2">
-              <Radio className="h-4 w-4 text-primary-400" />
-            </div>
-            <div>
-              <h3 className="text-base font-semibold">{t('dashboard.connectionStatus')}</h3>
-              <p className="text-xs text-dark-muted">
-                {t('dashboard.activeConnections', { count: connections.length })}
-              </p>
-            </div>
+    <div className="card mb-3">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-7 h-7 rounded-lg bg-primary-500/20 flex items-center justify-center shrink-0">
+            <Radio className="h-3.5 w-3.5 text-primary-400" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold leading-tight">{t('dashboard.connectionStatus')}</h3>
+            <p className="text-[11px] text-dark-muted truncate">
+              {list.length === 0
+                ? (t('dashboard.noActiveConnections') || 'No active connections')
+                : t('dashboard.activeConnections', { count: list.length })}
+            </p>
           </div>
         </div>
-        <StatusBadge
-          status={connected ? "connected" : "disconnected"}
-          pulse={connected}
-        />
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium shrink-0 ${
+          connected
+            ? 'bg-green-500/15 text-green-400 ring-1 ring-green-500/25'
+            : 'bg-red-500/15 text-red-400 ring-1 ring-red-500/25'
+        }`}>
+          {connected
+            ? <Wifi className="h-3 w-3" />
+            : <WifiOff className="h-3 w-3" />}
+          {connected ? t('common.connected') : t('common.disconnected')}
+        </span>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
-        <div className="rounded-xl bg-dark-bg/50 p-3">
-          <p className="text-xs text-dark-muted">{t('dashboard.active')}</p>
-          <p className="mt-1 text-lg font-semibold">{connections.length}</p>
-        </div>
-        <div className="rounded-xl bg-dark-bg/50 p-3">
-          <p className="text-xs text-dark-muted">{t('dashboard.subscriptions')}</p>
-          <p className="mt-1 text-lg font-semibold">{formatNumber(totalSubscriptions)}</p>
-        </div>
-        <div className="rounded-xl bg-dark-bg/50 p-3">
-          <p className="text-xs text-dark-muted">{t('dashboard.pending')}</p>
-          <p className="mt-1 text-lg font-semibold">{formatNumber(totalPendingBytes)}</p>
-        </div>
-        <div className="rounded-xl bg-dark-bg/50 p-3">
-          <p className="text-xs text-dark-muted">{t('dashboard.servers')}</p>
-          <p className="mt-1 text-lg font-semibold">
-            {new Set(connections.map((conn) => conn.server || conn.server_id || "unknown")).size}
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-2 lg:grid-cols-3">
-        {visibleConnections.map((conn) => (
-          <div
-            key={conn.cid || conn.server_id || conn.ip || conn.name}
-            className="rounded-2xl border border-dark-border/60 bg-dark-bg/40 p-3"
-          >
-            <div className="mb-3 flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <Server className="h-3.5 w-3.5 shrink-0 text-primary-400" />
-                  <p className="truncate text-sm font-medium">
-                    {conn.name || conn.server || t('dashboard.natsServer')}
-                  </p>
-                </div>
-                <p className="mt-1 truncate text-xs font-mono text-dark-muted">
-                  {conn.ip || t('dashboard.noIp')}
-                  {conn.port ? `:${conn.port}` : ""}
-                </p>
-              </div>
-              <span className="rounded-full bg-primary-500/10 px-2 py-0.5 text-xs text-primary-300">
-                #{conn.cid || t('dashboard.na')}
-              </span>
-            </div>
-
-            <div className="space-y-1.5 text-xs text-dark-muted">
-              <div className="flex items-center justify-between gap-3">
-                <span>{t('dashboard.user')}</span>
-                <span className="font-medium text-dark-text">{conn.user || t('dashboard.na')}</span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span>{t('dashboard.subscriptions')}</span>
-                <span className="font-medium text-dark-text">{conn.subs_count || 0}</span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span>{t('dashboard.pending')}</span>
-                <span className="font-medium text-dark-text">
-                  {formatNumber(conn.pending_bytes)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span>{t('dashboard.rtt')}</span>
-                <span className="font-medium text-dark-text">{conn.rtt || t('dashboard.na')}</span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span>{t('dashboard.in')}</span>
-                <span className="flex items-center gap-1 font-medium text-dark-text">
-                  <Download className="h-3 w-3" />
-                  {formatNumber(conn.in_msgs)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span>{t('dashboard.out')}</span>
-                <span className="flex items-center gap-1 font-medium text-dark-text">
-                  <Upload className="h-3 w-3" />
-                  {formatNumber(conn.out_msgs)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span>{t('dashboard.lastActivity')}</span>
-                <span className="flex items-center gap-1 font-medium text-dark-text">
-                  <Clock className="h-3 w-3" />
-                  {conn.last_activity ? new Date(conn.last_activity).toLocaleString() : t('dashboard.na')}
-                </span>
-              </div>
-            </div>
+      {/* Summary stats — always show */}
+      <div className="grid grid-cols-4 gap-1.5 mb-3">
+        {[
+          { label: t('dashboard.active'), value: list.length },
+          { label: t('dashboard.subscriptions'), value: formatNumber(totalSubs) },
+          { label: t('dashboard.pending'), value: formatNumber(totalPending) },
+          { label: t('dashboard.servers'), value: serverCount },
+        ].map(({ label, value }) => (
+          <div key={label} className="rounded-lg bg-dark-bg/50 px-2 py-2 text-center">
+            <p className="text-[10px] text-dark-muted leading-tight">{label}</p>
+            <p className="text-sm font-semibold tabular-nums mt-0.5">{value}</p>
           </div>
         ))}
       </div>
 
-       {shouldExpand && (
-         <Button
-           type="button"
-           variant="secondary"
-           size="sm"
-           onClick={() => setExpanded(!expanded)}
-           icon={expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-         >
-           {expanded ? t('dashboard.showLess') : t('dashboard.showMore', { count: connections.length - VISIBLE_CONNECTIONS })}
-         </Button>
-       )}
+      {/* Empty state */}
+      {list.length === 0 && (
+        <div className="rounded-lg border border-dashed border-dark-border/50 bg-dark-bg/30 py-8 text-center">
+          <Radio className="mx-auto mb-2 h-7 w-7 opacity-25" />
+          <p className="text-xs text-dark-muted">{t('dashboard.noActiveConnections') || 'No active connections'}</p>
+          <p className="text-[11px] text-dark-muted/60 mt-0.5">
+            {t('dashboard.connectionsWillAppear') || 'Client connections will appear here'}
+          </p>
+        </div>
+      )}
+
+      {/* Connection list */}
+      {list.length > 0 && (
+        <div className="space-y-1">
+          {visible.map((conn) => (
+            <ConnectionRow key={conn.cid ?? conn.ip ?? conn.name ?? Math.random()} conn={conn} t={t} />
+          ))}
+
+          {hasMore && (
+            <button
+              onClick={() => setExpanded(p => !p)}
+              className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dark-border/40 py-1.5 text-[11px] text-dark-muted hover:text-dark-text hover:bg-dark-bg/40 transition-colors mt-1"
+            >
+              {expanded ? (
+                <><ChevronUp className="h-3 w-3" />{t('dashboard.showLess') || 'Show less'}</>
+              ) : (
+                <><ChevronDown className="h-3 w-3" />{t('dashboard.showMore', { count: list.length - INITIAL_VISIBLE }) || `Show ${list.length - INITIAL_VISIBLE} more`}</>
+              )}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ConnectionRow({ conn, t }: { conn: ConnectionInfo; t: any }) {
+  const [open, setOpen] = useState(false);
+
+  const label = conn.user || conn.name || (t('connections.anonymous') || 'Anonymous');
+  const addr = conn.ip ? `${conn.ip}${conn.port ? `:${conn.port}` : ''}` : null;
+
+  return (
+    <div className="rounded-lg border border-dark-border/40 bg-dark-bg/20 overflow-hidden">
+      <button
+        onClick={() => setOpen(p => !p)}
+        className="flex w-full items-center gap-2.5 px-3 py-2 text-left hover:bg-dark-bg/50 transition-colors"
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
+
+        <Server className="h-3.5 w-3.5 text-dark-muted shrink-0" />
+
+        <div className="flex-1 min-w-0 flex items-center gap-2">
+          <span className="text-xs font-medium truncate">{label}</span>
+          {addr && (
+            <span className="text-[10px] font-mono text-dark-muted/70 truncate hidden sm:block" title={addr}>
+              {addr}
+            </span>
+          )}
+        </div>
+
+        {conn.cid != null && (
+          <span className="rounded px-1.5 py-0.5 text-[10px] font-mono bg-primary-500/10 text-primary-400 shrink-0">
+            #{conn.cid}
+          </span>
+        )}
+
+        <div className="hidden sm:flex items-center gap-1 shrink-0 text-[10px] text-dark-muted">
+          <span>{conn.subs_count || 0} subs</span>
+        </div>
+
+        <ChevronDown className={`h-3 w-3 text-dark-muted shrink-0 transition-transform duration-150 ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="border-t border-dark-border/40 px-3 py-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-[11px]">
+          <DetailRow label={t('dashboard.rtt') || 'RTT'} value={conn.rtt || '—'} />
+          <DetailRow label={t('dashboard.subscriptions') || 'Subs'} value={conn.subs_count ?? 0} />
+          <DetailRow label={t('dashboard.pending') || 'Pending'} value={formatNumber(conn.pending_bytes)} />
+          <DetailRow
+            label={t('dashboard.in') || 'In'}
+            value={
+              <span className="flex items-center gap-1">
+                <Download className="h-2.5 w-2.5" />
+                {formatNumber(conn.in_msgs)}
+              </span>
+            }
+          />
+          <DetailRow
+            label={t('dashboard.out') || 'Out'}
+            value={
+              <span className="flex items-center gap-1">
+                <Upload className="h-2.5 w-2.5" />
+                {formatNumber(conn.out_msgs)}
+              </span>
+            }
+          />
+          <DetailRow
+            label={t('dashboard.lastActivity') || 'Last active'}
+            value={
+              conn.last_activity ? (
+                <span className="flex items-center gap-1">
+                  <Clock className="h-2.5 w-2.5" />
+                  {new Date(conn.last_activity).toLocaleTimeString()}
+                </span>
+              ) : '—'
+            }
+          />
+          {conn.server && (
+            <div className="col-span-full border-t border-dark-border/30 pt-1.5 mt-0.5 flex items-center gap-2">
+              <span className="text-dark-muted shrink-0">{t('dashboard.natsServer') || 'NATS server'}</span>
+              <span className="font-mono text-[10px] text-dark-muted/70 truncate" title={conn.server}>
+                {conn.server}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-dark-muted shrink-0">{label}</span>
+      <span className="font-medium text-right tabular-nums">{value}</span>
     </div>
   );
 }

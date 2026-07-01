@@ -1,7 +1,7 @@
 import type { Alert } from "../../../types";
 import { ModalWrapper } from "../../../components/ui/Modal";
 import { useTranslation } from "react-i18next";
-import { Mail, Webhook, Hash } from "lucide-react";
+import { Mail, Webhook, Hash, X } from "lucide-react";
 import Select from "../../../components/ui/Select";
 import Button from "../../../components/ui/Button";
 import { useState } from "react";
@@ -62,25 +62,28 @@ export default function AlertFormModal({
   };
 
   return createPortal(
-    <ModalWrapper isOpen={true}>
+    <ModalWrapper isOpen={true} onClose={onClose}>
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
-        onClick={onClose}
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       >
         <div
           className="card w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
-          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="alert-modal-title"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-5 border-b border-dark-border flex-shrink-0">
-            <h2 className="text-xl font-bold">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-dark-border flex-shrink-0">
+            <h2 id="alert-modal-title" className="text-sm font-bold">
               {alert ? t("alerts.editAlert") : t("alerts.createAlert")}
             </h2>
             <button
+              type="button"
               onClick={onClose}
-              className="p-2 hover:bg-dark-bg rounded-lg transition-colors"
+              className="p-1.5 hover:bg-dark-bg rounded-lg transition-colors"
             >
-              ×
+              <X className="w-4 h-4" />
             </button>
           </div>
 

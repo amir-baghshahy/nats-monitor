@@ -62,14 +62,14 @@ export default function StreamDetailPage() {
    if (!name) return <div>{t("streams.notFound")}</div>;
 
   return (
-    <div className="p-2 md:p-3 lg:p-4">
+    <div className="p-4 md:p-6">
       <div className="flex items-center gap-4 mb-4">
         <Link to="/streams" className="p-2 hover:bg-dark-bg rounded-lg transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold">{name}</h1>
+            <h1 className="text-xl font-bold">{name}</h1>
             <div
               className={`flex items-center gap-2 px-3 py-1 rounded-full ${
                 (streamData.state?.num_pending || 0) > 1000

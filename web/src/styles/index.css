@@ -9,6 +9,13 @@
 
   html {
     scroll-behavior: auto;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    height: 100%;
+    overflow: hidden;
   }
 
   html[lang="fa"],
@@ -31,7 +38,7 @@
 
 @layer components {
   .card {
-    @apply relative overflow-hidden rounded-xl border border-dark-border/60 bg-dark-card/75 p-4 shadow-lg shadow-black/10 backdrop-blur-xl;
+    @apply relative overflow-hidden rounded-xl border border-dark-border/60 bg-dark-card/75 p-3 shadow-lg shadow-black/10 backdrop-blur-xl;
   }
 
   .card::before {

@@ -22,6 +22,7 @@ import {
   Menu,
   X,
   Network,
+  KeySquare,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -29,7 +30,7 @@ const NAV_ITEMS = [
   { key: "streams", href: "/streams", icon: Database },
   { key: "consumers", href: "/consumers", icon: Users },
   { key: "messages", href: "/messages", icon: MessageSquare },
-  { key: "kvStore", href: "/kv-store", icon: Database },
+  { key: "kvStore", href: "/kv-store", icon: KeySquare },
   { key: "subjects", href: "/subjects", icon: Globe },
   { key: "connections", href: "/connections", icon: Cable },
   { key: "cluster", href: "/cluster", icon: Activity },
@@ -43,7 +44,7 @@ const NAV_ITEMS = [
 
 export default function Layout({ children }: { children: ReactNode }) {
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { t } = useTranslation();
 
   const { data: health } = useQuery({
@@ -57,95 +58,90 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen overflow-hidden bg-dark-bg">
       {/* Mobile backdrop */}
-      {mobileMenuOpen && (
+      {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Mobile menu button */}
       <button
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-dark-card border border-dark-border text-dark-text hover:bg-dark-bg transition-colors"
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="md:hidden fixed top-3 left-3 z-50 p-1.5 rounded-lg bg-dark-card border border-dark-border text-dark-text hover:bg-dark-bg transition-colors"
       >
-        {mobileMenuOpen ? (
-          <X className="w-6 h-6" />
-        ) : (
-          <Menu className="w-6 h-6" />
-        )}
+        {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:relative z-30 flex w-72 flex-shrink-0 flex-col border-r border-dark-border/70 bg-dark-card/75 shadow-2xl shadow-black/20 backdrop-blur-xl overflow-hidden transition-transform duration-300 ${
-          mobileMenuOpen
-            ? "translate-x-0"
-            : "-translate-x-full lg:translate-x-0"
+        className={`fixed md:relative z-30 flex h-full w-64 flex-shrink-0 flex-col border-r border-dark-border/70 bg-dark-card/75 shadow-2xl shadow-black/20 backdrop-blur-xl overflow-hidden transition-transform duration-300 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="border-b border-dark-border/70 px-6 py-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary-500/20 text-primary-300 ring-1 ring-primary-400/30">
-              <Activity className="h-5 w-5" />
+        {/* Logo */}
+        <div className="border-b border-dark-border/70 px-4 py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-500/20 text-primary-300 ring-1 ring-primary-400/30 shrink-0">
+              <Activity className="h-4 w-4" />
             </div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight text-dark-text">
+            <div className="min-w-0">
+              <h1 className="text-sm font-bold tracking-tight text-dark-text truncate">
                 {t("app.title")}
               </h1>
-              <p className="text-xs text-dark-muted">{t("app.subtitle")}</p>
+              <p className="text-[10px] text-dark-muted truncate">{t("app.subtitle")}</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4 scrollbar-thin">
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto px-2 py-3 scrollbar-thin space-y-0.5">
           {NAV_ITEMS.map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link
                 key={item.key}
                 to={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all duration-200 ${
+                onClick={() => setSidebarOpen(false)}
+                className={`group flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 ${
                   isActive
-                    ? "bg-primary-600 text-white shadow-lg shadow-primary-500/20"
-                    : "text-dark-muted hover:bg-dark-bg/70 hover:text-dark-text hover-lift"
+                    ? "bg-primary-600 text-white shadow-sm shadow-primary-500/20"
+                    : "text-dark-muted hover:bg-dark-bg/60 hover:text-dark-text"
                 }`}
               >
                 <item.icon
-                  className={`h-5 w-5 transition-transform duration-200 ${isActive ? "text-white" : "text-dark-muted group-hover:text-dark-text group-hover:scale-110"}`}
+                  className={`h-4 w-4 shrink-0 ${isActive ? "text-white" : "text-dark-muted group-hover:text-dark-text"}`}
                 />
-                <span>{t(`nav.${item.key}`)}</span>
+                <span className="truncate">{t(`nav.${item.key}`)}</span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="border-t border-dark-border/70 p-4 space-y-3">
+        {/* Footer */}
+        <div className="border-t border-dark-border/70 p-3 space-y-2">
           <LanguageSwitcher />
-          <div className="rounded-2xl border border-dark-border/60 bg-dark-bg/45 p-3">
+          <div className="rounded-lg border border-dark-border/60 bg-dark-bg/45 px-3 py-2">
             <div className="flex items-center gap-2">
               <div
-                className={`h-2.5 w-2.5 rounded-full ${
-                  connected
-                    ? "bg-status-success animate-pulse"
-                    : "bg-status-error"
+                className={`h-2 w-2 rounded-full shrink-0 ${
+                  connected ? "bg-status-success animate-pulse" : "bg-status-error"
                 }`}
               />
-              <span className="text-xs text-dark-muted">
+              <span className="text-xs text-dark-muted truncate">
                 {connected ? t("common.connected") : t("common.disconnected")}
               </span>
               {!connected && (
-                <CloudOff className="ms-auto h-4 w-4 text-status-error" />
+                <CloudOff className="ms-auto h-3.5 w-3.5 shrink-0 text-status-error" />
               )}
             </div>
           </div>
         </div>
       </aside>
 
-      {/* Main content - full height, inner scroll */}
-      <main className="h-full flex-1 pt-16 lg:pt-0 overflow-hidden">
-        <div className="h-full overflow-y-auto overflow-x-hidden">
+      {/* Main content */}
+      <main className="h-full flex-1 pt-12 md:pt-0 overflow-hidden min-w-0">
+        <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-thin">
           {children}
         </div>
       </main>

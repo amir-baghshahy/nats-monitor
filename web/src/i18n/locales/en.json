@@ -784,7 +784,9 @@
     "pointCount": "{{count}} point",
     "pointCount_other": "{{count}} points",
     "noStreamTrend": "No Stream Trend",
-    "noStreamTrendDescription": "Select a stream to view historical message points."
+    "noStreamTrendDescription": "Select a stream to view historical message points.",
+    "selectStreamForTrend": "Select a stream to view its trend",
+    "dataPoints": "points"
   },
   "tenancy": {
     "title": "Multi-Tenancy",

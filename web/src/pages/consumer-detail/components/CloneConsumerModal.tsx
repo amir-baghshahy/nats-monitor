@@ -25,12 +25,12 @@ export default function CloneConsumerModal({
   const { t } = useTranslation();
 
   return createPortal(
-    <ModalWrapper isOpen={true}>
+    <ModalWrapper isOpen={true} onClose={onClose}>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
         <div className="card w-full max-w-md">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">{t("consumers.cloneConsumerTitle")}</h2>
-            <button onClick={onClose} className="p-2 hover:bg-dark-bg rounded-lg">
+            <button type="button" onClick={onClose} className="p-1.5 hover:bg-dark-bg rounded-lg">
               <span className="text-dark-muted">✕</span>
             </button>
           </div>

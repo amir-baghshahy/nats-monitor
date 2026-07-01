@@ -1,7 +1,7 @@
 import { UseSecurityReturn } from './hooks/useSecurity'
 import { useTranslation } from "react-i18next";
 import {
-  Shield, Users, Plus, Edit, Trash2,
+  Shield, Users, Plus, Edit, Trash2, X,
   Clock, FileText, Server, Activity, ToggleLeft, ToggleRight
 } from 'lucide-react'
 import { PageError, PageLoading } from '../../components/ui/PageState'
@@ -58,7 +58,7 @@ export default function SecurityPage({
   }
 
   return (
-    <div className="p-2">
+    <div className="p-4 md:p-6">
       <PageHeader
         title={t('security.title')}
         subtitle={t('security.subtitle')}
@@ -213,36 +213,32 @@ export default function SecurityPage({
                   </div>
                     <div className="flex items-center gap-2">
                       <button
-                         onClick={async () => {
-                           const ok = await confirm({ title: user.enabled ? t('security.disableUser') : t('security.enableUser'), message: t('security.toggleUserConfirm', { name: user.name }), confirmLabel: user.enabled ? t('security.disable') : t('security.enable'), variant: "warning" })
+                        type="button"
+                        onClick={async () => {
+                          const ok = await confirm({ title: user.enabled ? t('security.disableUser') : t('security.enableUser'), message: t('security.toggleUserConfirm', { name: user.name }), confirmLabel: user.enabled ? t('security.disable') : t('security.enable'), variant: "warning" })
                           if (ok) updateUserMutation.mutate({ name: user.name, data: { enabled: !user.enabled } })
                         }}
-                        className="p-2 hover:bg-dark-border rounded-lg"
+                        className="p-1.5 hover:bg-dark-border rounded-lg"
                       >
-                        {user.enabled ? (
-                          <ToggleRight className="w-4 h-4 text-green-400" />
-                        ) : (
-                          <ToggleLeft className="w-4 h-4 text-dark-muted" />
-                        )}
+                        {user.enabled ? <ToggleRight className="w-4 h-4 text-green-400" /> : <ToggleLeft className="w-4 h-4 text-dark-muted" />}
                       </button>
                       <button
-                        onClick={() => {
-                          setSelectedUser(user)
-                          setShowUserModal(true)
-                        }}
-                        className="p-2 hover:bg-dark-border rounded-lg"
+                        type="button"
+                        onClick={() => { setSelectedUser(user); setShowUserModal(true); }}
+                        className="p-1.5 hover:bg-dark-border rounded-lg"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
-                     <button
+                      <button
+                        type="button"
                         onClick={async () => {
                           const ok = await confirm({ title: t('security.deleteUser'), message: t('security.deleteUserConfirm', { name: user.name }), confirmLabel: t('security.delete'), variant: "danger" })
-                         if (ok) deleteUserMutation.mutate(user.name)
-                       }}
-                       className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg"
-                     >
-                       <Trash2 className="w-4 h-4" />
-                     </button>
+                          if (ok) deleteUserMutation.mutate(user.name)
+                        }}
+                        className="p-1.5 hover:bg-red-500/20 text-red-400 rounded-lg"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                 </div>
               </div>
@@ -306,19 +302,20 @@ export default function SecurityPage({
       )}
 
       {showUserModal && (
-        <ModalWrapper isOpen={true}>
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="card max-w-md w-full">
+        <ModalWrapper isOpen={true} onClose={() => { setShowUserModal(false); setSelectedUser(null); }}>
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
+            onClick={(e) => { if (e.target === e.currentTarget) { setShowUserModal(false); setSelectedUser(null); } }}
+          >
+            <div className="card max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="user-modal-title">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold">{selectedUser ? t('security.editUser') : t('security.createUser')}</h2>
+              <h2 id="user-modal-title" className="text-sm font-bold">{selectedUser ? t('security.editUser') : t('security.createUser')}</h2>
               <button
-                onClick={() => {
-                  setShowUserModal(false)
-                  setSelectedUser(null)
-                }}
-                className="p-2 hover:bg-dark-bg rounded-lg"
+                type="button"
+                onClick={() => { setShowUserModal(false); setSelectedUser(null); }}
+                className="p-1.5 hover:bg-dark-bg rounded-lg"
               >
-                ×
+                <X className="w-4 h-4" />
               </button>
             </div>
             <form

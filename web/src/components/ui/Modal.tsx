@@ -2,36 +2,29 @@ import { useEffect } from "react";
 
 interface ModalWrapperProps {
   isOpen: boolean;
+  onClose?: () => void;
   children: React.ReactNode;
 }
 
-/**
- * ModalWrapper component that locks body scroll when modal is open
- * This prevents the background from scrolling when a modal is active
- */
-export function ModalWrapper({ isOpen, children }: ModalWrapperProps) {
+export function ModalWrapper({ isOpen, onClose, children }: ModalWrapperProps) {
   useEffect(() => {
-    // Find the main scrollable container in the Layout
-    const scrollContainer = document.querySelector("main > div");
+    if (!isOpen) return;
 
-    if (isOpen) {
-      // Lock body scroll
-      document.body.style.overflow = "hidden";
+    const scrollContainer = document.querySelector("main > div") as HTMLElement | null;
+    document.body.style.overflow = "hidden";
+    if (scrollContainer) scrollContainer.style.overflow = "hidden";
 
-      // Lock the inner scrollable container
-      if (scrollContainer) {
-        (scrollContainer as HTMLElement).style.overflow = "hidden";
-      }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && onClose) onClose();
+    };
+    document.addEventListener("keydown", handleKeyDown);
 
-      // Return cleanup function
-      return () => {
-        document.body.style.overflow = "";
-        if (scrollContainer) {
-          (scrollContainer as HTMLElement).style.overflow = "";
-        }
-      };
-    }
-  }, [isOpen]);
+    return () => {
+      document.body.style.overflow = "";
+      if (scrollContainer) scrollContainer.style.overflow = "";
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   return <>{children}</>;
 }

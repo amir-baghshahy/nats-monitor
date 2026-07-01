@@ -38,13 +38,16 @@ export default function CreateStreamModal({
   };
 
   return createPortal(
-    <ModalWrapper isOpen={true}>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-        <div className="card max-w-md w-full">
+    <ModalWrapper isOpen={true} onClose={onClose}>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
+        <div className="card max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="create-stream-title">
           <div className="flex items-center justify-between mb-4">
-             <h2 className="text-xl font-bold">{t("streams.createStream")}</h2>
-            <button onClick={onClose} className="p-2 hover:bg-dark-bg rounded-lg">
-              <X className="w-5 h-5" />
+            <h2 id="create-stream-title" className="text-sm font-bold">{t("streams.createStream")}</h2>
+            <button type="button" onClick={onClose} className="p-1.5 hover:bg-dark-bg rounded-lg">
+              <X className="w-4 h-4" />
             </button>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">

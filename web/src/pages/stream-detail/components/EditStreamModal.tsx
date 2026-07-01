@@ -24,7 +24,7 @@ export default function EditStreamModal({
   const { t } = useTranslation();
 
   return createPortal(
-    <ModalWrapper isOpen={true}>
+    <ModalWrapper isOpen={true} onClose={onClose}>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
         <div className="card w-full max-w-lg">
           <div className="flex items-center justify-between mb-4">

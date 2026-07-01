@@ -31,12 +31,14 @@ export default function ConnectionsPage({
   const { t } = useTranslation();
 
   return (
-    <div className="p-2 md:p-3 lg:p-4">
+    <div className="p-4 md:p-6">
       <PageHeader
         title={t('connections.title')}
         subtitle={t('connections.subtitle')}
         actions={
-           <Button variant="secondary" icon={<RefreshCw className="w-4 h-4" />} onClick={() => refetch()} />
+          <Button variant="secondary" size="sm" icon={<RefreshCw className="w-3.5 h-3.5" />} onClick={() => refetch()}>
+            {t('common.refresh')}
+          </Button>
         }
       />
 
@@ -170,9 +172,9 @@ export default function ConnectionsPage({
                       </span>
                     </div>
                     <div className="flex items-center gap-4 mt-1 text-xs text-dark-muted">
-                      <span className="flex items-center gap-1">
-                        <Server className="w-3 h-3" />
-                        {conn.server}
+                      <span className="flex items-center gap-1 min-w-0">
+                        <Server className="w-3 h-3 shrink-0" />
+                        <span className="truncate max-w-[200px]" title={conn.server}>{conn.server}</span>
                       </span>
                     </div>
                   </div>

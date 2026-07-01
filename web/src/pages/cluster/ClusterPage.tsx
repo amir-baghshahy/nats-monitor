@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   Server, HardDrive, Activity, CheckCircle, XCircle,
   RefreshCw, Copy, Database, Shield,
-  Zap, Globe
+  Zap, Globe, Info
 } from 'lucide-react'
 import { PageError, PageLoading } from '../../components/ui/PageState'
 import { PageHeader, PanelCard } from '../../components/ui'
@@ -55,14 +55,14 @@ export default function ClusterPage({
   }
 
   return (
-    <div className="p-2">
+    <div className="p-4 md:p-6">
       <PageHeader
         title={t('cluster.title')}
         subtitle={clusterInfo?.is_clustered
           ? t('cluster.cluster', { name: clusterInfo?.cluster_name || t('cluster.notClustered') })
           : t('cluster.standaloneMode')}
         actions={
-          <Button variant="secondary" icon={<RefreshCw className="w-4 h-4" />} onClick={refreshAll}>
+          <Button variant="secondary" size="sm" icon={<RefreshCw className="w-3.5 h-3.5" />} onClick={refreshAll}>
             {t('common.refresh')}
           </Button>
         }
@@ -411,23 +411,3 @@ export default function ClusterPage({
   )
 }
 
-function Info({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
-    </svg>
-  )
-}

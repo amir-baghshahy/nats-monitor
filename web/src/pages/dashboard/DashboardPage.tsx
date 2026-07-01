@@ -24,7 +24,7 @@ export default function DashboardPage({
 
   if (isLoading) {
     return (
-      <div className="p-2">
+      <div className="p-4 md:p-6">
         <DashboardHeader
           sseConnected={sseConnected}
           onRefresh={() => refetch()}
@@ -36,7 +36,7 @@ export default function DashboardPage({
 
   if (isError) {
     return (
-      <div className="p-2">
+      <div className="p-4 md:p-6">
         <DashboardHeader
           sseConnected={sseConnected}
           onRefresh={() => refetch()}
@@ -47,7 +47,7 @@ export default function DashboardPage({
   }
 
   return (
-    <div className="p-2 animate-fade-in">
+    <div className="p-4 md:p-6 animate-fade-in">
       <DashboardHeader
         sseConnected={sseConnected}
         onRefresh={() => refetch()}

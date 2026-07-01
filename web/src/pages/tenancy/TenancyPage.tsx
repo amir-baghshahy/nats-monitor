@@ -2,7 +2,7 @@ import type { ConnectionConfig, ConnectionStatus } from '../../types'
 import { UseTenancyReturn } from './hooks/useTenancy'
 import { useTranslation } from "react-i18next";
 import {
-  Server, Plus, Edit, Trash2, CheckCircle, XCircle,
+  Server, Plus, Edit, Trash2, CheckCircle, XCircle, X,
   RefreshCw, Play, Globe, Star
 } from 'lucide-react'
 import { PageError, PageLoading } from '../../components/ui/PageState'
@@ -62,7 +62,7 @@ export default function TenancyPage({
   }
 
   return (
-    <div className="p-2">
+    <div className="p-4 md:p-6">
       <PageHeader
         title={t('tenancy.title')}
         subtitle={t('tenancy.subtitle')}
@@ -175,43 +175,42 @@ export default function TenancyPage({
                   <div className="flex items-center gap-2">
                     {!conn.is_default && (
                       <button
+                        type="button"
                         onClick={() => setDefaultMutation.mutate(connectionId)}
-                        className="p-2 hover:bg-yellow-500/20 text-yellow-400 rounded-lg"
+                        className="p-1.5 hover:bg-yellow-500/20 text-yellow-400 rounded-lg"
                         title={t('tenancy.setDefault')}
                       >
-                        <Star className="w-4 h-4" />
+                        <Star className="w-3.5 h-3.5" />
                       </button>
                     )}
                     <button
+                      type="button"
                       onClick={() => handleTest(connectionUrl)}
                       disabled={testConnectionMutation.isPending}
-                      className="p-2 hover:bg-blue-500/20 text-blue-400 rounded-lg"
+                      className="p-1.5 hover:bg-blue-500/20 text-blue-400 rounded-lg"
                       title={t('tenancy.testConnection')}
                     >
-                      <RefreshCw
-                        className={`w-4 h-4 ${testConnectionMutation.isPending && testingUrl === connectionUrl ? 'animate-spin' : ''}`}
-                      />
+                      <RefreshCw className={`w-3.5 h-3.5 ${testConnectionMutation.isPending && testingUrl === connectionUrl ? 'animate-spin' : ''}`} />
                     </button>
                     <button
-                      onClick={() => {
-                        setEditingConnection(conn)
-                        setShowModal(true)
-                      }}
-                      className="p-2 hover:bg-dark-border rounded-lg"
+                      type="button"
+                      onClick={() => { setEditingConnection(conn); setShowModal(true); }}
+                      className="p-1.5 hover:bg-dark-border rounded-lg"
                       title={t('common.edit')}
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-3.5 h-3.5" />
                     </button>
                     {!conn.is_default && (
                       <button
+                        type="button"
                         onClick={async () => {
                           const ok = await confirm({ title: t('tenancy.deleteConnection'), message: t('tenancy.deleteConnectionConfirm', { name: connectionName }), confirmLabel: t('common.delete'), variant: "danger" })
                           if (ok) deleteMutation.mutate(connectionId)
                         }}
-                        className="p-2 hover:bg-red-500/20 text-red-400 rounded-lg"
+                        className="p-1.5 hover:bg-red-500/20 text-red-400 rounded-lg"
                         title={t('common.delete')}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
@@ -247,22 +246,22 @@ export default function TenancyPage({
       </PanelCard>
 
       {showModal && (
-        <ModalWrapper isOpen={true}>
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="card max-w-md w-full">
+        <ModalWrapper isOpen={true} onClose={() => { setShowModal(false); setEditingConnection(null); setTestResult(null); }}>
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
+            onClick={(e) => { if (e.target === e.currentTarget) { setShowModal(false); setEditingConnection(null); setTestResult(null); } }}
+          >
+            <div className="card max-w-md w-full" role="dialog" aria-modal="true" aria-labelledby="conn-modal-title">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">
+              <h2 id="conn-modal-title" className="text-sm font-bold">
                 {editingConnection ? t('tenancy.editConnection') : t('tenancy.addConnection')}
               </h2>
               <button
-                onClick={() => {
-                  setShowModal(false)
-                  setEditingConnection(null)
-                  setTestResult(null)
-                }}
-                className="p-2 hover:bg-dark-bg rounded-lg"
+                type="button"
+                onClick={() => { setShowModal(false); setEditingConnection(null); setTestResult(null); }}
+                className="p-1.5 hover:bg-dark-bg rounded-lg"
               >
-                ×
+                <X className="w-4 h-4" />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">

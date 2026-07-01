@@ -1,4 +1,4 @@
-import { Send } from "lucide-react";
+import { Send, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
 import { ModalWrapper } from "../../../components/ui/Modal";
@@ -36,16 +36,20 @@ export default function PublishModal({
   };
 
   return createPortal(
-    <ModalWrapper isOpen={true}>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-        <div className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <ModalWrapper isOpen={true} onClose={onClose}>
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
+        <div className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="publish-modal-title">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">{t('messages.publishMessage')}</h2>
+            <h2 id="publish-modal-title" className="text-sm font-bold">{t('messages.publishMessage')}</h2>
             <button
+              type="button"
               onClick={onClose}
-              className="p-2 hover:bg-dark-bg rounded-lg"
+              className="p-1.5 hover:bg-dark-bg rounded-lg"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
 

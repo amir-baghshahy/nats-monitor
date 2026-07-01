@@ -18,7 +18,7 @@ export default function PanelCard({
   icon,
   header,
   footer,
-  maxHeight = 500,
+  maxHeight,
   children,
   className = "",
   loading = false,
@@ -28,7 +28,7 @@ export default function PanelCard({
   return (
     <div
       className={`card overflow-hidden flex flex-col ${className}`}
-      style={{ maxHeight }}
+      style={maxHeight !== undefined ? { maxHeight } : undefined}
     >
       {/* Header */}
       {(header || title) && (

@@ -10,10 +10,10 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import type { MetricDataPoint } from "../../types";
+
 import { formatBytes, formatNumber } from "../../utils/formatters";
+import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import { PageError, PageLoading } from "../../components/ui/PageState";
-import { t } from "i18next";
 import Select from "../../components/ui/Select";
 import { PageHeader, StatCard, PanelCard, EmptyState } from "../../components/ui";
 import { Button } from "../../components/ui";
@@ -25,85 +25,38 @@ const durations = [
   { label: "last24Hours", value: "24h" },
 ];
 
-function Sparkline({
-  data,
-  color,
-  width = 200,
-  height = 40,
-}: {
-  data: MetricDataPoint[];
-  color: string;
-  width?: number;
-  height?: number;
-}) {
-  if (!data || data.length === 0) {
+function MiniChart({ data, color }: { data: { value?: number }[]; color: string }) {
+  const { t } = useTranslation();
+  const chartData = data.map((p, i) => ({ i, v: p.value || 0 }));
+  if (chartData.length < 2) {
     return (
-      <div
-        style={{ width, height }}
-        className="flex items-center justify-center text-dark-muted text-xs"
-      >
-        Collecting data...
+      <div className="flex h-10 items-center justify-center text-[10px] text-dark-muted/60">
+        {t("common.collectingData")}
       </div>
     );
   }
-
-  const values = data.map((point) => point.value || 0);
-
-  if (values.every((v) => v === 0)) {
-    return (
-      <div
-        style={{ width, height }}
-        className="flex items-center justify-center text-dark-muted text-xs"
-      >
-        {t("metrics.noActivity")}
-      </div>
-    );
-  }
-
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-
-  if (data.length === 1) {
-    const x = width / 2;
-    const y = height - ((values[0] - min) / range) * height;
-    const cy = Math.max(4, Math.min(height - 4, y));
-    return (
-      <svg width={width} height={height} className="overflow-visible">
-        <line
-          x1={0}
-          y1={cy}
-          x2={width}
-          y2={cy}
-          stroke={color}
-          strokeWidth="1"
-          strokeDasharray="4 3"
-          opacity="0.4"
-        />
-        <circle cx={x} cy={cy} r="4" fill={color} opacity="0.9" />
-      </svg>
-    );
-  }
-
-  const points = values
-    .map((value, index) => {
-      const x = (index / (values.length - 1)) * width;
-      const y = height - ((value - min) / range) * height;
-      return `${x},${y}`;
-    })
-    .join(" ");
-
   return (
-    <svg width={width} height={height} className="overflow-visible">
-      <polyline
-        points={points}
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <div className="h-10 w-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={chartData} margin={{ top: 2, right: 0, left: 0, bottom: 2 }}>
+          <defs>
+            <linearGradient id={`mg-${color.replace(/[^a-z0-9]/gi, '')}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={color} stopOpacity={0.25} />
+              <stop offset="95%" stopColor={color} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <Area
+            type="monotone"
+            dataKey="v"
+            stroke={color}
+            strokeWidth={1.5}
+            fill={`url(#mg-${color.replace(/[^a-z0-9]/gi, '')})`}
+            dot={false}
+            isAnimationActive={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 
@@ -140,7 +93,7 @@ export default function MetricsPage({
   }
 
   return (
-    <div className="p-2">
+    <div className="p-4 md:p-6">
       <PageHeader
         title={t("metrics.title")}
         subtitle={t("metrics.subtitle")}
@@ -347,11 +300,9 @@ export default function MetricsPage({
                         {formatNumber(messages)}
                       </span>
                     </div>
-                    <Sparkline
+                    <MiniChart
                       data={messageSeries?.data || []}
                       color="rgb(59, 130, 246)"
-                      width={280}
-                      height={48}
                     />
                   </div>
 
@@ -367,11 +318,9 @@ export default function MetricsPage({
                         {formatBytes(bytes)}
                       </span>
                     </div>
-                    <Sparkline
+                    <MiniChart
                       data={bytesSeries?.data || []}
                       color="rgb(16, 185, 129)"
-                      width={280}
-                      height={48}
                     />
                   </div>
                 </PanelCard>

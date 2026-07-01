@@ -36,6 +36,7 @@ export default function Select({
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const selectRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
   const displayValue = selectedOption?.label || placeholder || "";
@@ -55,10 +56,10 @@ export default function Select({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Node;
+      const insideButton = buttonRef.current?.contains(target);
+      const insideDropdown = dropdownRef.current?.contains(target);
+      if (!insideButton && !insideDropdown) {
         setIsOpen(false);
       }
     };
@@ -131,6 +132,7 @@ export default function Select({
         !disabled &&
         createPortal(
           <div
+            ref={dropdownRef}
             className="fixed z-[99999] max-h-60 overflow-auto rounded-xl border border-dark-border/70 bg-dark-card/95 shadow-xl backdrop-blur-sm scrollbar-thin"
             style={{
               top: `${dropdownPosition.top}px`,

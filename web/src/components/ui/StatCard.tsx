@@ -64,21 +64,21 @@ export default function StatCard({
   const displayValue =
     typeof value === "number" && formatValue ? formatNumber(value) : value;
 
-  const iconSize = size === "small" ? "w-4 h-4" : "w-5 h-5";
-  const valueSize = size === "small" ? "text-lg" : "text-2xl";
-  const labelSize = size === "small" ? "text-[10px]" : "text-xs";
-  const containerSize = size === "small" ? "w-8 h-8" : "w-10 h-10";
+  const iconSize = size === "small" ? "w-3.5 h-3.5" : "w-4 h-4";
+  const valueSize = size === "small" ? "text-base" : "text-xl";
+  const labelSize = "text-[11px]";
+  const containerSize = size === "small" ? "w-7 h-7" : "w-8 h-8";
 
   const card = (
     <div className="card">
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2">
         <div
           className={`${containerSize} rounded-lg ${iconBg} flex items-center justify-center shrink-0`}
         >
           <Icon className={`${iconSize} ${iconColor}`} />
         </div>
         <div className="min-w-0">
-          <p className={`${valueSize} font-bold truncate`}>{displayValue}</p>
+          <p className={`${valueSize} font-bold leading-tight truncate`}>{displayValue}</p>
           <p className={`${labelSize} text-dark-muted truncate`}>{label}</p>
         </div>
       </div>
